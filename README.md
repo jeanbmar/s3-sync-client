@@ -87,12 +87,12 @@ Additional code examples are available in the test folder.
 <a name="sync-bucket-with-local"></a>
 #### sync.bucketWithLocal(localDir, bucketPrefix[, options])
 
-- localDir (string) Local directory
-- bucketPrefix (string) Remote bucket name which may contain a prefix appended with a ``/`` separator 
-- options (Object)
-  - del (boolean) Equivalent to CLI ``--delete`` option
-  - dryRun (boolean) Equivalent to CLI ``--dryrun`` option
-  - maxConcurrentTransfers (number) Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
+- `localDir` (string) Local directory
+- `bucketPrefix` (string) Remote bucket name which may contain a prefix appended with a `/` separator 
+- `options` (Object)
+  - `del` (boolean) Equivalent to CLI ``--delete`` option
+  - `dryRun` (boolean) Equivalent to CLI ``--dryrun`` option
+  - `maxConcurrentTransfers` (number) Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
 - Returns: Promise resolving an object of sync operations 
 
 Sync a remote S3 bucket with the local file system.  
@@ -101,12 +101,12 @@ Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 <a name="sync-local-with-bucket"></a>
 #### sync.localWithBucket(bucketPrefix, localDir[, options])
 
-- bucketPrefix (string) Remote bucket name which may contain a prefix appended with a ``/`` separator
-- localDir (string) Local directory
-- options (Object)
-    - del (boolean) Equivalent to CLI ``--delete`` option
-    - dryRun (boolean) Equivalent to CLI ``--dryrun`` option
-    - maxConcurrentTransfers (number) Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
+- `bucketPrefix` (string) Remote bucket name which may contain a prefix appended with a ``/`` separator
+- `localDir` (string) Local directory
+- `options` (Object)
+    - `del` (boolean) Equivalent to CLI ``--delete`` option
+    - `dryRun` (boolean) Equivalent to CLI ``--dryrun`` option
+    - `maxConcurrentTransfers` (number) Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
 - Returns: Promise resolving an object of sync operations
 
 Sync the local file system with a remote S3 bucket.  
