@@ -118,12 +118,12 @@ Similar to AWS CLI ``aws s3 sync s3://bucketPrefix localDir [options]``.
 
 Most of the existing repo and NPM modules encounter one or more of the following limitations:
 
-- Require AWS CLI to be installed
-- Use Etag to perform file comparison (Etag should be considered an opaque field, and should not be used)
-- Limit S3 bucket object listing to 1000 objects
-- Support syncing bucket with local, but doesn't support syncing local with bucket
-- Use outdated dependencies
-- Is unmaintained
+- requires AWS CLI to be installed
+- uses Etag to perform file comparison (Etag should be considered an opaque field, and should not be used)
+- limits S3 bucket object listing to 1000 objects
+- supports syncing bucket with local, but doesn't support syncing local with bucket
+- uses outdated dependencies
+- is unmaintained
 
 The following JavaScript modules suffer at least one of the limitations:
 
@@ -135,8 +135,8 @@ The following JavaScript modules suffer at least one of the limitations:
 - https://github.com/hughsk/s3-sync
 - https://github.com/issacg/s3sync
 
-**AWS CLI ``s3 sync`` for Node.js** has its share of limitations as well:
+**AWS CLI ``s3 sync`` for Node.js** has its share of limitations too:
 
-- Does not support bucket with bucket sync (yet)
-- Does not support multipart transfers
-- Support a limited set of AWS CLI options (--delete and --dryrun)
+- does not support bucket with bucket sync (yet)
+- does not support multipart transfers
+- supports a limited set of AWS CLI options (--delete and --dryrun)
