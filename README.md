@@ -33,7 +33,7 @@ https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html
 
 #### Init client
 
-``S3SyncClient`` extends AWS SDK ``S3Client`` and should be instantiated the same way.
+``S3SyncClient`` extends the AWS SDK ``S3Client`` class and should be instantiated the same way.
 
 ```javascript
 const S3SyncClient = require('s3-sync-client');
