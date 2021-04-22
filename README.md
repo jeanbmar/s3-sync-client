@@ -82,7 +82,7 @@ Additional code examples are available in the test folder.
 <a name="class-s3-sync-client"></a>
 ### Class: S3SyncClient
 <a name="new-s3-sync-client"></a>
-``new S3SyncClient(configuration)``
+#### ``new S3SyncClient(configuration)``
 
 - `configuration` <Object\> Configuration as in the AWS SDK S3Client. See https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html.
 
