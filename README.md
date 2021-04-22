@@ -1,4 +1,4 @@
-# AWS CLI ``s3 sync`` for Node.js
+# AWS CLI s3 sync for Node.js
 
 **AWS CLI ``s3 sync`` for Node.js** provides a modern client to perform S3 sync operations between a file system and a S3 bucket in the spirit of:  
 https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html
