@@ -78,8 +78,8 @@ describe('S3SyncClient', () => {
         this.timeout(120000);
 
         it('sync a single dir with a few files successfully', async () => {
-            await s3.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET_2);
-            const objects = await s3.listBucketObjects(BUCKET_2);
+            await s3.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
+            const objects = await s3.listBucketObjects(BUCKET);
             assert(objects.has('xmoj'));
         });
 

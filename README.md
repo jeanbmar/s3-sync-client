@@ -16,7 +16,7 @@ https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html
 1. [Getting Started](#getting-started)
     1. [Install](#install)
     1. [Code Examples](#code-examples)
-1. [API Reference](#api-referece)
+1. [API Reference](#api-reference)
     - [Class: S3SyncClient](#class-s3-sync-client)
       - [new S3SyncClient(configuration)](#new-s3-sync-client)
       - [sync.bucketWithLocal(localDir, bucketPrefix[, options])](#sync-bucket-with-local)
@@ -78,14 +78,14 @@ Additional code examples are available in the test folder.
 
 ## API Reference
 <a name="class-s3-sync-client"></a>
-### Class: S3SyncClient (#class-s3-sync-client)
+### Class: S3SyncClient
 <a name="new-s3-sync-client"></a>
-#### new S3SyncClient(configuration) (#new-s3-sync-client)
+#### new S3SyncClient(configuration)
 
 - configuration (Object) - Configuration as in AWS SDK S3Client. See https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html.
 
 <a name="sync-bucket-with-local"></a>
-#### sync.bucketWithLocal(localDir, bucketPrefix[, options]) (#sync-bucket-with-local)
+#### sync.bucketWithLocal(localDir, bucketPrefix[, options])
 
 - localDir (string) Local directory
 - bucketPrefix (string) Remote bucket name which may contain a prefix appended with a ``/`` separator 
@@ -99,7 +99,7 @@ Sync a remote S3 bucket with the local file system.
 Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 
 <a name="sync-local-with-bucket"></a>
-#### sync.localWithBucket(bucketPrefix, localDir[, options]) (#sync-local-with-bucket)
+#### sync.localWithBucket(bucketPrefix, localDir[, options])
 
 - bucketPrefix (string) Remote bucket name which may contain a prefix appended with a ``/`` separator
 - localDir (string) Local directory
@@ -138,5 +138,5 @@ The following JavaScript modules suffer at least one of the limitations:
 **AWS CLI ``s3 sync`` for Node.js** has its share of limitations as well:
 
 - Does not support bucket with bucket sync (yet)
-- Des not support multipart transfers
+- Does not support multipart transfers
 - Support a limited set of AWS CLI options (--delete and --dryrun)
