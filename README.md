@@ -87,7 +87,7 @@ Additional code examples are available in the test folder.
 - `configuration` <Object\> Configuration as in the AWS SDK S3Client. See https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html.
 
 <a name="sync-bucket-with-local"></a>
-``sync.bucketWithLocal(localDir, bucketPrefix[, options])``
+#### ``sync.bucketWithLocal(localDir, bucketPrefix[, options])``
 
 - `localDir` <string\> Local directory
 - `bucketPrefix` <string\> Remote bucket name which may contain a prefix appended with a `/` separator 
@@ -101,7 +101,7 @@ Sync a remote S3 bucket with the local file system.
 Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 
 <a name="sync-local-with-bucket"></a>
-``sync.localWithBucket(bucketPrefix, localDir[, options])``
+#### ``sync.localWithBucket(bucketPrefix, localDir[, options])``
 
 - `bucketPrefix` <string\> Remote bucket name which may contain a prefix appended with a ``/`` separator
 - `localDir` <string\> Local directory
