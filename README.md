@@ -31,7 +31,9 @@ https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html
 
 ### Code Examples
 
-``S3SyncClient`` extends AWS SDK ``S3Client`` and should be instantiated the same way:
+#### Init client
+
+``S3SyncClient`` extends AWS SDK ``S3Client`` and should be instantiated the same way.
 
 ```javascript
 const S3SyncClient = require('s3-sync-client');
@@ -45,7 +47,7 @@ const sync = new S3SyncClient({
 });
 ```
 
-Sync a remote S3 bucket with the local file system:
+#### Sync a remote S3 bucket with the local file system
 
 ```javascript
 const S3SyncClient = require('s3-sync-client');
@@ -59,7 +61,7 @@ await sync.bucketWithLocal('/path/to/local/dir', 'mybucket2');
 await sync.bucketWithLocal('/path/to/local/dir', 'mybucket2/zzz', { del: true });
 ```
 
-Sync the local file system with a remote S3 bucket:
+#### Sync the local file system with a remote S3 bucket
 
 ```javascript
 const S3SyncClient = require('s3-sync-client');
@@ -80,34 +82,34 @@ Additional code examples are available in the test folder.
 <a name="class-s3-sync-client"></a>
 ### Class: S3SyncClient
 <a name="new-s3-sync-client"></a>
-#### new S3SyncClient(configuration)
+``new S3SyncClient(configuration)``
 
-- configuration (Object) - Configuration as in AWS SDK S3Client. See https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html.
+- `configuration` <Object\> Configuration as in the AWS SDK S3Client. See https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html.
 
 <a name="sync-bucket-with-local"></a>
-#### sync.bucketWithLocal(localDir, bucketPrefix[, options])
+``sync.bucketWithLocal(localDir, bucketPrefix[, options])``
 
-- `localDir` (string) Local directory
-- `bucketPrefix` (string) Remote bucket name which may contain a prefix appended with a `/` separator 
-- `options` (Object)
-  - `del` (boolean) Equivalent to CLI ``--delete`` option
-  - `dryRun` (boolean) Equivalent to CLI ``--dryrun`` option
-  - `maxConcurrentTransfers` (number) Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
-- Returns: Promise resolving an object of sync operations 
+- `localDir` <string\> Local directory
+- `bucketPrefix` <string\> Remote bucket name which may contain a prefix appended with a `/` separator 
+- `options` <Object\>
+  - `del` <boolean\> Equivalent to CLI ``--delete`` option
+  - `dryRun` <boolean\> Equivalent to CLI ``--dryrun`` option
+  - `maxConcurrentTransfers` <number\> Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
+- Returns: <Promise\> <Promise\> Fulfills with an <Object\> of sync operations upon success.
 
 Sync a remote S3 bucket with the local file system.  
 Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 
 <a name="sync-local-with-bucket"></a>
-#### sync.localWithBucket(bucketPrefix, localDir[, options])
+``sync.localWithBucket(bucketPrefix, localDir[, options])``
 
-- `bucketPrefix` (string) Remote bucket name which may contain a prefix appended with a ``/`` separator
-- `localDir` (string) Local directory
-- `options` (Object)
-    - `del` (boolean) Equivalent to CLI ``--delete`` option
-    - `dryRun` (boolean) Equivalent to CLI ``--dryrun`` option
-    - `maxConcurrentTransfers` (number) Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
-- Returns: Promise resolving an object of sync operations
+- `bucketPrefix` <string\> Remote bucket name which may contain a prefix appended with a ``/`` separator
+- `localDir` <string\> Local directory
+- `options` <Object\>
+    - `del` <boolean\> Equivalent to CLI ``--delete`` option
+    - `dryRun` <boolean\> Equivalent to CLI ``--dryrun`` option
+    - `maxConcurrentTransfers` <number\> Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
+- Returns: <Promise\> Fulfills with an <Object\> of sync operations upon success.
 
 Sync the local file system with a remote S3 bucket.  
 Similar to AWS CLI ``aws s3 sync s3://bucketPrefix localDir [options]``.
