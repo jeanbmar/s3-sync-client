@@ -1,0 +1,30 @@
+{
+  "name": "s3-sync-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeanbmar/s3-sync-client.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jeanbmar/s3-sync-client/issues"
+  },
+  "homepage": "https://github.com/jeanbmar/s3-sync-client#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "mocha": "^8.3.2",
+    "tar": "^6.1.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.13.0"
+  }
+}
