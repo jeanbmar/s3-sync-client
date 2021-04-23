@@ -34,9 +34,9 @@ describe('S3SyncClient', () => {
     });
 
     it('load bucket 2 dataset', async function () {
-        this.timeout(120000);
+        this.timeout(180000);
         await s3.emptyBucket(BUCKET_2);
-        await s3.bucketWithLocal(DATA_DIR, BUCKET_2, { del: true });
+        await s3.bucketWithLocal(DATA_DIR, BUCKET_2, { del: true, maxConcurrentTransfers: 100 });
         const objects = await s3.listLocalObjects(DATA_DIR);
         assert(objects.size === 10000);
     });
