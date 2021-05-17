@@ -74,6 +74,9 @@ await sync.localWithBucket('mybucket', '/path/to/some/local', { del: true });
 // aws s3 sync s3://mybucket2 /path/to/local/dir --dryrun
 const syncOps = await sync.localWithBucket('mybucket2', '/path/to/local/dir', { dryRun: true });
 console.log(syncOps); // log download and delete operations to perform
+
+// sync s3://mybucket/flowers/rose.png to /path/to/local/dir/rose.png
+await sync.localWithBucket('mybucket/flowers/rose.png', '/path/to/local/dir', { flatten: true });
 ```
 
 Additional code examples are available in the test folder.
