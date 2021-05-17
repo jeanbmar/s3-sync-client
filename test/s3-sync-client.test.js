@@ -36,7 +36,7 @@ describe('S3SyncClient', () => {
     it('load bucket 2 dataset', async function () {
         this.timeout(180000);
         await s3.emptyBucket(BUCKET_2);
-        await s3.bucketWithLocal(DATA_DIR, BUCKET_2, { del: true, maxConcurrentTransfers: 100 });
+        await s3.bucketWithLocal(DATA_DIR, BUCKET_2, { del: true, maxConcurrentTransfers: 1000 });
         const objects = await s3.listLocalObjects(DATA_DIR);
         assert(objects.size === 10000);
     });
@@ -52,7 +52,7 @@ describe('S3SyncClient', () => {
         it('listed objects are properly formed', async () => {
             const objects = await s3.listLocalObjects(path.join(DATA_DIR, 'def/jkl'));
             assert.deepStrictEqual(objects.get('xmoj'), {
-                key: 'xmoj',
+                id: 'xmoj',
                 lastModified: 1618993846000,
                 size: 3,
                 path: path.join(DATA_DIR, 'def/jkl/xmoj'),
@@ -62,7 +62,7 @@ describe('S3SyncClient', () => {
         it('listed objects with prefix are properly formed', async () => {
             const objects = await s3.listLocalObjects(path.join(DATA_DIR, 'def/jkl'), { prefix: 'azerty' });
             assert.deepStrictEqual(objects.get('azerty/xmoj'), {
-                key: 'azerty/xmoj',
+                id: 'azerty/xmoj',
                 lastModified: 1618993846000,
                 size: 3,
                 path: path.join(DATA_DIR, 'def/jkl/xmoj'),
@@ -97,7 +97,7 @@ describe('S3SyncClient', () => {
 
         it('sync 10000 local objects with delete option successfully', async () => {
             await s3.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
-            await s3.bucketWithLocal(DATA_DIR, BUCKET, { del: true });
+            await s3.bucketWithLocal(DATA_DIR, BUCKET, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await s3.listLocalObjects(DATA_DIR);
             assert(objects.size === 10000);
             assert(!objects.has('xmoj'));
@@ -117,15 +117,21 @@ describe('S3SyncClient', () => {
             assert(objects.has('def/jkl/xmoj'));
         });
 
+        it('sync a single dir and flatten it', async () => {
+            await s3.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { flatten: true });
+            const objects = await s3.listLocalObjects(SYNC_DIR);
+            assert(objects.has('xmoj'));
+        });
+
         it('sync 10000 bucket objects successfully', async () => {
-            await s3.localWithBucket(BUCKET_2, SYNC_DIR);
+            await s3.localWithBucket(BUCKET_2, SYNC_DIR, { maxConcurrentTransfers: 1000 });
             const objects = await s3.listLocalObjects(SYNC_DIR);
             assert(objects.size >= 10000);
         });
 
         it('sync 10000 bucket objects with delete option successfully', async () => {
             await s3.localWithBucket(`${BUCKET_2}/def/jkl`, path.join(SYNC_DIR, 'foo'));
-            await s3.localWithBucket(BUCKET_2, SYNC_DIR, { del: true });
+            await s3.localWithBucket(BUCKET_2, SYNC_DIR, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await s3.listLocalObjects(SYNC_DIR);
             assert(objects.size === 10000);
             assert(!objects.has('foo/def/jkl/xmoj'));
@@ -134,30 +140,30 @@ describe('S3SyncClient', () => {
 
     describe('compute sync operations', () => {
         const sourceObjects = new Map([
-            ['abc/created', { key: 'abc/created', lastModified: 1619002208000, size: 1 }],
-            ['abc/updated1', { key: 'abc/updated1', lastModified: 1619002208001, size: 1 }],
-            ['abc/updated2', { key: 'abc/updated2', lastModified: 1619002208000, size: 2 }],
-            ['abc/unchanged', { key: 'abc/unchanged', lastModified: 1619002208000, size: 1 }],
+            ['abc/created', { id: 'abc/created', lastModified: 1619002208000, size: 1 }],
+            ['abc/updated1', { id: 'abc/updated1', lastModified: 1619002208001, size: 1 }],
+            ['abc/updated2', { id: 'abc/updated2', lastModified: 1619002208000, size: 2 }],
+            ['abc/unchanged', { id: 'abc/unchanged', lastModified: 1619002208000, size: 1 }],
         ]);
         const targetObjects = new Map([
-            ['abc/unchanged', { key: 'abc/unchanged', lastModified: 1619002208000, size: 1 }],
-            ['abc/updated1', { key: 'abc/updated1', lastModified: 1619002208000, size: 1 }],
-            ['abc/updated2', { key: 'abc/updated2', lastModified: 1619002208000, size: 1 }],
-            ['deleted', { key: 'deleted', lastModified: 1619002208000, size: 1 }],
+            ['abc/unchanged', { id: 'abc/unchanged', lastModified: 1619002208000, size: 1 }],
+            ['abc/updated1', { id: 'abc/updated1', lastModified: 1619002208000, size: 1 }],
+            ['abc/updated2', { id: 'abc/updated2', lastModified: 1619002208000, size: 1 }],
+            ['deleted', { id: 'deleted', lastModified: 1619002208000, size: 1 }],
         ]);
 
         it('compute objects to transfer successfully', () => {
-            const objectsToTransfer = S3SyncClient.getObjectsToTransfer(sourceObjects, targetObjects);
+            const objectsToTransfer = S3SyncClient.util.getObjectsToTransfer(sourceObjects, targetObjects);
             assert.deepStrictEqual(objectsToTransfer, [
-                { key: 'abc/created', lastModified: 1619002208000, size: 1 },
-                { key: 'abc/updated1', lastModified: 1619002208001, size: 1 },
-                { key: 'abc/updated2', lastModified: 1619002208000, size: 2 },
+                { id: 'abc/created', lastModified: 1619002208000, size: 1 },
+                { id: 'abc/updated1', lastModified: 1619002208001, size: 1 },
+                { id: 'abc/updated2', lastModified: 1619002208000, size: 2 },
             ]);
         });
 
         it('compute objects to delete successfully', () => {
-            const objectsToDelete = S3SyncClient.getObjectsToDelete(sourceObjects, targetObjects);
-            assert.deepStrictEqual(objectsToDelete.map(({ key }) => key), ['deleted']);
+            const objectsToDelete = S3SyncClient.util.getObjectsToDelete(sourceObjects, targetObjects);
+            assert.deepStrictEqual(objectsToDelete.map(({ id }) => id), ['deleted']);
         });
     });
 });

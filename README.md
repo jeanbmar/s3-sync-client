@@ -108,6 +108,7 @@ Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 - `options` *<Object\>*
     - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
     - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+    - `flatten` *<boolean\>* Objects do not inherit the bucket's directory hierarchy when they are written to the file system. 
     - `maxConcurrentTransfers` *<number\>* Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
