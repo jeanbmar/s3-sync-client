@@ -59,18 +59,69 @@ describe('S3SyncClient', () => {
             });
         });
 
-        it('listed objects with prefix are properly formed', async () => {
-            const objects = await s3.listLocalObjects(path.join(DATA_DIR, 'def/jkl'), { prefix: 'azerty' });
-            assert.deepStrictEqual(objects.get('azerty/xmoj'), {
-                id: 'azerty/xmoj',
-                lastModified: 1618993846000,
-                size: 3,
-                path: path.join(DATA_DIR, 'def/jkl/xmoj'),
-            });
-        });
-
         it('list local objects with non-directory args throws', async () => {
             await assert.rejects(async () => s3.listLocalObjects(path.join(DATA_DIR, 'xoin')));
+        });
+    });
+
+    describe('get relocation id', () => {
+        const { Relocator } = S3SyncClient;
+        it('relocate id from root', () => {
+            assert.deepStrictEqual(Relocator.getRelocation('', '', ''), '');
+            assert.deepStrictEqual(Relocator.getRelocation('id', '', ''), 'id');
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', '', ''), 'a/b/c');
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', '', 'x'), 'x/a/b/c');
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', '', 'x/y'), 'x/y/a/b/c');
+        });
+        it('relocate id to root', () => {
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a', ''), 'b/c');
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b', ''), 'c');
+        });
+        it('folder is not relocated', () => {
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b/c', ''), 'a/b/c');
+        });
+        it('perform lower id relocation', () => {
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a', 'x'), 'x/b/c');
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a', 'x/y/z'), 'x/y/z/b/c');
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b', 'x'), 'x/c');
+            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b', 'x/y'), 'x/y/c');
+        });
+    });
+
+    describe('sync bucket with bucket', function () {
+        this.timeout(120000);
+
+        it('sync a single dir', async () => {
+            await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, { maxConcurrentTransfers: 1000 });
+            const objects = await s3.listBucketObjects(BUCKET, { prefix: 'def/jkl' });
+            assert(objects.has('def/jkl/xmoj'));
+            assert(objects.size === 11);
+        });
+
+        it('sync a single dir with root relocation', async () => {
+            await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, {
+                maxConcurrentTransfers: 1000,
+                relocations: [['', 'relocated']],
+            });
+            const objects = await s3.listBucketObjects(BUCKET, { prefix: 'relocated' });
+            assert(objects.has('relocated/def/jkl/xmoj'));
+            assert(objects.size === 11);
+        });
+
+        it('sync a single dir with folder relocation', async () => {
+            await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, {
+                maxConcurrentTransfers: 1000,
+                relocations: [['def/jkl', 'relocated-bis/folder']],
+            });
+            const objects = await s3.listBucketObjects(BUCKET, { prefix: 'relocated-bis/folder' });
+            assert(objects.has('relocated-bis/folder/xmoj'));
+            assert(objects.size === 11);
+        });
+
+        it('sync entire bucket with delete option successfully', async () => {
+            await s3.bucketWithBucket(BUCKET_2, BUCKET, { del: true, maxConcurrentTransfers: 1000 });
+            const objects = await s3.listBucketObjects(BUCKET);
+            assert(objects.size === 10000);
         });
     });
 
@@ -83,10 +134,14 @@ describe('S3SyncClient', () => {
             assert(objects.has('xmoj'));
         });
 
-        it('sync a single dir with a bucket prefix successfully', async () => {
-            await s3.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), path.posix.join(BUCKET, 'zzz'));
+        it('sync a single dir with a bucket using relocation successfully', async () => {
+            await s3.bucketWithLocal(
+                path.join(DATA_DIR, 'def/jkl'),
+                path.posix.join(BUCKET, 'zzz'),
+                { relocations: [['', 'zzz']] },
+            );
             const objects = await s3.listBucketObjects(BUCKET, { prefix: 'zzz' });
-            assert(objects.has('zzz/xmoj'));
+            assert(objects.has('zzz/zzz/xmoj'));
         });
 
         it('sync 10000 local objects successfully', async () => {
