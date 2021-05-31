@@ -117,7 +117,7 @@ await sync.bucketWithBucket('my-source-bucket/a/b/c.txt', 'my-target-bucket', {
 // sync s3://mybucket/flowers/red/rose.png to /path/to/local/dir/rose.png
 await sync.localWithBucket('mybucket/flowers/red/rose.png', '/path/to/local/dir', {
     relocations: [
-        ['flowers/red', ''], // folder flowers/red will be flatten during sync
+        ['flowers/red', ''], // folder flowers/red will be flattened during sync
     ],
 });
 ```
