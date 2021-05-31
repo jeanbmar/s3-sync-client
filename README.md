@@ -1,7 +1,18 @@
 # AWS CLI s3 sync for Node.js
 
-**AWS CLI ``s3 sync`` for Node.js** provides a modern client to perform S3 sync operations between a file system and a S3 bucket in the spirit of:  
-https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html
+**AWS CLI ``s3 sync`` for Node.js** provides a modern client to perform S3 sync operations between a file system and a S3 bucket in the spirit of the official [AWS CLI command](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html).    
+AWS CLI installation is **NOT** required by this module.
+
+## Features
+
+- Sync a local file system with a remote Amazon S3 bucket
+- Sync a remote Amazon S3 bucket with a local file system
+- Sync two remote Amazon S3 buckets
+- Sync only new and updated objects
+- Support AWS CLI options ``--delete`` and ``--dryrun`` 
+- Sync **any** number of objects (no 1000 objects limit)
+- Transfer objects concurrently
+- Manage differences in folder structures easily through relocation
 
 ## Why should I use this module?
 
@@ -21,6 +32,8 @@ https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html
       - [new S3SyncClient(configuration)](#new-s3-sync-client)
       - [sync.bucketWithLocal(localDir, bucketPrefix[, options])](#sync-bucket-with-local)
       - [sync.localWithBucket(bucketPrefix, localDir[, options])](#sync-local-with-bucket)
+      - [sync.bucketWithBucket(sourceBucketPrefix, targetBucketPrefix[, options])](#sync-bucket-with-bucket)
+1. [Change Log](#change-log)
 1. [Comparison with other modules](#comparison-with-other-modules)
 
 ## Getting Started
@@ -74,9 +87,39 @@ await sync.localWithBucket('mybucket', '/path/to/some/local', { del: true });
 // aws s3 sync s3://mybucket2 /path/to/local/dir --dryrun
 const syncOps = await sync.localWithBucket('mybucket2', '/path/to/local/dir', { dryRun: true });
 console.log(syncOps); // log download and delete operations to perform
+```
 
-// sync s3://mybucket/flowers/rose.png to /path/to/local/dir/rose.png
-await sync.localWithBucket('mybucket/flowers/rose.png', '/path/to/local/dir', { flatten: true });
+#### Sync two remote S3 buckets
+
+```javascript
+const S3SyncClient = require('s3-sync-client');
+
+const sync = new S3SyncClient({ /* credentials */ });
+
+// aws s3 sync s3://my-source-bucket s3://my-target-bucket --delete
+await sync.bucketWithBucket('my-source-bucket', 'my-target-bucket', { del: true });
+```
+
+#### Relocate objects during sync
+
+```javascript
+const S3SyncClient = require('s3-sync-client');
+
+const sync = new S3SyncClient({ /* credentials */ });
+
+// sync s3://my-source-bucket/a/b/c.txt to s3://my-target-bucket/zzz/c.txt
+await sync.bucketWithBucket('my-source-bucket/a/b/c.txt', 'my-target-bucket', {
+    relocations: [ // multiple relocations can be applied
+        ['a/b', 'zzz'],
+    ],
+});
+
+// sync s3://mybucket/flowers/red/rose.png to /path/to/local/dir/rose.png
+await sync.localWithBucket('mybucket/flowers/red/rose.png', '/path/to/local/dir', {
+    relocations: [
+        ['flowers/red', ''], // folder flowers/red will be flatten during sync
+    ],
+});
 ```
 
 Additional code examples are available in the test folder.
@@ -98,6 +141,7 @@ Additional code examples are available in the test folder.
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `maxConcurrentTransfers` *<number\>* Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
+  - `relocations` *<Array\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync a remote S3 bucket with the local file system.  
@@ -111,12 +155,31 @@ Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 - `options` *<Object\>*
     - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
     - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-    - `flatten` *<boolean\>* Objects do not inherit the bucket's directory hierarchy when they are written to the file system. 
     - `maxConcurrentTransfers` *<number\>* Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
+    - `relocations` *<Array\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync the local file system with a remote S3 bucket.  
 Similar to AWS CLI ``aws s3 sync s3://bucketPrefix localDir [options]``.
+
+<a name="sync-bucket-with-bucket"></a>
+#### ``sync.bucketWithBucket(sourceBucketPrefix, targetBucketPrefix[, options])``
+
+- `sourceBucketPrefix` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
+- `targetBucketPrefix` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
+- `options` *<Object\>*
+    - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+    - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+    - `maxConcurrentTransfers` *<number\>* Each copy generates a Promise which is resolved after the object has been copied. This parameter sets the maximum number of copy promises that might be running concurrently.
+    - `relocations` *<Array\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+- Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
+
+Sync two remote S3 buckets.  
+Similar to AWS CLI ``aws s3 sync s3://sourceBucketPrefix s3://targetBucketPrefix [options]``.
+
+# Change Log
+
+See [CHANGELOG.md](CHANGELOG.md).
 
 # Comparison with other modules
 
@@ -141,8 +204,7 @@ The following JavaScript modules suffer at least one of the limitations:
 - https://github.com/hughsk/s3-sync
 - https://github.com/issacg/s3sync
 
-**AWS CLI ``s3 sync`` for Node.js** has its share of limitations too:
+**AWS CLI ``s3 sync`` for Node.js** has some limitations too:
 
-- does not support bucket with bucket sync (yet)
 - does not support multipart transfers
 - supports a limited set of AWS CLI options (--delete and --dryrun)
