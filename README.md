@@ -19,7 +19,7 @@ AWS CLI installation is **NOT** required by this module.
 1. There is no way to achieve S3 sync using the AWS SDK for JavaScript v3 alone.
 1. AWS CLI installation is **NOT** required.
 1. The package contains no external dependency besides AWS SDK.
-1. The AWS SDK dependency is up-to-date (**AWS SDK for JavaScript v3**, https://github.com/aws/aws-sdk-js-v3).
+1. The AWS SDK dependency is up-to-date ([AWS SDK for JavaScript v3](https://github.com/aws/aws-sdk-js-v3)).
 1. The module overcomes a set of common limitations listed at the bottom of this README.
 
 # Table of Contents
