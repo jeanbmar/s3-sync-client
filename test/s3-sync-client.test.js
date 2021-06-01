@@ -80,11 +80,12 @@ describe('S3SyncClient', () => {
         it('folder is not relocated', () => {
             assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b/c', ''), 'a/b/c');
         });
-        it('perform lower id relocation', () => {
+        it('perform complex id relocation', () => {
             assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a', 'x'), 'x/b/c');
             assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a', 'x/y/z'), 'x/y/z/b/c');
             assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b', 'x'), 'x/c');
             assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b', 'x/y'), 'x/y/c');
+            assert.deepStrictEqual(Relocator.getRelocation('x/y/z', 'x/y', ''), 'z');
         });
     });
 
