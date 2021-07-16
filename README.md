@@ -9,7 +9,7 @@ AWS CLI installation is **NOT** required by this module.
 - Sync a remote Amazon S3 bucket with a local file system
 - Sync two remote Amazon S3 buckets
 - Sync only new and updated objects
-- Support AWS CLI options ``--delete`` and ``--dryrun`` 
+- Support AWS CLI options ``--delete``, ``--dryrun`` and ``--acl``
 - Track object sync progress
 - Sync **any** number of objects (no 1000 objects limit)
 - Transfer objects concurrently
@@ -163,6 +163,7 @@ Additional code examples are available in the test folder.
 - `localDir` *<string\>* Local directory
 - `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a `/` separator 
 - `options` *<Object\>*
+  - `acl` *<string\>* Equivalent to CLI ``--acl`` option
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `monitor` *<EventEmitter\>*
@@ -199,6 +200,7 @@ Similar to AWS CLI ``aws s3 sync s3://bucketPrefix localDir [options]``.
 - `sourceBucketPrefix` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
 - `targetBucketPrefix` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
 - `options` *<Object\>*
+  - `acl` *<string\>* Equivalent to CLI ``--acl`` option
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `monitor` *<EventEmitter\>*
