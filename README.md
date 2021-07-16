@@ -123,7 +123,7 @@ monitor.on('progress', (progress) => console.log(progress));
 */
 // optionally emit abort event
 setTimeout(() => monitor.emit('abort'), 30000);
-// don't forget to pass monitor to sync options
+// pass monitor to sync options
 await sync.localWithBucket('mybucket', '/path/to/local/dir', { monitor });
 ```
 
