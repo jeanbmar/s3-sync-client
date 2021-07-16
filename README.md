@@ -109,22 +109,20 @@ const S3SyncClient = require('s3-sync-client');
 
 const sync = new S3SyncClient({ /* credentials */ });
 
-// declare an EventEmitter instance
 const monitor = new EventEmitter();
-// attach progress event
 monitor.on('progress', (progress) => console.log(progress));
-/* output
+setTimeout(() => monitor.emit('abort'), 30000); // optional abort
+await sync.localWithBucket('mybucket', '/path/to/local/dir', { monitor });
+
+/* output:
 ...
 {
   size: { current: 11925, total: 35688 },
   count: { current: 3974, total: 10000 }
 }
 ...
+and abort unfinished sync after 30s (promise rejected with an AbortError) 
 */
-// optionally emit abort event
-setTimeout(() => monitor.emit('abort'), 30000);
-// pass monitor to sync options
-await sync.localWithBucket('mybucket', '/path/to/local/dir', { monitor });
 ```
 
 #### Relocate objects during sync
