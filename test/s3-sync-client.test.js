@@ -1,10 +1,13 @@
 /* eslint-disable func-names */
 const fs = require('fs');
 const path = require('path');
+const EventEmitter = require('events');
 const assert = require('assert');
 const tar = require('tar');
 const { describe, it } = require('mocha');
 const S3SyncClient = require('..');
+const SyncObject = require('../lib/objects/sync-object');
+const LocalObject = require('../lib/objects/local-object');
 
 const BUCKET = 's3-sync-client';
 const BUCKET_2 = 's3-sync-client-2';
@@ -35,8 +38,10 @@ describe('S3SyncClient', () => {
 
     it('load bucket 2 dataset', async function () {
         this.timeout(180000);
+        const monitor = new EventEmitter();
+        monitor.on('progress', (progress) => console.log(progress));
         await s3.emptyBucket(BUCKET_2);
-        await s3.bucketWithLocal(DATA_DIR, BUCKET_2, { del: true, maxConcurrentTransfers: 1000 });
+        await s3.bucketWithLocal(DATA_DIR, BUCKET_2, { del: true, maxConcurrentTransfers: 1000, monitor });
         const objects = await s3.listLocalObjects(DATA_DIR);
         assert(objects.size === 10000);
     });
@@ -51,12 +56,12 @@ describe('S3SyncClient', () => {
     describe('list local objects', () => {
         it('listed objects are properly formed', async () => {
             const objects = await s3.listLocalObjects(path.join(DATA_DIR, 'def/jkl'));
-            assert.deepStrictEqual(objects.get('xmoj'), {
+            assert.deepStrictEqual(objects.get('xmoj'), new LocalObject({
                 id: 'xmoj',
                 lastModified: 1618993846000,
                 size: 3,
                 path: path.join(DATA_DIR, 'def/jkl/xmoj'),
-            });
+            }));
         });
 
         it('list local objects with non-directory args throws', async () => {
@@ -65,35 +70,41 @@ describe('S3SyncClient', () => {
     });
 
     describe('get relocation id', () => {
-        const { Relocator } = S3SyncClient;
+        const getRelocation = (id, sourcePrefix, targetPrefix) => {
+            const object = new SyncObject({ id });
+            object.relocate(sourcePrefix, targetPrefix);
+            return object.id;
+        };
         it('relocate id from root', () => {
-            assert.deepStrictEqual(Relocator.getRelocation('', '', ''), '');
-            assert.deepStrictEqual(Relocator.getRelocation('id', '', ''), 'id');
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', '', ''), 'a/b/c');
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', '', 'x'), 'x/a/b/c');
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', '', 'x/y'), 'x/y/a/b/c');
+            assert.deepStrictEqual(getRelocation('', '', ''), '');
+            assert.deepStrictEqual(getRelocation('id', '', ''), 'id');
+            assert.deepStrictEqual(getRelocation('a/b/c', '', ''), 'a/b/c');
+            assert.deepStrictEqual(getRelocation('a/b/c', '', 'x'), 'x/a/b/c');
+            assert.deepStrictEqual(getRelocation('a/b/c', '', 'x/y'), 'x/y/a/b/c');
         });
         it('relocate id to root', () => {
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a', ''), 'b/c');
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b', ''), 'c');
+            assert.deepStrictEqual(getRelocation('a/b/c', 'a', ''), 'b/c');
+            assert.deepStrictEqual(getRelocation('a/b/c', 'a/b', ''), 'c');
         });
         it('folder is not relocated', () => {
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b/c', ''), 'a/b/c');
+            assert.deepStrictEqual(getRelocation('a/b/c', 'a/b/c', ''), 'a/b/c');
         });
         it('perform complex id relocation', () => {
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a', 'x'), 'x/b/c');
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a', 'x/y/z'), 'x/y/z/b/c');
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b', 'x'), 'x/c');
-            assert.deepStrictEqual(Relocator.getRelocation('a/b/c', 'a/b', 'x/y'), 'x/y/c');
-            assert.deepStrictEqual(Relocator.getRelocation('x/y/z', 'x/y', ''), 'z');
+            assert.deepStrictEqual(getRelocation('a/b/c', 'a', 'x'), 'x/b/c');
+            assert.deepStrictEqual(getRelocation('a/b/c', 'a', 'x/y/z'), 'x/y/z/b/c');
+            assert.deepStrictEqual(getRelocation('a/b/c', 'a/b', 'x'), 'x/c');
+            assert.deepStrictEqual(getRelocation('a/b/c', 'a/b', 'x/y'), 'x/y/c');
+            assert.deepStrictEqual(getRelocation('x/y/z', 'x/y', ''), 'z');
         });
     });
 
     describe('sync bucket with bucket', function () {
         this.timeout(120000);
 
-        it('sync a single dir', async () => {
-            await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, { maxConcurrentTransfers: 1000 });
+        it('sync a single dir with progress tracking', async () => {
+            const monitor = new EventEmitter();
+            monitor.on('progress', (progress) => console.log(progress));
+            await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listBucketObjects(BUCKET, { prefix: 'def/jkl' });
             assert(objects.has('def/jkl/xmoj'));
             assert(objects.size === 11);
@@ -145,8 +156,10 @@ describe('S3SyncClient', () => {
             assert(objects.has('zzz/zzz/xmoj'));
         });
 
-        it('sync 10000 local objects successfully', async () => {
-            await s3.bucketWithLocal(DATA_DIR, BUCKET, { maxConcurrentTransfers: 1000 });
+        it('sync 10000 local objects successfully with progress tracking', async () => {
+            const monitor = new EventEmitter();
+            monitor.on('progress', (progress) => console.log(progress));
+            await s3.bucketWithLocal(DATA_DIR, BUCKET, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listLocalObjects(DATA_DIR);
             assert(objects.size >= 10000);
         });
@@ -179,8 +192,10 @@ describe('S3SyncClient', () => {
             assert(objects.has('xmoj'));
         });
 
-        it('sync 10000 bucket objects successfully', async () => {
-            await s3.localWithBucket(BUCKET_2, SYNC_DIR, { maxConcurrentTransfers: 1000 });
+        it('sync 10000 bucket objects successfully with progress tracking', async () => {
+            const monitor = new EventEmitter();
+            monitor.on('progress', (progress) => console.log(progress));
+            await s3.localWithBucket(BUCKET_2, SYNC_DIR, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listLocalObjects(SYNC_DIR);
             assert(objects.size >= 10000);
         });
@@ -192,34 +207,41 @@ describe('S3SyncClient', () => {
             assert(objects.size === 10000);
             assert(!objects.has('foo/def/jkl/xmoj'));
         });
+
+        it('abort sync and throw', async () => {
+            const monitor = new EventEmitter();
+            const pSync = s3.localWithBucket(BUCKET_2, path.join(SYNC_DIR, 'abort'), { monitor });
+            monitor.on('progress', () => monitor.emit('abort'));
+            await assert.rejects(pSync, { name: 'AbortError' });
+        });
     });
 
     describe('compute sync operations', () => {
-        const sourceObjects = new Map([
-            ['abc/created', { id: 'abc/created', lastModified: 1619002208000, size: 1 }],
-            ['abc/updated1', { id: 'abc/updated1', lastModified: 1619002208001, size: 1 }],
-            ['abc/updated2', { id: 'abc/updated2', lastModified: 1619002208000, size: 2 }],
-            ['abc/unchanged', { id: 'abc/unchanged', lastModified: 1619002208000, size: 1 }],
+        const bucketObjects = new Map([
+            ['abc/created', { id: 'abc/created', lastModified: 0, size: 1 }],
+            ['abc/updated1', { id: 'abc/updated1', lastModified: 1, size: 1 }],
+            ['abc/updated2', { id: 'abc/updated2', lastModified: 0, size: 2 }],
+            ['abc/unchanged', { id: 'abc/unchanged', lastModified: 0, size: 1 }],
         ]);
-        const targetObjects = new Map([
-            ['abc/unchanged', { id: 'abc/unchanged', lastModified: 1619002208000, size: 1 }],
-            ['abc/updated1', { id: 'abc/updated1', lastModified: 1619002208000, size: 1 }],
-            ['abc/updated2', { id: 'abc/updated2', lastModified: 1619002208000, size: 1 }],
-            ['deleted', { id: 'deleted', lastModified: 1619002208000, size: 1 }],
+        const localObjects = new Map([
+            ['abc/unchanged', { id: 'abc/unchanged', lastModified: 0, size: 1 }],
+            ['abc/updated1', { id: 'abc/updated1', lastModified: 0, size: 1 }],
+            ['abc/updated2', { id: 'abc/updated2', lastModified: 0, size: 1 }],
+            ['deleted', { id: 'deleted', lastModified: 0, size: 1 }],
         ]);
 
-        it('compute objects to transfer successfully', () => {
-            const objectsToTransfer = S3SyncClient.util.getObjectsToTransfer(sourceObjects, targetObjects);
-            assert.deepStrictEqual(objectsToTransfer, [
-                { id: 'abc/created', lastModified: 1619002208000, size: 1 },
-                { id: 'abc/updated1', lastModified: 1619002208001, size: 1 },
-                { id: 'abc/updated2', lastModified: 1619002208000, size: 2 },
+        it('compute sync operations on objects successfully', () => {
+            const { created, updated, deleted } = S3SyncClient.util.diff(bucketObjects, localObjects);
+            assert.deepStrictEqual(created, [
+                { id: 'abc/created', size: 1, lastModified: 0 },
             ]);
-        });
-
-        it('compute objects to delete successfully', () => {
-            const objectsToDelete = S3SyncClient.util.getObjectsToDelete(sourceObjects, targetObjects);
-            assert.deepStrictEqual(objectsToDelete.map(({ id }) => id), ['deleted']);
+            assert.deepStrictEqual(updated, [
+                { id: 'abc/updated1', size: 1, lastModified: 1 },
+                { id: 'abc/updated2', size: 2, lastModified: 0 },
+            ]);
+            assert.deepStrictEqual(deleted, [
+                { id: 'deleted', size: 1, lastModified: 0 },
+            ]);
         });
     });
 });

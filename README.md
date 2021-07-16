@@ -1,6 +1,6 @@
 # AWS CLI s3 sync for Node.js
 
-**AWS CLI ``s3 sync`` for Node.js** provides a modern client to perform S3 sync operations between a file system and a S3 bucket in the spirit of the official [AWS CLI command](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html).    
+**AWS CLI ``s3 sync`` for Node.js** provides a modern client to perform S3 sync operations between file systems and S3 buckets in the spirit of the official [AWS CLI command](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html).    
 AWS CLI installation is **NOT** required by this module.
 
 ## Features
@@ -10,6 +10,7 @@ AWS CLI installation is **NOT** required by this module.
 - Sync two remote Amazon S3 buckets
 - Sync only new and updated objects
 - Support AWS CLI options ``--delete`` and ``--dryrun`` 
+- Track object sync progress
 - Sync **any** number of objects (no 1000 objects limit)
 - Transfer objects concurrently
 - Manage differences in folder structures easily through relocation
@@ -100,6 +101,32 @@ const sync = new S3SyncClient({ /* credentials */ });
 await sync.bucketWithBucket('my-source-bucket', 'my-target-bucket', { del: true });
 ```
 
+#### Track transfer progress
+
+```javascript
+const EventEmitter = require('events');
+const S3SyncClient = require('s3-sync-client');
+
+const sync = new S3SyncClient({ /* credentials */ });
+
+// declare an EventEmitter instance
+const monitor = new EventEmitter();
+// attach progress event
+monitor.on('progress', (progress) => console.log(progress));
+/* output
+...
+{
+  size: { current: 11925, total: 35688 },
+  count: { current: 3974, total: 10000 }
+}
+...
+*/
+// optionally emit abort event
+setTimeout(() => monitor.emit('abort'), 30000);
+// don't forget to pass monitor to sync options
+await sync.localWithBucket('mybucket', '/path/to/local/dir', { monitor });
+```
+
 #### Relocate objects during sync
 
 ```javascript
@@ -140,6 +167,9 @@ Additional code examples are available in the test folder.
 - `options` *<Object\>*
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `monitor` *<EventEmitter\>*
+    - Attach `progress` event to receive upload progress notifications
+    - Emit `abort` event to stop object uploads immediately
   - `maxConcurrentTransfers` *<number\>* Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
   - `relocations` *<Array\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
@@ -153,10 +183,13 @@ Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 - `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
 - `localDir` *<string\>* Local directory
 - `options` *<Object\>*
-    - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
-    - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-    - `maxConcurrentTransfers` *<number\>* Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
-    - `relocations` *<Array\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+  - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `monitor` *<EventEmitter\>*
+    - Attach `progress` event to receive download progress notifications
+    - Emit `abort` event to stop object downloads immediately
+  - `maxConcurrentTransfers` *<number\>* Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
+  - `relocations` *<Array\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync the local file system with a remote S3 bucket.  
@@ -168,10 +201,13 @@ Similar to AWS CLI ``aws s3 sync s3://bucketPrefix localDir [options]``.
 - `sourceBucketPrefix` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
 - `targetBucketPrefix` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
 - `options` *<Object\>*
-    - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
-    - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-    - `maxConcurrentTransfers` *<number\>* Each copy generates a Promise which is resolved after the object has been copied. This parameter sets the maximum number of copy promises that might be running concurrently.
-    - `relocations` *<Array\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+  - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `monitor` *<EventEmitter\>*
+    - Attach `progress` event to receive copy progress notifications
+    - Emit `abort` event to stop object copy operations immediately
+  - `maxConcurrentTransfers` *<number\>* Each copy generates a Promise which is resolved after the object has been copied. This parameter sets the maximum number of copy promises that might be running concurrently.
+  - `relocations` *<Array\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync two remote S3 buckets.  
@@ -207,4 +243,3 @@ The following JavaScript modules suffer at least one of the limitations:
 **AWS CLI ``s3 sync`` for Node.js** has some limitations too:
 
 - does not support multipart transfers
-- supports a limited set of AWS CLI options (--delete and --dryrun)
