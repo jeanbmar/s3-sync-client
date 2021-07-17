@@ -135,10 +135,10 @@ const S3SyncClient = require('s3-sync-client');
 const sync = new S3SyncClient({ /* credentials */ });
 
 /*
- * commandInput properties can either be:
- * - fixed values
- * - functions, in order to set dynamic values (e.g. using the object key)
- */
+commandInput properties can either be:
+  - fixed values
+  - functions, in order to set dynamic values (e.g. using the object key)
+*/
 
 // set ACL, fixed value
 await sync.localWithBucket('mybucket', '/path/to/local/dir', {
