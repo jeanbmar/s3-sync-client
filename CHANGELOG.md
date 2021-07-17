@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
-* add support for ``acl`` option
+* add support for the AWS SDK command options through the ``commandInput`` option
 
 ## [1.4.0]
 

@@ -9,7 +9,8 @@ AWS CLI installation is **NOT** required by this module.
 - Sync a remote Amazon S3 bucket with a local file system
 - Sync two remote Amazon S3 buckets
 - Sync only new and updated objects
-- Support AWS CLI options ``--delete``, ``--dryrun`` and ``--acl``
+- Support AWS CLI options ``--delete``, ``--dryrun``
+- Support AWS SDK command input options
 - Track object sync progress
 - Sync **any** number of objects (no 1000 objects limit)
 - Transfer objects concurrently
@@ -125,6 +126,37 @@ and abort unfinished sync after 30s (promise rejected with an AbortError)
 */
 ```
 
+#### Use AWS SDK command input options
+
+```javascript
+const mime = require('mime-types');
+const S3SyncClient = require('s3-sync-client');
+
+const sync = new S3SyncClient({ /* credentials */ });
+
+/*
+ * commandInput properties can either be:
+ * - fixed values
+ * - functions, in order to set dynamic values (e.g. using the object key)
+ */
+
+// set ACL, fixed value
+await sync.localWithBucket('mybucket', '/path/to/local/dir', {
+    commandInput: {
+        ACL: 'aws-exec-read',
+    },
+});
+
+// set content type, dynamic value (function)
+await sync.bucketWithBucket('mybucket1', 'mybucket2', {
+    commandInput: {
+        ContentType: (syncCommandInput) => (
+            mime.lookup(syncCommandInput.Key) || 'text/html'
+        ),
+    },
+});
+```
+
 #### Relocate objects during sync
 
 ```javascript
@@ -155,7 +187,7 @@ Additional code examples are available in the test folder.
 <a name="new-s3-sync-client"></a>
 #### ``new S3SyncClient(configuration)``
 
-- `configuration` *<Object\>* Configuration as in the AWS SDK S3Client. See https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html.
+- `configuration` *<Object\>* Configuration as in the [AWS SDK S3Client](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html).
 
 <a name="sync-bucket-with-local"></a>
 #### ``sync.bucketWithLocal(localDir, bucketPrefix[, options])``
@@ -163,7 +195,7 @@ Additional code examples are available in the test folder.
 - `localDir` *<string\>* Local directory
 - `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a `/` separator 
 - `options` *<Object\>*
-  - `acl` *<string\>* Equivalent to CLI ``--acl`` option
+  - `commandInput` [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) Set any of the SDK PutObjectCommand options to uploads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `monitor` *<EventEmitter\>*
@@ -182,6 +214,7 @@ Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 - `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
 - `localDir` *<string\>* Local directory
 - `options` *<Object\>*
+  - `commandInput` [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) Set any of the SDK GetObjectCommand options to downloads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `monitor` *<EventEmitter\>*
@@ -200,7 +233,7 @@ Similar to AWS CLI ``aws s3 sync s3://bucketPrefix localDir [options]``.
 - `sourceBucketPrefix` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
 - `targetBucketPrefix` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
 - `options` *<Object\>*
-  - `acl` *<string\>* Equivalent to CLI ``--acl`` option
+  - `commandInput` [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) Set any of the SDK CopyObjectCommand options to copy operations
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `monitor` *<EventEmitter\>*
