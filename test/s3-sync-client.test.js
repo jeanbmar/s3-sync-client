@@ -5,7 +5,7 @@ const EventEmitter = require('events');
 const assert = require('assert');
 const tar = require('tar');
 const { describe, it } = require('mocha');
-const { GetObjectAclCommand } = require('@aws-sdk/client-s3');
+const { GetObjectAclCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const S3SyncClient = require('..');
 const SyncObject = require('../lib/objects/sync-object');
 const LocalObject = require('../lib/objects/local-object');
@@ -157,18 +157,28 @@ describe('S3SyncClient', () => {
             assert(objects.has('zzz/zzz/xmoj'));
         });
 
-        it('sync files with ACL option successfully', async () => {
+        it('sync files with extra SDK command input options successfully', async () => {
             await s3.bucketWithLocal(
                 path.join(DATA_DIR, 'def/jkl'),
                 path.posix.join(BUCKET, 'acl'),
-                { acl: 'aws-exec-read' },
+                {
+                    commandInput: {
+                        ACL: 'aws-exec-read',
+                        Metadata: (syncCommandInput) => ({ custom: syncCommandInput.Key }),
+                    },
+                },
             );
-            const response = await s3.send(new GetObjectAclCommand({
+            const metadataResponse = await s3.send(new GetObjectCommand({
                 Bucket: BUCKET,
                 Key: 'acl/xmoj',
             }));
-            assert(response.Grants.findIndex(({ Permission }) => Permission === 'FULL_CONTROL') > -1);
-            assert(response.Grants.findIndex(({ Permission }) => Permission === 'READ') > -1);
+            assert(metadataResponse.Metadata.custom === 'acl/xmoj');
+            const aclResponse = await s3.send(new GetObjectAclCommand({
+                Bucket: BUCKET,
+                Key: 'acl/xmoj',
+            }));
+            assert(aclResponse.Grants.findIndex(({ Permission }) => Permission === 'FULL_CONTROL') > -1);
+            assert(aclResponse.Grants.findIndex(({ Permission }) => Permission === 'READ') > -1);
         });
 
         it('sync 10000 local objects successfully with progress tracking', async () => {
