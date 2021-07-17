@@ -7,8 +7,8 @@ const tar = require('tar');
 const { describe, it } = require('mocha');
 const { GetObjectAclCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const S3SyncClient = require('..');
-const SyncObject = require('../lib/objects/sync-object');
-const LocalObject = require('../lib/objects/local-object');
+const SyncObject = require('../lib/sync-objects/sync-object');
+const LocalObject = require('../lib/sync-objects/local-object');
 
 const BUCKET = 's3-sync-client';
 const BUCKET_2 = 's3-sync-client-2';
