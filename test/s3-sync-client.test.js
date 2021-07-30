@@ -1,7 +1,6 @@
 /* eslint-disable func-names */
 const fs = require('fs');
 const path = require('path');
-const EventEmitter = require('events');
 const assert = require('assert');
 const tar = require('tar');
 const { describe, it } = require('mocha');
@@ -9,6 +8,7 @@ const { GetObjectAclCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const S3SyncClient = require('..');
 const SyncObject = require('../lib/sync-objects/sync-object');
 const LocalObject = require('../lib/sync-objects/local-object');
+const emptyBucket = require('./helpers/empty-bucket');
 
 const BUCKET = 's3-sync-client';
 const BUCKET_2 = 's3-sync-client-2';
@@ -39,17 +39,17 @@ describe('S3SyncClient', () => {
 
     it('load bucket 2 dataset', async function () {
         this.timeout(180000);
-        const monitor = new EventEmitter();
+        const monitor = new S3SyncClient.TransferMonitor();
         monitor.on('progress', (progress) => console.log(progress));
-        await s3.emptyBucket(BUCKET_2);
-        await s3.bucketWithLocal(DATA_DIR, BUCKET_2, { del: true, maxConcurrentTransfers: 1000, monitor });
+        await emptyBucket(s3, BUCKET_2);
+        await s3.sync(DATA_DIR, `s3://${BUCKET_2}`, { del: true, maxConcurrentTransfers: 1000, monitor });
         const objects = await s3.listLocalObjects(DATA_DIR);
         assert(objects.size === 10000);
     });
 
     it('empty bucket', async function () {
         this.timeout(20000);
-        await s3.emptyBucket(BUCKET);
+        await emptyBucket(s3, BUCKET);
         const bucketObjects = await s3.listBucketObjects(BUCKET);
         assert(bucketObjects.size === 0);
     });
@@ -103,7 +103,7 @@ describe('S3SyncClient', () => {
         this.timeout(120000);
 
         it('sync a single dir with progress tracking', async () => {
-            const monitor = new EventEmitter();
+            const monitor = new S3SyncClient.TransferMonitor();
             monitor.on('progress', (progress) => console.log(progress));
             await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listBucketObjects(BUCKET, { prefix: 'def/jkl' });
@@ -122,7 +122,7 @@ describe('S3SyncClient', () => {
         });
 
         it('sync a single dir with folder relocation', async () => {
-            await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, {
+            await s3.sync(`s3://${BUCKET_2}/def/jkl`, `s3://${BUCKET}`, {
                 maxConcurrentTransfers: 1000,
                 relocations: [['def/jkl', 'relocated-bis/folder']],
             });
@@ -148,9 +148,9 @@ describe('S3SyncClient', () => {
         });
 
         it('sync a single dir with a bucket using relocation successfully', async () => {
-            await s3.bucketWithLocal(
+            await s3.sync(
                 path.join(DATA_DIR, 'def/jkl'),
-                path.posix.join(BUCKET, 'zzz'),
+                `s3://${path.posix.join(BUCKET, 'zzz')}`,
                 { relocations: [['', 'zzz']] },
             );
             const objects = await s3.listBucketObjects(BUCKET, { prefix: 'zzz' });
@@ -182,7 +182,7 @@ describe('S3SyncClient', () => {
         });
 
         it('sync 10000 local objects successfully with progress tracking', async () => {
-            const monitor = new EventEmitter();
+            const monitor = new S3SyncClient.TransferMonitor();
             monitor.on('progress', (progress) => console.log(progress));
             await s3.bucketWithLocal(DATA_DIR, BUCKET, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listLocalObjects(DATA_DIR);
@@ -191,7 +191,7 @@ describe('S3SyncClient', () => {
 
         it('sync 10000 local objects with delete option successfully', async () => {
             await s3.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
-            await s3.bucketWithLocal(DATA_DIR, BUCKET, { del: true, maxConcurrentTransfers: 1000 });
+            await s3.sync(DATA_DIR, `s3://${BUCKET}`, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await s3.listLocalObjects(DATA_DIR);
             assert(objects.size === 10000);
             assert(!objects.has('xmoj'));
@@ -218,25 +218,25 @@ describe('S3SyncClient', () => {
         });
 
         it('sync 10000 bucket objects successfully with progress tracking', async () => {
-            const monitor = new EventEmitter();
+            const monitor = new S3SyncClient.TransferMonitor();
             monitor.on('progress', (progress) => console.log(progress));
-            await s3.localWithBucket(BUCKET_2, SYNC_DIR, { maxConcurrentTransfers: 1000, monitor });
+            await s3.sync(`s3://${BUCKET_2}`, SYNC_DIR, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listLocalObjects(SYNC_DIR);
             assert(objects.size >= 10000);
         });
 
         it('sync 10000 bucket objects with delete option successfully', async () => {
             await s3.localWithBucket(`${BUCKET_2}/def/jkl`, path.join(SYNC_DIR, 'foo'));
-            await s3.localWithBucket(BUCKET_2, SYNC_DIR, { del: true, maxConcurrentTransfers: 1000 });
+            await s3.sync(`s3://${BUCKET_2}`, SYNC_DIR, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await s3.listLocalObjects(SYNC_DIR);
             assert(objects.size === 10000);
             assert(!objects.has('foo/def/jkl/xmoj'));
         });
 
         it('abort sync and throw', async () => {
-            const monitor = new EventEmitter();
+            const monitor = new S3SyncClient.TransferMonitor();
             const pSync = s3.localWithBucket(BUCKET_2, path.join(SYNC_DIR, 'abort'), { monitor });
-            monitor.on('progress', () => monitor.emit('abort'));
+            monitor.on('progress', () => monitor.abort());
             await assert.rejects(pSync, { name: 'AbortError' });
         });
     });
