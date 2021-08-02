@@ -11,7 +11,7 @@ AWS CLI installation is **NOT** required by this module.
 - Sync only new and updated objects
 - Support AWS CLI options ``--delete``, ``--dryrun``
 - Support AWS SDK command input options
-- Track object sync progress
+- Monitor object sync progress
 - Sync **any** number of objects (no 1000 objects limit)
 - Transfer objects concurrently
 - Manage differences in folder structures easily through relocation
@@ -32,9 +32,9 @@ AWS CLI installation is **NOT** required by this module.
 1. [API Reference](#api-reference)
     - [Class: S3SyncClient](#class-s3-sync-client)
       - [new S3SyncClient(configuration)](#new-s3-sync-client)
-      - [sync.bucketWithLocal(localDir, bucketPrefix[, options])](#sync-bucket-with-local)
-      - [sync.localWithBucket(bucketPrefix, localDir[, options])](#sync-local-with-bucket)
-      - [sync.bucketWithBucket(sourceBucketPrefix, targetBucketPrefix[, options])](#sync-bucket-with-bucket)
+      - [client.sync(localDir, bucketUri[, options])](#sync-bucket-with-local)
+      - [client.sync(bucketUri, localDir[, options])](#sync-local-with-bucket)
+      - [client.sync(sourceBucketUri, targetBucketUri[, options])](#sync-bucket-with-bucket)
 1. [Change Log](#change-log)
 1. [Comparison with other modules](#comparison-with-other-modules)
 
@@ -53,7 +53,7 @@ AWS CLI installation is **NOT** required by this module.
 ```javascript
 const S3SyncClient = require('s3-sync-client');
 
-const sync = new S3SyncClient({
+const client = new S3SyncClient({
     region: 'eu-west-3',
     credentials: {
         accessKeyId: process.env.ACCESS_KEY_ID,
@@ -67,13 +67,13 @@ const sync = new S3SyncClient({
 ```javascript
 const S3SyncClient = require('s3-sync-client');
 
-const sync = new S3SyncClient({ /* credentials */ });
+const client = new S3SyncClient({ /* credentials */ });
 
 // aws s3 sync /path/to/local/dir s3://mybucket2
-await sync.bucketWithLocal('/path/to/local/dir', 'mybucket2');
+await client.sync('/path/to/local/dir', 's3://mybucket2');
 
 // aws s3 sync /path/to/local/dir s3://mybucket2/zzz --delete
-await sync.bucketWithLocal('/path/to/local/dir', 'mybucket2/zzz', { del: true });
+await client.sync('/path/to/local/dir', 's3://mybucket2/zzz', { del: true });
 ```
 
 #### Sync the local file system with a remote S3 bucket
@@ -81,13 +81,13 @@ await sync.bucketWithLocal('/path/to/local/dir', 'mybucket2/zzz', { del: true })
 ```javascript
 const S3SyncClient = require('s3-sync-client');
 
-const sync = new S3SyncClient({ /* credentials */ });
+const client = new S3SyncClient({ /* credentials */ });
 
 // aws s3 sync s3://mybucket /path/to/some/local --delete
-await sync.localWithBucket('mybucket', '/path/to/some/local', { del: true });
+await client.sync('s3://mybucket', '/path/to/some/local', { del: true });
 
 // aws s3 sync s3://mybucket2 /path/to/local/dir --dryrun
-const syncOps = await sync.localWithBucket('mybucket2', '/path/to/local/dir', { dryRun: true });
+const syncOps = await client.sync('s3://mybucket2', '/path/to/local/dir', { dryRun: true });
 console.log(syncOps); // log download and delete operations to perform
 ```
 
@@ -96,24 +96,26 @@ console.log(syncOps); // log download and delete operations to perform
 ```javascript
 const S3SyncClient = require('s3-sync-client');
 
-const sync = new S3SyncClient({ /* credentials */ });
+const client = new S3SyncClient({ /* credentials */ });
 
 // aws s3 sync s3://my-source-bucket s3://my-target-bucket --delete
-await sync.bucketWithBucket('my-source-bucket', 'my-target-bucket', { del: true });
+await client.sync('s3://my-source-bucket', 's3://my-target-bucket', { del: true });
 ```
 
-#### Track transfer progress
+#### Monitor transfer progress
 
 ```javascript
 const EventEmitter = require('events');
 const S3SyncClient = require('s3-sync-client');
 
-const sync = new S3SyncClient({ /* credentials */ });
+const client = new S3SyncClient({ /* credentials */ });
 
-const monitor = new EventEmitter();
+const { TransferMonitor } = S3SyncClient;
+const monitor = new TransferMonitor();
 monitor.on('progress', (progress) => console.log(progress));
-setTimeout(() => monitor.emit('abort'), 30000); // optional abort
-await sync.localWithBucket('mybucket', '/path/to/local/dir', { monitor });
+setTimeout(() => monitor.abort(), 30000); // optional abort
+
+await client.sync('s3://mybucket', '/path/to/local/dir', { monitor });
 
 /* output:
 ...
@@ -132,7 +134,7 @@ and abort unfinished sync after 30s (promise rejected with an AbortError)
 const mime = require('mime-types');
 const S3SyncClient = require('s3-sync-client');
 
-const sync = new S3SyncClient({ /* credentials */ });
+const client = new S3SyncClient({ /* credentials */ });
 
 /*
 commandInput properties can either be:
@@ -141,14 +143,14 @@ commandInput properties can either be:
 */
 
 // set ACL, fixed value
-await sync.localWithBucket('mybucket', '/path/to/local/dir', {
+await client.sync('s3://mybucket', '/path/to/local/dir', {
     commandInput: {
         ACL: 'aws-exec-read',
     },
 });
 
 // set content type, dynamic value (function)
-await sync.bucketWithBucket('mybucket1', 'mybucket2', {
+await client.sync('s3://mybucket1', 's3://mybucket2', {
     commandInput: {
         ContentType: (syncCommandInput) => (
             mime.lookup(syncCommandInput.Key) || 'text/html'
@@ -162,17 +164,17 @@ await sync.bucketWithBucket('mybucket1', 'mybucket2', {
 ```javascript
 const S3SyncClient = require('s3-sync-client');
 
-const sync = new S3SyncClient({ /* credentials */ });
+const client = new S3SyncClient({ /* credentials */ });
 
 // sync s3://my-source-bucket/a/b/c.txt to s3://my-target-bucket/zzz/c.txt
-await sync.bucketWithBucket('my-source-bucket/a/b/c.txt', 'my-target-bucket', {
+await client.sync('s3://my-source-bucket/a/b/c.txt', 's3://my-target-bucket', {
     relocations: [ // multiple relocations can be applied
         ['a/b', 'zzz'],
     ],
 });
 
 // sync s3://mybucket/flowers/red/rose.png to /path/to/local/dir/rose.png
-await sync.localWithBucket('mybucket/flowers/red/rose.png', '/path/to/local/dir', {
+await client.sync('s3://mybucket/flowers/red/rose.png', '/path/to/local/dir', {
     relocations: [
         ['flowers/red', ''], // folder flowers/red will be flattened during sync
     ],
@@ -190,15 +192,15 @@ Additional code examples are available in the test folder.
 - `configuration` *<Object\>* Configuration as in the [AWS SDK S3Client](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html).
 
 <a name="sync-bucket-with-local"></a>
-#### ``sync.bucketWithLocal(localDir, bucketPrefix[, options])``
+#### ``client.sync(localDir, bucketUri[, options])``
 
 - `localDir` *<string\>* Local directory
-- `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a `/` separator 
+- `bucketUri` *<string\>* Remote bucket name which may contain a prefix appended with a `/` separator 
 - `options` *<Object\>*
   - `commandInput` [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) Set any of the SDK PutObjectCommand options to uploads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-  - `monitor` *<EventEmitter\>*
+  - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive upload progress notifications
     - Emit `abort` event to stop object uploads immediately
   - `maxConcurrentTransfers` *<number\>* Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
@@ -206,18 +208,18 @@ Additional code examples are available in the test folder.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync a remote S3 bucket with the local file system.  
-Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
+Similar to AWS CLI ``aws s3 sync localDir bucketUri [options]``.
 
 <a name="sync-local-with-bucket"></a>
-#### ``sync.localWithBucket(bucketPrefix, localDir[, options])``
+#### ``client.sync(bucketUri, localDir[, options])``
 
-- `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
+- `bucketUri` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
 - `localDir` *<string\>* Local directory
 - `options` *<Object\>*
   - `commandInput` [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) Set any of the SDK GetObjectCommand options to downloads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-  - `monitor` *<EventEmitter\>*
+  - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive download progress notifications
     - Emit `abort` event to stop object downloads immediately
   - `maxConcurrentTransfers` *<number\>* Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
@@ -225,18 +227,18 @@ Similar to AWS CLI ``aws s3 sync localDir s3://bucketPrefix [options]``.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync the local file system with a remote S3 bucket.  
-Similar to AWS CLI ``aws s3 sync s3://bucketPrefix localDir [options]``.
+Similar to AWS CLI ``aws s3 sync bucketUri localDir [options]``.
 
 <a name="sync-bucket-with-bucket"></a>
-#### ``sync.bucketWithBucket(sourceBucketPrefix, targetBucketPrefix[, options])``
+#### ``client.sync(sourceBucketUri, targetBucketUri[, options])``
 
-- `sourceBucketPrefix` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
-- `targetBucketPrefix` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
+- `sourceBucketUri` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
+- `targetBucketUri` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
 - `options` *<Object\>*
   - `commandInput` [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) Set any of the SDK CopyObjectCommand options to copy operations
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-  - `monitor` *<EventEmitter\>*
+  - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive copy progress notifications
     - Emit `abort` event to stop object copy operations immediately
   - `maxConcurrentTransfers` *<number\>* Each copy generates a Promise which is resolved after the object has been copied. This parameter sets the maximum number of copy promises that might be running concurrently.
@@ -244,7 +246,7 @@ Similar to AWS CLI ``aws s3 sync s3://bucketPrefix localDir [options]``.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync two remote S3 buckets.  
-Similar to AWS CLI ``aws s3 sync s3://sourceBucketPrefix s3://targetBucketPrefix [options]``.
+Similar to AWS CLI ``aws s3 sync sourceBucketUri targetBucketUri [options]``.
 
 # Change Log
 
