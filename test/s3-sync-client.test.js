@@ -100,7 +100,7 @@ describe('S3SyncClient', () => {
     });
 
     describe('sync bucket with bucket', function () {
-        this.timeout(120000);
+        this.timeout(140000);
 
         it('sync a single dir with progress tracking', async () => {
             const monitor = new S3SyncClient.TransferMonitor();
@@ -139,7 +139,7 @@ describe('S3SyncClient', () => {
     });
 
     describe('sync bucket with local', function () {
-        this.timeout(120000);
+        this.timeout(140000);
 
         it('sync a single dir with a few files successfully', async () => {
             await s3.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
@@ -199,7 +199,7 @@ describe('S3SyncClient', () => {
     });
 
     describe('sync local with bucket', function () {
-        this.timeout(120000);
+        this.timeout(140000);
 
         before(() => {
             fs.mkdirSync(path.join(__dirname, 'sync'), { recursive: true });
