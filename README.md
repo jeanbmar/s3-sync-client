@@ -126,6 +126,14 @@ await client.sync('s3://mybucket', '/path/to/local/dir', { monitor });
 ...
 and abort unfinished sync after 30s (promise rejected with an AbortError) 
 */
+
+// to pull status info occasionally only, use monitor.getStatus():
+const timeout = setInterval(() => console.log(monitor.getStatus()), 2000);
+try {
+    await client.sync('s3://mybucket', '/path/to/local/dir', { monitor });
+} finally {
+    clearInterval(timeout);
+}
 ```
 
 #### Use AWS SDK command input options
