@@ -211,6 +211,16 @@ describe('S3SyncClient', () => {
             assert(objects.has('def/jkl/xmoj'));
         });
 
+        it('sync a single dir with a few files and delete extra files successfully', async () => {
+            // https://github.com/jeanbmar/s3-sync-client/issues/9
+            await s3.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { relocations: [['def/jkl', 'issue9']] });
+            fs.writeFileSync(path.join(`${SYNC_DIR}/issue9`, 'to-be-deleted'), 'to-be-deleted', 'utf8');
+            await s3.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { relocations: [['def/jkl', 'issue9']], del: true });
+            const objects = await s3.listLocalObjects(`${SYNC_DIR}/issue9`);
+            assert.strictEqual(objects.size, 11);
+            assert(!objects.has(`${SYNC_DIR}/issue9/to-be-deleted`));
+        });
+
         it('sync a single dir and flatten it', async () => {
             await s3.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { flatten: true });
             const objects = await s3.listLocalObjects(SYNC_DIR);
