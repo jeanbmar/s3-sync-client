@@ -278,5 +278,19 @@ describe('S3SyncClient', () => {
                 { id: 'deleted', size: 1, lastModified: 0 },
             ]);
         });
+
+        it('compute sync sizeOnly operations on objects successfully', () => {
+            const sizeOnly = true;
+            const { created, updated, deleted } = S3SyncClient.util.diff(bucketObjects, localObjects, sizeOnly);
+            assert.deepStrictEqual(created, [
+                { id: 'abc/created', size: 1, lastModified: 0 },
+            ]);
+            assert.deepStrictEqual(updated, [
+                { id: 'abc/updated2', size: 2, lastModified: 0 },
+            ]);
+            assert.deepStrictEqual(deleted, [
+                { id: 'deleted', size: 1, lastModified: 0 },
+            ]);
+        });
     });
 });
