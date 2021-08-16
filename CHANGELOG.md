@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0]
+
+### Breaking Changes
+
+* `monitor` option is now an instance of `S3SyncClient.TransferMonitor` (formerly `EventEmitter`)
+* methods `bucketWithBucket`, `bucketWithLocal` and `localWithBucket` will not break but should be considered deprecated. `sync` single method should be used instead
+
+### Features
+
+* a single `sync` method has been added as a replacement of `bucketWithBucket`, `bucketWithLocal` and `localWithBucket` methods
+
 ## [1.5.0]
 
 ### Features
