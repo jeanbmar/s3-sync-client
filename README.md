@@ -9,7 +9,7 @@ AWS CLI installation is **NOT** required by this module.
 - Sync a remote Amazon S3 bucket with a local file system
 - Sync two remote Amazon S3 buckets
 - Sync only new and updated objects
-- Support AWS CLI options ``--delete``, ``--dryrun``
+- Support AWS CLI options `--delete`, `--dryrun`, `--size-only`
 - Support AWS SDK command input options
 - Monitor object sync progress
 - Sync **any** number of objects (no 1000 objects limit)
@@ -208,6 +208,7 @@ Additional code examples are available in the test folder.
   - `commandInput` [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) Set any of the SDK PutObjectCommand options to uploads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive upload progress notifications
     - Emit `abort` event to stop object uploads immediately
@@ -227,6 +228,7 @@ Similar to AWS CLI ``aws s3 sync localDir bucketUri [options]``.
   - `commandInput` [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) Set any of the SDK GetObjectCommand options to downloads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive download progress notifications
     - Emit `abort` event to stop object downloads immediately
@@ -246,6 +248,7 @@ Similar to AWS CLI ``aws s3 sync bucketUri localDir [options]``.
   - `commandInput` [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) Set any of the SDK CopyObjectCommand options to copy operations
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive copy progress notifications
     - Emit `abort` event to stop object copy operations immediately
@@ -285,4 +288,4 @@ The following JavaScript modules suffer at least one of the limitations:
 
 **AWS CLI ``s3 sync`` for Node.js** has some limitations too:
 
-- does not support multipart transfers
+- does not support multipart transfers (yet)
