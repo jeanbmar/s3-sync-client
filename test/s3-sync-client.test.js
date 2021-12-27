@@ -10,6 +10,7 @@ const SyncObject = require('../lib/sync-objects/sync-object');
 const LocalObject = require('../lib/sync-objects/local-object');
 const emptyBucket = require('./helpers/empty-bucket');
 const hasObject = require('./helpers/has-object');
+const syncDiff = require('../lib/utilities/sync-diff');
 
 const BUCKET = 's3-sync-client';
 const BUCKET_2 = 's3-sync-client-2';
@@ -267,7 +268,7 @@ describe('S3SyncClient', () => {
         ];
 
         it('compute sync operations on objects successfully', () => {
-            const { created, updated, deleted } = S3SyncClient.util.diff(bucketObjects, localObjects);
+            const { created, updated, deleted } = syncDiff(bucketObjects, localObjects);
             assert.deepStrictEqual(created, [
                 { id: 'abc/created', size: 1, lastModified: 0 },
             ]);
@@ -282,7 +283,7 @@ describe('S3SyncClient', () => {
 
         it('compute sync sizeOnly operations on objects successfully', () => {
             const sizeOnly = true;
-            const { created, updated, deleted } = S3SyncClient.util.diff(bucketObjects, localObjects, sizeOnly);
+            const { created, updated, deleted } = syncDiff(bucketObjects, localObjects, sizeOnly);
             assert.deepStrictEqual(created, [
                 { id: 'abc/created', size: 1, lastModified: 0 },
             ]);
