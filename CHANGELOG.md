@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0]
+
+### Breaking Changes
+
+* use composition instead of inheritance with `S3Client` to behave like a plugin
+* move `@aws-sdk/client-s3` and `@aws-sdk/abort-controller` from dependencies to peer dependencies
+
+### Features
+
+* replace promise chunks with promise queues for increased concurrency and performances
+
+### Test
+
+* replace `mocha` with `jest`
+
 ## [2.1.0]
 
 * support aws cli ``--size-only`` option through `sizeOnly` property
