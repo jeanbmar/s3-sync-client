@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
+* add aws cli ``--include`` and ``--exclude`` support through `filters` option
 * replace promise chunks with promise queues for increased concurrency and performances
 
 ### Test
