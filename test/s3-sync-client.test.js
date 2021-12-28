@@ -1,9 +1,6 @@
-/* eslint-disable func-names */
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
 const tar = require('tar');
-const { describe, it } = require('mocha');
 const { GetObjectAclCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const S3SyncClient = require('..');
 const SyncObject = require('../lib/sync-objects/sync-object');
@@ -19,18 +16,19 @@ const SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const DATA_DIR = path.join(__dirname, 'data');
 const SYNC_DIR = path.join(__dirname, 'sync');
 
+jest.setTimeout(60000);
+
 describe('S3SyncClient', () => {
     let s3;
 
-    before(() => {
+    beforeAll(() => {
         s3 = new S3SyncClient({
             region: 'eu-west-3',
             credentials: { accessKeyId: ACCESS_KEY_ID, secretAccessKey: SECRET_ACCESS_KEY },
         });
     });
 
-    it('load initial data folder', async function () {
-        this.timeout(20000);
+    test('load initial data folder', async () => {
         fs.rmSync(DATA_DIR, { force: true, recursive: true });
         fs.mkdirSync(DATA_DIR, { recursive: true });
         await tar.x({
@@ -39,27 +37,27 @@ describe('S3SyncClient', () => {
         });
     });
 
-    it('load bucket 2 dataset', async function () {
-        this.timeout(180000);
+    test('load bucket 2 dataset', async () => {
         const monitor = new S3SyncClient.TransferMonitor();
-        monitor.on('progress', (progress) => console.log(progress));
+        let count = 0;
+        monitor.on('progress', (progress) => { count = progress.count.current; });
         await emptyBucket(s3, BUCKET_2);
         await s3.sync(DATA_DIR, `s3://${BUCKET_2}`, { del: true, maxConcurrentTransfers: 1000, monitor });
         const objects = await s3.listLocalObjects(DATA_DIR);
-        assert.strictEqual(objects.length, 10000);
+        expect(count).toStrictEqual(10000);
+        expect(objects.length).toStrictEqual(10000);
     });
 
-    it('empty bucket', async function () {
-        this.timeout(20000);
+    test('empty bucket', async () => {
         await emptyBucket(s3, BUCKET);
         const bucketObjects = await s3.listBucketObjects(BUCKET);
-        assert.strictEqual(bucketObjects.length, 0);
+        expect(bucketObjects.length).toStrictEqual(0);
     });
 
     describe('list local objects', () => {
-        it('listed objects are properly formed', async () => {
+        test('listed objects are properly formed', async () => {
             const objects = await s3.listLocalObjects(path.join(DATA_DIR, 'def/jkl'));
-            assert.deepStrictEqual(objects.find(({ id }) => id === 'xmoj'), new LocalObject({
+            expect(objects.find(({ id }) => id === 'xmoj')).toStrictEqual(new LocalObject({
                 id: 'xmoj',
                 lastModified: 1618993846000,
                 size: 3,
@@ -67,8 +65,8 @@ describe('S3SyncClient', () => {
             }));
         });
 
-        it('list local objects with non-directory args throws', async () => {
-            await assert.rejects(async () => s3.listLocalObjects(path.join(DATA_DIR, 'xoin')));
+        test('list local objects with non-directory args throws', async () => {
+            await expect(s3.listLocalObjects(path.join(DATA_DIR, 'xoin'))).rejects.toThrow();
         });
     });
 
@@ -78,88 +76,86 @@ describe('S3SyncClient', () => {
             object.relocate(sourcePrefix, targetPrefix);
             return object.id;
         };
-        it('relocate id from root', () => {
-            assert.deepStrictEqual(getRelocation('', '', ''), '');
-            assert.deepStrictEqual(getRelocation('id', '', ''), 'id');
-            assert.deepStrictEqual(getRelocation('a/b/c', '', ''), 'a/b/c');
-            assert.deepStrictEqual(getRelocation('a/b/c', '', 'x'), 'x/a/b/c');
-            assert.deepStrictEqual(getRelocation('a/b/c', '', 'x/y'), 'x/y/a/b/c');
+        test('relocate id from root', () => {
+            expect(getRelocation('', '', '')).toStrictEqual('');
+            expect(getRelocation('id', '', '')).toStrictEqual('id');
+            expect(getRelocation('a/b/c', '', '')).toStrictEqual('a/b/c');
+            expect(getRelocation('a/b/c', '', 'x')).toStrictEqual('x/a/b/c');
+            expect(getRelocation('a/b/c', '', 'x/y')).toStrictEqual('x/y/a/b/c');
         });
-        it('relocate id to root', () => {
-            assert.deepStrictEqual(getRelocation('a/b/c', 'a', ''), 'b/c');
-            assert.deepStrictEqual(getRelocation('a/b/c', 'a/b', ''), 'c');
+        test('relocate id to root', () => {
+            expect(getRelocation('a/b/c', 'a', '')).toStrictEqual('b/c');
+            expect(getRelocation('a/b/c', 'a/b', '')).toStrictEqual('c');
         });
-        it('folder is not relocated', () => {
-            assert.deepStrictEqual(getRelocation('a/b/c', 'a/b/c', ''), 'a/b/c');
+        test('folder is not relocated', () => {
+            expect(getRelocation('a/b/c', 'a/b/c', '')).toStrictEqual('a/b/c');
         });
-        it('perform complex id relocation', () => {
-            assert.deepStrictEqual(getRelocation('a/b/c', 'a', 'x'), 'x/b/c');
-            assert.deepStrictEqual(getRelocation('a/b/c', 'a', 'x/y/z'), 'x/y/z/b/c');
-            assert.deepStrictEqual(getRelocation('a/b/c', 'a/b', 'x'), 'x/c');
-            assert.deepStrictEqual(getRelocation('a/b/c', 'a/b', 'x/y'), 'x/y/c');
-            assert.deepStrictEqual(getRelocation('x/y/z', 'x/y', ''), 'z');
+        test('perform complex id relocation', () => {
+            expect(getRelocation('a/b/c', 'a', 'x')).toStrictEqual('x/b/c');
+            expect(getRelocation('a/b/c', 'a', 'x/y/z')).toStrictEqual('x/y/z/b/c');
+            expect(getRelocation('a/b/c', 'a/b', 'x')).toStrictEqual('x/c');
+            expect(getRelocation('a/b/c', 'a/b', 'x/y')).toStrictEqual('x/y/c');
+            expect(getRelocation('x/y/z', 'x/y', '')).toStrictEqual('z');
         });
     });
 
-    describe('sync bucket with bucket', function () {
-        this.timeout(140000);
-
-        it('sync a single dir with progress tracking', async () => {
+    describe('sync bucket with bucket', () => {
+        test('sync a single dir with progress tracking', async () => {
             const monitor = new S3SyncClient.TransferMonitor();
-            monitor.on('progress', (progress) => console.log(progress));
+            let count = 0;
+            monitor.on('progress', (progress) => { count = progress.count.current; });
             await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listBucketObjects(BUCKET, { prefix: 'def/jkl' });
-            assert(hasObject(objects, 'def/jkl/xmoj'));
-            assert.strictEqual(objects.length, 11);
+            expect(hasObject(objects, 'def/jkl/xmoj')).toBe(true);
+            expect(count).toStrictEqual(11);
+            expect(objects.length).toStrictEqual(11);
         });
 
-        it('sync a single dir with root relocation', async () => {
+        test('sync a single dir with root relocation', async () => {
             await s3.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, {
                 maxConcurrentTransfers: 1000,
                 relocations: [['', 'relocated']],
             });
             const objects = await s3.listBucketObjects(BUCKET, { prefix: 'relocated' });
-            assert(hasObject(objects, 'relocated/def/jkl/xmoj'));
-            assert.strictEqual(objects.length, 11);
+            expect(hasObject(objects, 'relocated/def/jkl/xmoj')).toBe(true);
+            expect(objects.length).toStrictEqual(11);
         });
 
-        it('sync a single dir with folder relocation', async () => {
+        test('sync a single dir with folder relocation', async () => {
             await s3.sync(`s3://${BUCKET_2}/def/jkl`, `s3://${BUCKET}`, {
                 maxConcurrentTransfers: 1000,
                 relocations: [['def/jkl', 'relocated-bis/folder']],
             });
             const objects = await s3.listBucketObjects(BUCKET, { prefix: 'relocated-bis/folder' });
-            assert(hasObject(objects, 'relocated-bis/folder/xmoj'));
-            assert.strictEqual(objects.length, 11);
+            expect(hasObject(objects, 'relocated-bis/folder/xmoj')).toBe(true);
+            expect(objects.length).toStrictEqual(11);
         });
 
-        it('sync entire bucket with delete option successfully', async () => {
+        test('sync entire bucket with delete option successfully', async () => {
             await s3.bucketWithBucket(BUCKET_2, BUCKET, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await s3.listBucketObjects(BUCKET);
-            assert.strictEqual(objects.length, 10000);
+            expect(objects.length).toStrictEqual(10000);
         });
     });
 
-    describe('sync bucket with local', function () {
-        this.timeout(140000);
-
-        it('sync a single dir with a few files successfully', async () => {
+    describe('sync bucket with local', () => {
+        test('sync a single dir with a few files successfully', async () => {
             await s3.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
             const objects = await s3.listBucketObjects(BUCKET);
-            assert(hasObject(objects, 'xmoj'));
+            expect(hasObject(objects, 'xmoj')).toBe(true);
         });
 
-        it('sync a single dir with a bucket using relocation successfully', async () => {
+        test('sync a single dir with a bucket using relocation successfully', async () => {
             await s3.sync(
                 path.join(DATA_DIR, 'def/jkl'),
                 `s3://${path.posix.join(BUCKET, 'zzz')}`,
                 { relocations: [['', 'zzz']] },
             );
             const objects = await s3.listBucketObjects(BUCKET, { prefix: 'zzz' });
-            assert(hasObject(objects, 'zzz/zzz/xmoj'));
+            expect(hasObject(objects, 'zzz/zzz/xmoj')).toBe(true);
         });
 
-        it('sync files with extra SDK command input options successfully', async () => {
+        test('sync files with extra SDK command input options successfully', async () => {
             await s3.bucketWithLocal(
                 path.join(DATA_DIR, 'def/jkl'),
                 path.posix.join(BUCKET, 'acl'),
@@ -174,82 +170,85 @@ describe('S3SyncClient', () => {
                 Bucket: BUCKET,
                 Key: 'acl/xmoj',
             }));
-            assert(metadataResponse.Metadata.custom === 'acl/xmoj');
+            expect(metadataResponse.Metadata.custom).toStrictEqual('acl/xmoj');
             const aclResponse = await s3.send(new GetObjectAclCommand({
                 Bucket: BUCKET,
                 Key: 'acl/xmoj',
             }));
-            assert(aclResponse.Grants.findIndex(({ Permission }) => Permission === 'FULL_CONTROL') > -1);
-            assert(aclResponse.Grants.findIndex(({ Permission }) => Permission === 'READ') > -1);
+            expect(aclResponse.Grants.find(({ Permission }) => Permission === 'FULL_CONTROL')).toBeTruthy();
+            expect(aclResponse.Grants.find(({ Permission }) => Permission === 'READ')).toBeTruthy();
         });
 
-        it('sync 10000 local objects successfully with progress tracking', async () => {
+        test('sync 10000 local objects successfully with progress tracking', async () => {
+            await emptyBucket(s3, BUCKET);
             const monitor = new S3SyncClient.TransferMonitor();
-            monitor.on('progress', (progress) => console.log(progress));
+            let count = 0;
+            monitor.on('progress', (progress) => { count = progress.count.current; });
             await s3.bucketWithLocal(DATA_DIR, BUCKET, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listLocalObjects(DATA_DIR);
-            assert(objects.length >= 10000);
+            expect(count).toStrictEqual(10000);
+            expect(objects.length).toBeGreaterThanOrEqual(10000);
         });
 
-        it('sync 10000 local objects with delete option successfully', async () => {
+        test('sync 10000 local objects with delete option successfully', async () => {
             await s3.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
             await s3.sync(DATA_DIR, `s3://${BUCKET}`, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await s3.listLocalObjects(DATA_DIR);
-            assert.strictEqual(objects.length, 10000);
-            assert(!hasObject(objects, 'xmoj'));
+            expect(objects.length).toStrictEqual(10000);
+            expect(hasObject(objects, 'xmoj')).toBe(false);
         });
     });
 
-    describe('sync local with bucket', function () {
-        this.timeout(140000);
-
-        before(() => {
+    describe('sync local with bucket', () => {
+        beforeAll(() => {
             fs.mkdirSync(path.join(__dirname, 'sync'), { recursive: true });
         });
 
-        it('sync a single dir with a few files successfully', async () => {
+        test('sync a single dir with a few files successfully', async () => {
             await s3.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR);
             const objects = await s3.listLocalObjects(SYNC_DIR);
-            assert(hasObject(objects, 'def/jkl/xmoj'));
+            expect(hasObject(objects, 'def/jkl/xmoj')).toBe(true);
         });
 
-        it('sync a single dir with a few files and delete extra files successfully', async () => {
+        test('sync a single dir with a few files and delete extra files successfully', async () => {
             // https://github.com/jeanbmar/s3-sync-client/issues/9
             await s3.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { relocations: [['def/jkl', 'issue9']] });
             fs.writeFileSync(path.join(`${SYNC_DIR}/issue9`, 'to-be-deleted'), 'to-be-deleted', 'utf8');
             await s3.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { relocations: [['def/jkl', 'issue9']], del: true });
             const objects = await s3.listLocalObjects(`${SYNC_DIR}/issue9`);
-            assert.strictEqual(objects.length, 11);
-            assert(!hasObject(objects, `${SYNC_DIR}/issue9/to-be-deleted`));
+            expect(objects.length).toStrictEqual(11);
+            expect(hasObject(objects, `${SYNC_DIR}/issue9/to-be-deleted`)).toBe(false);
         });
 
-        it('sync a single dir and flatten it', async () => {
+        test('sync a single dir and flatten it', async () => {
             await s3.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { flatten: true });
             const objects = await s3.listLocalObjects(SYNC_DIR);
-            assert(hasObject(objects, 'xmoj'));
+            expect(hasObject(objects, 'xmoj')).toBe(true);
         });
 
-        it('sync 10000 bucket objects successfully with progress tracking', async () => {
+        test('sync 10000 bucket objects successfully with progress tracking', async () => {
             const monitor = new S3SyncClient.TransferMonitor();
-            monitor.on('progress', (progress) => console.log(progress));
+            let count = 0;
+            monitor.on('progress', (progress) => { count = progress.count.current; });
             await s3.sync(`s3://${BUCKET_2}`, SYNC_DIR, { maxConcurrentTransfers: 1000, monitor });
             const objects = await s3.listLocalObjects(SYNC_DIR);
-            assert(objects.length >= 10000);
+            expect(count).toStrictEqual(10000);
+            expect(objects.length).toBeGreaterThanOrEqual(10000);
         });
 
-        it('sync 10000 bucket objects with delete option successfully', async () => {
+        test('sync 10000 bucket objects with delete option successfully', async () => {
             await s3.localWithBucket(`${BUCKET_2}/def/jkl`, path.join(SYNC_DIR, 'foo'));
             await s3.sync(`s3://${BUCKET_2}`, SYNC_DIR, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await s3.listLocalObjects(SYNC_DIR);
-            assert.strictEqual(objects.length, 10000);
-            assert(!hasObject(objects, 'foo/def/jkl/xmoj'));
+            expect(objects.length).toStrictEqual(10000);
+            expect(hasObject(objects, 'foo/def/jkl/xmoj')).toBe(false);
         });
 
-        it('abort sync and throw', async () => {
+        test('abort sync and throw', async () => {
             const monitor = new S3SyncClient.TransferMonitor();
             const pSync = s3.localWithBucket(BUCKET_2, path.join(SYNC_DIR, 'abort'), { monitor });
             monitor.on('progress', () => monitor.abort());
-            await assert.rejects(pSync, { name: 'AbortError' });
+            await expect(pSync).rejects.toThrow('Request aborted');
         });
     });
 
@@ -267,30 +266,30 @@ describe('S3SyncClient', () => {
             { id: 'deleted', lastModified: 0, size: 1 },
         ];
 
-        it('compute sync operations on objects successfully', () => {
+        test('compute sync operations on objects successfully', () => {
             const { created, updated, deleted } = syncDiff(bucketObjects, localObjects);
-            assert.deepStrictEqual(created, [
+            expect(created).toStrictEqual([
                 { id: 'abc/created', size: 1, lastModified: 0 },
             ]);
-            assert.deepStrictEqual(updated, [
+            expect(updated).toStrictEqual([
                 { id: 'abc/updated1', size: 1, lastModified: 1 },
                 { id: 'abc/updated2', size: 2, lastModified: 0 },
             ]);
-            assert.deepStrictEqual(deleted, [
+            expect(deleted).toStrictEqual([
                 { id: 'deleted', size: 1, lastModified: 0 },
             ]);
         });
 
-        it('compute sync sizeOnly operations on objects successfully', () => {
+        test('compute sync sizeOnly operations on objects successfully', () => {
             const sizeOnly = true;
             const { created, updated, deleted } = syncDiff(bucketObjects, localObjects, sizeOnly);
-            assert.deepStrictEqual(created, [
+            expect(created).toStrictEqual([
                 { id: 'abc/created', size: 1, lastModified: 0 },
             ]);
-            assert.deepStrictEqual(updated, [
+            expect(updated).toStrictEqual([
                 { id: 'abc/updated2', size: 2, lastModified: 0 },
             ]);
-            assert.deepStrictEqual(deleted, [
+            expect(deleted).toStrictEqual([
                 { id: 'deleted', size: 1, lastModified: 0 },
             ]);
         });

@@ -1,10 +1,10 @@
 {
   "name": "s3-sync-client",
   "version": "2.1.0",
-  "description": "",
+  "description": "AWS CLI s3 sync for Node.js provides a modern client to perform S3 sync operations between file systems and S3 buckets in the spirit of the official AWS CLI command",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "jest --runInBand"
   },
   "repository": {
     "type": "git",
@@ -17,15 +17,14 @@
   },
   "homepage": "https://github.com/jeanbmar/s3-sync-client#readme",
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.2.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "mocha": "^8.3.2",
-    "tar": "^6.1.0"
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "jest": "^27.4.5",
+    "tar": "^6.1.11"
   },
   "dependencies": {
-    "@aws-sdk/abort-controller":  "^3.20.0",
+    "@aws-sdk/abort-controller": "^3.20.0",
     "@aws-sdk/client-s3": "^3.20.0"
   }
 }
