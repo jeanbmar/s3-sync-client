@@ -1,6 +1,6 @@
 {
   "name": "s3-sync-client",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "AWS CLI s3 sync for Node.js provides a modern client to perform S3 sync operations between file systems and S3 buckets in the spirit of the official AWS CLI command",
   "main": "lib/index.js",
   "scripts": {
