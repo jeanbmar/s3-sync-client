@@ -20,7 +20,7 @@ AWS CLI installation is **NOT** required by this module.
 
 1. There is no way to achieve S3 sync using the AWS SDK for JavaScript v3 alone.
 1. AWS CLI installation is **NOT** required.
-1. The package contains no external dependency besides AWS SDK.
+1. The package contains no external dependency.
 1. The AWS SDK dependency is up-to-date ([AWS SDK for JavaScript v3](https://github.com/aws/aws-sdk-js-v3)).
 1. The module overcomes a set of common limitations listed at the bottom of this README.
 
@@ -42,80 +42,61 @@ AWS CLI installation is **NOT** required by this module.
 
 ### Install
 
-``npm install s3-sync-client``
+``npm i s3-sync-client``
 
 ### Code Examples
 
 #### Init client
 
-``S3SyncClient`` extends the AWS SDK ``S3Client`` class and should be instantiated the same way.
+``S3SyncClient`` is a wrapper for the AWS SDK ``S3Client`` class.
 
 ```javascript
+const S3Client = require('@aws-sdk/client-s3');
 const S3SyncClient = require('s3-sync-client');
 
-const client = new S3SyncClient({
-    region: 'eu-west-3',
-    credentials: {
-        accessKeyId: process.env.ACCESS_KEY_ID,
-        secretAccessKey: process.env.SECRET_ACCESS_KEY,
-    },
-});
+const s3Client = new S3Client({ /* ... */ });
+const { sync } = new S3SyncClient({ client: s3Client });
 ```
 
 #### Sync a remote S3 bucket with the local file system
 
 ```javascript
-const S3SyncClient = require('s3-sync-client');
-
-const client = new S3SyncClient({ /* credentials */ });
-
 // aws s3 sync /path/to/local/dir s3://mybucket2
-await client.sync('/path/to/local/dir', 's3://mybucket2');
+await sync('/path/to/local/dir', 's3://mybucket2');
 
 // aws s3 sync /path/to/local/dir s3://mybucket2/zzz --delete
-await client.sync('/path/to/local/dir', 's3://mybucket2/zzz', { del: true });
+await sync('/path/to/local/dir', 's3://mybucket2/zzz', { del: true });
 ```
 
 #### Sync the local file system with a remote S3 bucket
 
 ```javascript
-const S3SyncClient = require('s3-sync-client');
-
-const client = new S3SyncClient({ /* credentials */ });
-
 // aws s3 sync s3://mybucket /path/to/some/local --delete
-await client.sync('s3://mybucket', '/path/to/some/local', { del: true });
+await sync('s3://mybucket', '/path/to/some/local', { del: true });
 
 // aws s3 sync s3://mybucket2 /path/to/local/dir --dryrun
-const syncOps = await client.sync('s3://mybucket2', '/path/to/local/dir', { dryRun: true });
+const syncOps = await sync('s3://mybucket2', '/path/to/local/dir', { dryRun: true });
 console.log(syncOps); // log download and delete operations to perform
 ```
 
 #### Sync two remote S3 buckets
 
 ```javascript
-const S3SyncClient = require('s3-sync-client');
-
-const client = new S3SyncClient({ /* credentials */ });
-
 // aws s3 sync s3://my-source-bucket s3://my-target-bucket --delete
-await client.sync('s3://my-source-bucket', 's3://my-target-bucket', { del: true });
+await sync('s3://my-source-bucket', 's3://my-target-bucket', { del: true });
 ```
 
 #### Monitor transfer progress
 
 ```javascript
 const EventEmitter = require('events');
-const S3SyncClient = require('s3-sync-client');
+const { TransferMonitor } = require('s3-sync-client');
 
-const client = new S3SyncClient({ /* credentials */ });
-
-const { TransferMonitor } = S3SyncClient;
 const monitor = new TransferMonitor();
 monitor.on('progress', (progress) => console.log(progress));
 setTimeout(() => monitor.abort(), 30000); // optional abort
 
-await client.sync('s3://mybucket', '/path/to/local/dir', { monitor });
+await sync('s3://mybucket', '/path/to/local/dir', { monitor });
 
 /* output:
 ...
@@ -124,13 +105,13 @@ await client.sync('s3://mybucket', '/path/to/local/dir', { monitor });
   count: { current: 3974, total: 10000 }
 }
 ...
-and abort unfinished sync after 30s (promise rejected with an AbortError) 
+and aborts unfinished sync after 30s (promise rejected with an AbortError) 
 */
 
 // to pull status info occasionally only, use monitor.getStatus():
 const timeout = setInterval(() => console.log(monitor.getStatus()), 2000);
 try {
-    await client.sync('s3://mybucket', '/path/to/local/dir', { monitor });
+    await sync('s3://mybucket', '/path/to/local/dir', { monitor });
 } finally {
     clearInterval(timeout);
 }
@@ -140,10 +121,6 @@ try {
 
 ```javascript
 const mime = require('mime-types');
-const S3SyncClient = require('s3-sync-client');
-
-const client = new S3SyncClient({ /* credentials */ });
-
 /*
 commandInput properties can either be:
   - fixed values
@@ -151,14 +128,14 @@ commandInput properties can either be:
 */
 
 // set ACL, fixed value
-await client.sync('s3://mybucket', '/path/to/local/dir', {
+await sync('s3://mybucket', '/path/to/local/dir', {
     commandInput: {
         ACL: 'aws-exec-read',
     },
 });
 
 // set content type, dynamic value (function)
-await client.sync('s3://mybucket1', 's3://mybucket2', {
+await sync('s3://mybucket1', 's3://mybucket2', {
     commandInput: {
         ContentType: (syncCommandInput) => (
             mime.lookup(syncCommandInput.Key) || 'text/html'
@@ -170,19 +147,15 @@ await client.sync('s3://mybucket1', 's3://mybucket2', {
 #### Relocate objects during sync
 
 ```javascript
-const S3SyncClient = require('s3-sync-client');
-
-const client = new S3SyncClient({ /* credentials */ });
-
 // sync s3://my-source-bucket/a/b/c.txt to s3://my-target-bucket/zzz/c.txt
-await client.sync('s3://my-source-bucket/a/b/c.txt', 's3://my-target-bucket', {
+await sync('s3://my-source-bucket/a/b/c.txt', 's3://my-target-bucket', {
     relocations: [ // multiple relocations can be applied
         ['a/b', 'zzz'],
     ],
 });
 
 // sync s3://mybucket/flowers/red/rose.png to /path/to/local/dir/rose.png
-await client.sync('s3://mybucket/flowers/red/rose.png', '/path/to/local/dir', {
+await sync('s3://mybucket/flowers/red/rose.png', '/path/to/local/dir', {
     relocations: [
         ['flowers/red', ''], // folder flowers/red will be flattened during sync
     ],
@@ -195,9 +168,10 @@ Additional code examples are available in the test folder.
 <a name="class-s3-sync-client"></a>
 ### Class: S3SyncClient
 <a name="new-s3-sync-client"></a>
-#### ``new S3SyncClient(configuration)``
+#### ``new S3SyncClient(options)``
 
-- `configuration` *<Object\>* Configuration as in the [AWS SDK S3Client](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html).
+- `options` *<Object\>*
+  - `client` *<S3Client\>* instance of [AWS SDK S3Client](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html).
 
 <a name="sync-bucket-with-local"></a>
 #### ``client.sync(localDir, bucketUri[, options])``
