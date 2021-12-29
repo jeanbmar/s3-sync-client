@@ -297,4 +297,60 @@ describe('S3SyncClient', () => {
             ]);
         });
     });
+
+    describe('filter source objects', () => {
+        test('apply include and exclude filters to source objects', () => {
+            const syncObjects = [
+                'flowers/rose.jpg',
+                'flowers/sunflower.jpg',
+                'flowers/tulip.png',
+                'flowers/unknown/1.jpg',
+                'animals/cat.jpg',
+            ].map((id) => new SyncObject({ id }));
+            syncObjects.forEach((syncObject) => {
+                syncObject.applyFilters([
+                    { exclude: () => true },
+                    { include: (key) => key.endsWith('.jpg') },
+                    { exclude: (key) => key.startsWith('animals') },
+                    { exclude: (key) => key.indexOf('/unknown/') > -1 },
+                ]);
+            });
+            const included = syncObjects.filter((syncObject) => syncObject.isIncluded());
+            const keys = included.map((syncObject) => syncObject.id);
+            expect(keys).toStrictEqual(['flowers/rose.jpg', 'flowers/sunflower.jpg']);
+        });
+        test('sync bucket with filtered source bucket objects', async () => {
+            await syncClient.bucketWithBucket(BUCKET_2, BUCKET, {
+                filters: [
+                    { exclude: () => true },
+                    { include: (key) => key.startsWith('def/jkl') },
+                ],
+                del: true,
+            });
+            const objects = await syncClient.listBucketObjects(BUCKET);
+            expect(objects.length).toStrictEqual(11);
+        });
+        test('sync bucket with filtered source local objects', async () => {
+            await emptyBucket(syncClient, BUCKET);
+            await syncClient.bucketWithLocal(DATA_DIR, BUCKET, {
+                filters: [
+                    { exclude: () => true },
+                    { include: (key) => key.startsWith('def/jkl') },
+                ],
+            });
+            const objects = await syncClient.listBucketObjects(BUCKET);
+            expect(objects.length).toStrictEqual(11);
+        });
+        test('sync local fs with filtered source bucket objects', async () => {
+            fs.rmSync(path.join(SYNC_DIR, 'def/jkl'), { force: true, recursive: true });
+            await syncClient.localWithBucket(BUCKET, SYNC_DIR, {
+                filters: [
+                    { exclude: () => true },
+                    { include: (key) => key.startsWith('def/j') },
+                ],
+            });
+            const objects = await syncClient.listLocalObjects(path.join(SYNC_DIR, 'def/jkl'));
+            expect(objects.length).toStrictEqual(11);
+        });
+    });
 });

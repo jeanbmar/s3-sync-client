@@ -170,6 +170,8 @@ await sync('s3://mybucket/flowers/red/rose.png', '/path/to/local/dir', {
 });
 ```
 
+Note: relocations are applied after every other options such as filters.
+
 #### Filter source files
 
 ```javascript
@@ -265,7 +267,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 Most of the existing repo and NPM modules encounter one or more of the following limitations:
 
 - requires AWS CLI to be installed
-- uses Etag to perform file comparison (Etag should be considered an opaque field, and should not be used)
+- uses Etag to perform file comparison (Etag should be considered an opaque field and shouldn't be used)
 - limits S3 bucket object listing to 1000 objects
 - supports syncing bucket with local, but doesn't support syncing local with bucket
 - uses outdated dependencies
