@@ -9,7 +9,7 @@ AWS CLI installation is **NOT** required by this module.
 - Sync a remote Amazon S3 bucket with a local file system
 - Sync two remote Amazon S3 buckets
 - Sync only new and updated objects
-- Support AWS CLI options `--delete`, `--dryrun`, `--size-only`
+- Support AWS CLI options `--delete`, `--dryrun`, `--size-only`, `--include` and `--exclude`
 - Support AWS SDK command input options
 - Monitor object sync progress
 - Sync **any** number of objects (no 1000 objects limit)
@@ -28,7 +28,15 @@ AWS CLI installation is **NOT** required by this module.
 
 1. [Getting Started](#getting-started)
     1. [Install](#install)
-    1. [Code Examples](#code-examples)
+    2. [Code Examples](#code-examples)
+        1. [Client initialization](#client-initialization)
+        2. [Sync a remote S3 bucket with the local file system](#sync-a-remote-s3-bucket-with-the-local-file-system)
+        3. [Sync the local file system with a remote S3 bucket](#sync-the-local-file-system-with-a-remote-s3-bucket)
+        4. [Sync two remote S3 buckets](#sync-two-remote-s3-buckets)
+        5. [Monitor transfer progress](#monitor-transfer-progress)
+        6. [Use AWS SDK command input options](#use-aws-sdk-command-input-options)
+        7. [Relocate objects during sync](#relocate-objects-during-sync)
+        8. [Filter source files](#filter-source-files)
 1. [API Reference](#api-reference)
     - [Class: S3SyncClient](#class-s3-sync-client)
       - [new S3SyncClient(configuration)](#new-s3-sync-client)
@@ -46,7 +54,7 @@ AWS CLI installation is **NOT** required by this module.
 
 ### Code Examples
 
-#### Init client
+#### Client initialization
 
 ``S3SyncClient`` is a wrapper for the AWS SDK ``S3Client`` class.
 
@@ -162,6 +170,21 @@ await sync('s3://mybucket/flowers/red/rose.png', '/path/to/local/dir', {
 });
 ```
 
+Note: relocations are applied after every other options such as filters.
+
+#### Filter source files
+
+```javascript
+// aws s3 sync s3://my-source-bucket s3://my-target-bucket --exclude "*" --include "*.txt" --include "flowers/*"
+await sync('s3://my-source-bucket', 's3://my-target-bucket', {
+    filters: [
+        { exclude: () => true }, // exclude everything
+        { include: (key) => key.endsWith('.txt') }, // include .txt files
+        { include: (key) => key.startsWith('flowers/') }, // also include everything inside the flowers folder
+    ],
+});
+```
+
 Additional code examples are available in the test folder.
 
 ## API Reference
@@ -244,7 +267,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 Most of the existing repo and NPM modules encounter one or more of the following limitations:
 
 - requires AWS CLI to be installed
-- uses Etag to perform file comparison (Etag should be considered an opaque field, and should not be used)
+- uses Etag to perform file comparison (Etag should be considered an opaque field and shouldn't be used)
 - limits S3 bucket object listing to 1000 objects
 - supports syncing bucket with local, but doesn't support syncing local with bucket
 - uses outdated dependencies
