@@ -214,6 +214,7 @@ Additional code examples are available in the test folder.
     - Emit `abort` event to stop object uploads immediately
   - `maxConcurrentTransfers` *<number\>* Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
   - `relocations` *<Array\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `exclude` *<Array\> Pass objects if they match exclude glob patterns, see [minimatch cheatsheet](https://github.com/motemen/minimatch-cheat-sheet)
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync a remote S3 bucket with the local file system.  
@@ -234,6 +235,7 @@ Similar to AWS CLI ``aws s3 sync localDir bucketUri [options]``.
     - Emit `abort` event to stop object downloads immediately
   - `maxConcurrentTransfers` *<number\>* Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
   - `relocations` *<Array\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `exclude` *<Array\> Pass objects if they match exclude glob patterns, see [minimatch cheatsheet](https://github.com/motemen/minimatch-cheat-sheet)
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync the local file system with a remote S3 bucket.  
@@ -254,6 +256,7 @@ Similar to AWS CLI ``aws s3 sync bucketUri localDir [options]``.
     - Emit `abort` event to stop object copy operations immediately
   - `maxConcurrentTransfers` *<number\>* Each copy generates a Promise which is resolved after the object has been copied. This parameter sets the maximum number of copy promises that might be running concurrently.
   - `relocations` *<Array\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `exclude` *<Array\> Pass objects if they match exclude glob patterns, see [minimatch cheatsheet](https://github.com/motemen/minimatch-cheat-sheet)
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
 Sync two remote S3 buckets.  
