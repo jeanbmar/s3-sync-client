@@ -15,6 +15,7 @@ const BUCKET_2 = 's3-sync-client-2';
 const ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const DATA_DIR = path.join(__dirname, 'data');
+const MULTIPART_DATA_DIR = path.join(__dirname, 'multipart-data');
 const SYNC_DIR = path.join(__dirname, 'sync');
 
 jest.setTimeout(60000);
@@ -38,6 +39,12 @@ describe('S3SyncClient', () => {
             file: path.join(__dirname, 'sample-files.tar.gz'),
             cwd: DATA_DIR,
         });
+    });
+
+    test('create multipart data', () => {
+        fs.rmSync(MULTIPART_DATA_DIR, { force: true, recursive: true });
+        fs.mkdirSync(MULTIPART_DATA_DIR, { recursive: true });
+        fs.writeFileSync(path.join(MULTIPART_DATA_DIR, 'multipart.data'), Buffer.alloc(16 * 1024 * 1024).fill('a'));
     });
 
     test('load bucket 2 dataset', async () => {
@@ -188,7 +195,7 @@ describe('S3SyncClient', () => {
             let count = 0;
             monitor.on('progress', (progress) => { count = progress.count.current; });
             await syncClient.bucketWithLocal(DATA_DIR, BUCKET, { maxConcurrentTransfers: 1000, monitor });
-            const objects = await syncClient.listLocalObjects(DATA_DIR);
+            const objects = await syncClient.listBucketObjects(BUCKET);
             expect(count).toStrictEqual(10000);
             expect(objects.length).toBeGreaterThanOrEqual(10000);
         });
@@ -196,9 +203,19 @@ describe('S3SyncClient', () => {
         test('sync 10000 local objects with delete option successfully', async () => {
             await syncClient.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
             await syncClient.sync(DATA_DIR, `s3://${BUCKET}`, { del: true, maxConcurrentTransfers: 1000 });
-            const objects = await syncClient.listLocalObjects(DATA_DIR);
+            const objects = await syncClient.listBucketObjects(BUCKET);
             expect(objects.length).toStrictEqual(10000);
             expect(hasObject(objects, 'xmoj')).toBe(false);
+        });
+
+        test('sync a local object using multipart uploads', async () => {
+            await syncClient.sync(MULTIPART_DATA_DIR, `s3://${BUCKET}`, {
+                maxConcurrentTransfers: 2,
+                partSize: 5 * 1024 * 1024,
+                relocations: [['', 'multipart']],
+            });
+            const objects = await syncClient.listBucketObjects(BUCKET);
+            expect(hasObject(objects, 'multipart/multipart.data')).toBe(true);
         });
     });
 

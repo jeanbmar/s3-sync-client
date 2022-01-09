@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 * add aws cli ``--include`` and ``--exclude`` support through `filters` option
 * replace promise chunks with promise queues for increased concurrency and performances
+* support multipart uploads when synchronizing a remote bucket with a local file system
 
 ### Test
 

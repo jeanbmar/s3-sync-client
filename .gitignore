@@ -1,4 +1,5 @@
 .idea
 node_modules
 test/data
+test/multipart-data
 test/sync

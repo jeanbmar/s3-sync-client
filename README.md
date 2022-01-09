@@ -6,7 +6,7 @@ AWS CLI installation is **NOT** required by this module.
 ## Features
 
 - Sync a local file system with a remote Amazon S3 bucket
-- Sync a remote Amazon S3 bucket with a local file system
+- Sync a remote Amazon S3 bucket with a local file system (multipart uploads are supported)
 - Sync two remote Amazon S3 buckets
 - Sync only new and updated objects
 - Support AWS CLI options `--delete`, `--dryrun`, `--size-only`, `--include` and `--exclude`
@@ -71,6 +71,7 @@ const { sync } = new S3SyncClient({ client: s3Client });
 ```javascript
 // aws s3 sync /path/to/local/dir s3://mybucket2
 await sync('/path/to/local/dir', 's3://mybucket2');
+await sync('/path/to/local/dir', 's3://mybucket2', { partSize: 100 * 1024 * 1024 }); // uses multipart uploads for files higher than 100MB
 
 // aws s3 sync /path/to/local/dir s3://mybucket2/zzz --delete
 await sync('/path/to/local/dir', 's3://mybucket2/zzz', { del: true });
@@ -202,7 +203,7 @@ Additional code examples are available in the test folder.
 - `localDir` *<string\>* Local directory
 - `bucketUri` *<string\>* Remote bucket name which may contain a prefix appended with a `/` separator 
 - `options` *<Object\>*
-  - `commandInput` [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) Set any of the SDK PutObjectCommand options to uploads
+  - `commandInput` *<Object\>* Set any of the SDK [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) or [*<CreateMultipartUploadCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/createmultipartuploadcommandinput.html) options to uploads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
@@ -210,6 +211,7 @@ Additional code examples are available in the test folder.
     - Attach `progress` event to receive upload progress notifications
     - Emit `abort` event to stop object uploads immediately
   - `maxConcurrentTransfers` *<number\>* Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
+  - `partSize` *<number\>* Set the part size in **bytes** for multipart uploads. Default to 5 MB.
   - `relocations` *<Array\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
 - Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
 
@@ -222,7 +224,7 @@ Similar to AWS CLI ``aws s3 sync localDir bucketUri [options]``.
 - `bucketUri` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
 - `localDir` *<string\>* Local directory
 - `options` *<Object\>*
-  - `commandInput` [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) Set any of the SDK GetObjectCommand options to downloads
+  - `commandInput` *<Object\>* Set any of the SDK [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) options to downloads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
@@ -242,7 +244,7 @@ Similar to AWS CLI ``aws s3 sync bucketUri localDir [options]``.
 - `sourceBucketUri` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
 - `targetBucketUri` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
 - `options` *<Object\>*
-  - `commandInput` [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) Set any of the SDK CopyObjectCommand options to copy operations
+  - `commandInput` *<Object\>* Set any of the SDK [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) options to copy operations
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
@@ -264,12 +266,13 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 **AWS CLI ``s3 sync`` for Node.js** has been developed to solve the S3 syncing limitations of the existing GitHub repo and NPM modules.
 
-Most of the existing repo and NPM modules encounter one or more of the following limitations:
+Most of the existing repo and NPM modules suffer one or more of the following limitations:
 
 - requires AWS CLI to be installed
 - uses Etag to perform file comparison (Etag should be considered an opaque field and shouldn't be used)
 - limits S3 bucket object listing to 1000 objects
 - supports syncing bucket with local, but doesn't support syncing local with bucket
+- doesn't support multipart uploads
 - uses outdated dependencies
 - is unmaintained
 
@@ -282,7 +285,3 @@ The following JavaScript modules suffer at least one of the limitations:
 - https://github.com/andrewrk/node-s3-client
 - https://github.com/hughsk/s3-sync
 - https://github.com/issacg/s3sync
-
-**AWS CLI ``s3 sync`` for Node.js** has some limitations too:
-
-- does not support multipart transfers (yet)
