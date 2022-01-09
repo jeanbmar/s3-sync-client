@@ -241,7 +241,7 @@ describe('S3SyncClient', () => {
         });
 
         test('sync a single dir and flatten it', async () => {
-            await syncClient.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { flatten: true });
+            await syncClient.localWithBucket(`${BUCKET_2}/def/jkl`, SYNC_DIR, { relocations: [['def/jkl', '']] });
             const objects = await syncClient.listLocalObjects(SYNC_DIR);
             expect(hasObject(objects, 'xmoj')).toBe(true);
         });
