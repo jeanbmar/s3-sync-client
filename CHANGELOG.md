@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 * use composition instead of inheritance with `S3Client` to behave like a plugin
 * move `@aws-sdk/client-s3` and `@aws-sdk/abort-controller` from dependencies to peer dependencies
+* deprecated option `flatten` has been removed, use `relocations` option instead
 
 ### Features
 
