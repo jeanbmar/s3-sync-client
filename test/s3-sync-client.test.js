@@ -44,7 +44,7 @@ describe('S3SyncClient', () => {
     test('create multipart data', () => {
         fs.rmSync(MULTIPART_DATA_DIR, { force: true, recursive: true });
         fs.mkdirSync(MULTIPART_DATA_DIR, { recursive: true });
-        fs.writeFileSync(path.join(MULTIPART_DATA_DIR, 'multipart.data'), Buffer.alloc(16 * 1024 * 1024).fill('a'));
+        fs.writeFileSync(path.join(MULTIPART_DATA_DIR, 'multipart.data'), Buffer.alloc(512 * 1024 * 1024).fill('a'));
     });
 
     test('load bucket 2 dataset', async () => {
@@ -208,6 +208,13 @@ describe('S3SyncClient', () => {
             expect(hasObject(objects, 'xmoj')).toBe(false);
         });
 
+        test('abort sync and throw', async () => {
+            const monitor = new TransferMonitor();
+            const pSync = syncClient.sync(DATA_DIR, `s3://${BUCKET}/abort`, { monitor });
+            setTimeout(() => monitor.abort(), 10000);
+            await expect(pSync).rejects.toThrow('Request aborted');
+        });
+
         test('sync a local object using multipart uploads', async () => {
             await syncClient.sync(MULTIPART_DATA_DIR, `s3://${BUCKET}`, {
                 maxConcurrentTransfers: 2,
@@ -216,6 +223,18 @@ describe('S3SyncClient', () => {
             });
             const objects = await syncClient.listBucketObjects(BUCKET);
             expect(hasObject(objects, 'multipart/multipart.data')).toBe(true);
+        });
+
+        // https://github.com/jeanbmar/s3-sync-client/issues/33
+        test('multipart abort sync and throw', async () => {
+            const monitor = new TransferMonitor();
+            const pSync = syncClient.sync(MULTIPART_DATA_DIR, `s3://${BUCKET}/abort-multipart`, {
+                maxConcurrentTransfers: 1,
+                partSize: 5 * 1024 * 1024,
+                monitor,
+            });
+            setTimeout(() => monitor.abort(), 4000);
+            await expect(pSync).rejects.toThrow('Request aborted');
         });
     });
 
