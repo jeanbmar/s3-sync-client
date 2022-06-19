@@ -28,5 +28,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install
+        run: npm ci
       - name: run test
         run: npm run test
