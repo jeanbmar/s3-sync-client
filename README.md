@@ -206,6 +206,7 @@ Additional code examples are available in the test folder.
   - `commandInput` *<Object\>* Set any of the SDK [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) or [*<CreateMultipartUploadCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/createmultipartuploadcommandinput.html) options to uploads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `filters` *<Array\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive upload progress notifications
@@ -227,6 +228,7 @@ Similar to AWS CLI ``aws s3 sync localDir bucketUri [options]``.
   - `commandInput` *<Object\>* Set any of the SDK [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) options to downloads
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `filters` *<Array\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive download progress notifications
@@ -247,6 +249,7 @@ Similar to AWS CLI ``aws s3 sync bucketUri localDir [options]``.
   - `commandInput` *<Object\>* Set any of the SDK [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) options to copy operations
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
+  - `filters` *<Array\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `monitor` *<S3SyncClient.TransferMonitor\>*
     - Attach `progress` event to receive copy progress notifications
