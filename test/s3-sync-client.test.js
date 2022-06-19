@@ -54,8 +54,8 @@ describe('S3SyncClient', () => {
         await emptyBucket(syncClient, BUCKET_2);
         await syncClient.sync(DATA_DIR, `s3://${BUCKET_2}`, { del: true, maxConcurrentTransfers: 1000, monitor });
         const objects = await syncClient.listLocalObjects(DATA_DIR);
-        expect(count).toStrictEqual(10000);
-        expect(objects.length).toStrictEqual(10000);
+        expect(count).toStrictEqual(5000);
+        expect(objects.length).toStrictEqual(5000);
     });
 
     test('empty bucket', async () => {
@@ -144,7 +144,7 @@ describe('S3SyncClient', () => {
         test('sync entire bucket with delete option successfully', async () => {
             await syncClient.bucketWithBucket(BUCKET_2, BUCKET, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await syncClient.listBucketObjects(BUCKET);
-            expect(objects.length).toStrictEqual(10000);
+            expect(objects.length).toStrictEqual(5000);
         });
     });
 
@@ -189,22 +189,22 @@ describe('S3SyncClient', () => {
             expect(aclResponse.Grants.find(({ Permission }) => Permission === 'READ')).toBeTruthy();
         });
 
-        test('sync 10000 local objects successfully with progress tracking', async () => {
+        test('sync 5000 local objects successfully with progress tracking', async () => {
             await emptyBucket(syncClient, BUCKET);
             const monitor = new TransferMonitor();
             let count = 0;
             monitor.on('progress', (progress) => { count = progress.count.current; });
             await syncClient.bucketWithLocal(DATA_DIR, BUCKET, { maxConcurrentTransfers: 1000, monitor });
             const objects = await syncClient.listBucketObjects(BUCKET);
-            expect(count).toStrictEqual(10000);
-            expect(objects.length).toBeGreaterThanOrEqual(10000);
+            expect(count).toStrictEqual(5000);
+            expect(objects.length).toBeGreaterThanOrEqual(5000);
         });
 
-        test('sync 10000 local objects with delete option successfully', async () => {
+        test('sync 5000 local objects with delete option successfully', async () => {
             await syncClient.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
             await syncClient.sync(DATA_DIR, `s3://${BUCKET}`, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await syncClient.listBucketObjects(BUCKET);
-            expect(objects.length).toStrictEqual(10000);
+            expect(objects.length).toStrictEqual(5000);
             expect(hasObject(objects, 'xmoj')).toBe(false);
         });
 
@@ -265,21 +265,21 @@ describe('S3SyncClient', () => {
             expect(hasObject(objects, 'xmoj')).toBe(true);
         });
 
-        test('sync 10000 bucket objects successfully with progress tracking', async () => {
+        test('sync 5000 bucket objects successfully with progress tracking', async () => {
             const monitor = new TransferMonitor();
             let count = 0;
             monitor.on('progress', (progress) => { count = progress.count.current; });
             await syncClient.sync(`s3://${BUCKET_2}`, SYNC_DIR, { maxConcurrentTransfers: 1000, monitor });
             const objects = await syncClient.listLocalObjects(SYNC_DIR);
-            expect(count).toStrictEqual(10000);
-            expect(objects.length).toBeGreaterThanOrEqual(10000);
+            expect(count).toStrictEqual(5000);
+            expect(objects.length).toBeGreaterThanOrEqual(5000);
         });
 
-        test('sync 10000 bucket objects with delete option successfully', async () => {
+        test('sync 5000 bucket objects with delete option successfully', async () => {
             await syncClient.localWithBucket(`${BUCKET_2}/def/jkl`, path.join(SYNC_DIR, 'foo'));
             await syncClient.sync(`s3://${BUCKET_2}`, SYNC_DIR, { del: true, maxConcurrentTransfers: 1000 });
             const objects = await syncClient.listLocalObjects(SYNC_DIR);
-            expect(objects.length).toStrictEqual(10000);
+            expect(objects.length).toStrictEqual(5000);
             expect(hasObject(objects, 'foo/def/jkl/xmoj')).toBe(false);
         });
 
