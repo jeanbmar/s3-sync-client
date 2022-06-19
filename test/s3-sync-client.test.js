@@ -18,7 +18,7 @@ const DATA_DIR = path.join(__dirname, 'data');
 const MULTIPART_DATA_DIR = path.join(__dirname, 'multipart-data');
 const SYNC_DIR = path.join(__dirname, 'sync');
 
-jest.setTimeout(60000);
+jest.setTimeout(90000);
 
 describe('S3SyncClient', () => {
     let s3Client;
