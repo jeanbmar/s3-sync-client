@@ -24,9 +24,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Cache node_modules
-          uses: actions/cache@v3
-          with:
-            path: '**/node_modules'
-            key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/package-lock.json') }}
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/package-lock.json') }}
       - name: run test
         run: npm run test
