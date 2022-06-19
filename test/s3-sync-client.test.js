@@ -52,7 +52,7 @@ describe('S3SyncClient', () => {
         let count = 0;
         monitor.on('progress', (progress) => { count = progress.count.current; });
         await emptyBucket(syncClient, BUCKET_2);
-        await syncClient.sync(DATA_DIR, `s3://${BUCKET_2}`, { del: true, maxConcurrentTransfers: 1000, monitor });
+        await syncClient.sync(DATA_DIR, `s3://${BUCKET_2}`, { del: true, maxConcurrentTransfers: 200, monitor });
         const objects = await syncClient.listLocalObjects(DATA_DIR);
         expect(count).toStrictEqual(5000);
         expect(objects.length).toStrictEqual(5000);
@@ -114,7 +114,7 @@ describe('S3SyncClient', () => {
             const monitor = new TransferMonitor();
             let count = 0;
             monitor.on('progress', (progress) => { count = progress.count.current; });
-            await syncClient.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, { maxConcurrentTransfers: 1000, monitor });
+            await syncClient.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, { maxConcurrentTransfers: 200, monitor });
             const objects = await syncClient.listBucketObjects(BUCKET, { prefix: 'def/jkl' });
             expect(hasObject(objects, 'def/jkl/xmoj')).toBe(true);
             expect(count).toStrictEqual(11);
@@ -123,7 +123,7 @@ describe('S3SyncClient', () => {
 
         test('sync a single dir with root relocation', async () => {
             await syncClient.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, {
-                maxConcurrentTransfers: 1000,
+                maxConcurrentTransfers: 200,
                 relocations: [['', 'relocated']],
             });
             const objects = await syncClient.listBucketObjects(BUCKET, { prefix: 'relocated' });
@@ -133,7 +133,7 @@ describe('S3SyncClient', () => {
 
         test('sync a single dir with folder relocation', async () => {
             await syncClient.sync(`s3://${BUCKET_2}/def/jkl`, `s3://${BUCKET}`, {
-                maxConcurrentTransfers: 1000,
+                maxConcurrentTransfers: 200,
                 relocations: [['def/jkl', 'relocated-bis/folder']],
             });
             const objects = await syncClient.listBucketObjects(BUCKET, { prefix: 'relocated-bis/folder' });
@@ -142,7 +142,7 @@ describe('S3SyncClient', () => {
         });
 
         test('sync entire bucket with delete option successfully', async () => {
-            await syncClient.bucketWithBucket(BUCKET_2, BUCKET, { del: true, maxConcurrentTransfers: 1000 });
+            await syncClient.bucketWithBucket(BUCKET_2, BUCKET, { del: true, maxConcurrentTransfers: 200 });
             const objects = await syncClient.listBucketObjects(BUCKET);
             expect(objects.length).toStrictEqual(5000);
         });
@@ -194,7 +194,7 @@ describe('S3SyncClient', () => {
             const monitor = new TransferMonitor();
             let count = 0;
             monitor.on('progress', (progress) => { count = progress.count.current; });
-            await syncClient.bucketWithLocal(DATA_DIR, BUCKET, { maxConcurrentTransfers: 1000, monitor });
+            await syncClient.bucketWithLocal(DATA_DIR, BUCKET, { maxConcurrentTransfers: 200, monitor });
             const objects = await syncClient.listBucketObjects(BUCKET);
             expect(count).toStrictEqual(5000);
             expect(objects.length).toBeGreaterThanOrEqual(5000);
@@ -202,7 +202,7 @@ describe('S3SyncClient', () => {
 
         test('sync 5000 local objects with delete option successfully', async () => {
             await syncClient.bucketWithLocal(path.join(DATA_DIR, 'def/jkl'), BUCKET);
-            await syncClient.sync(DATA_DIR, `s3://${BUCKET}`, { del: true, maxConcurrentTransfers: 1000 });
+            await syncClient.sync(DATA_DIR, `s3://${BUCKET}`, { del: true, maxConcurrentTransfers: 200 });
             const objects = await syncClient.listBucketObjects(BUCKET);
             expect(objects.length).toStrictEqual(5000);
             expect(hasObject(objects, 'xmoj')).toBe(false);
@@ -269,7 +269,7 @@ describe('S3SyncClient', () => {
             const monitor = new TransferMonitor();
             let count = 0;
             monitor.on('progress', (progress) => { count = progress.count.current; });
-            await syncClient.sync(`s3://${BUCKET_2}`, SYNC_DIR, { maxConcurrentTransfers: 1000, monitor });
+            await syncClient.sync(`s3://${BUCKET_2}`, SYNC_DIR, { maxConcurrentTransfers: 200, monitor });
             const objects = await syncClient.listLocalObjects(SYNC_DIR);
             expect(count).toStrictEqual(5000);
             expect(objects.length).toBeGreaterThanOrEqual(5000);
@@ -277,7 +277,7 @@ describe('S3SyncClient', () => {
 
         test('sync 5000 bucket objects with delete option successfully', async () => {
             await syncClient.localWithBucket(`${BUCKET_2}/def/jkl`, path.join(SYNC_DIR, 'foo'));
-            await syncClient.sync(`s3://${BUCKET_2}`, SYNC_DIR, { del: true, maxConcurrentTransfers: 1000 });
+            await syncClient.sync(`s3://${BUCKET_2}`, SYNC_DIR, { del: true, maxConcurrentTransfers: 200 });
             const objects = await syncClient.listLocalObjects(SYNC_DIR);
             expect(objects.length).toStrictEqual(5000);
             expect(hasObject(objects, 'foo/def/jkl/xmoj')).toBe(false);
