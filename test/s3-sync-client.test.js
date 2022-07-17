@@ -289,6 +289,16 @@ describe('S3SyncClient', () => {
             monitor.on('progress', () => monitor.abort());
             await expect(pSync).rejects.toThrow('Request aborted');
         });
+
+        // https://github.com/jeanbmar/s3-sync-client/issues/36
+        test('s3 last modified date is preserved', async () => {
+            const now = Date.now();
+            fs.rmSync(path.join(SYNC_DIR, 'last-modified'), { recursive: true, force: true });
+            await syncClient.sync(`s3://${BUCKET_2}/xoim`, path.join(SYNC_DIR, 'last-modified'));
+            const { atimeMs, mtimeMs } = fs.statSync(path.join(SYNC_DIR, 'last-modified', 'xoim'));
+            expect(atimeMs).toBeLessThan(now);
+            expect(mtimeMs).toBeLessThan(now);
+        });
     });
 
     describe('compute sync operations', () => {
