@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const tar = require('tar');
 const { S3Client, GetObjectAclCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const S3SyncClient = require('..');

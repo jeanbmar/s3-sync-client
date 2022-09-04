@@ -3,8 +3,11 @@
   "version": "3.0.3",
   "description": "AWS CLI s3 sync for Node.js provides a modern client to perform S3 sync operations between file systems and S3 buckets in the spirit of the official AWS CLI command",
   "main": "lib/index.js",
+  "engines" : {
+    "node" : ">=16.0.0"
+  },
   "files": [
-    "/lib"
+    "/lib/**/*"
   ],
   "scripts": {
     "test": "jest --runInBand"
