@@ -1,14 +1,14 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const tar = require('tar');
-const { S3Client, GetObjectAclCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
-const S3SyncClient = require('..');
-const { TransferMonitor } = require('..');
-const SyncObject = require('../lib/sync-objects/sync-object');
-const LocalObject = require('../lib/sync-objects/local-object');
-const emptyBucket = require('./helpers/empty-bucket');
-const hasObject = require('./helpers/has-object');
-const syncDiff = require('../lib/utilities/sync-diff');
+import fs from 'node:fs';
+import path from 'node:path';
+import tar from 'tar';
+import { S3Client, GetObjectAclCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import S3SyncClient from '..';
+import { TransferMonitor } from '..';
+import SyncObject from '../lib/sync-objects/sync-object';
+import LocalObject from '../lib/sync-objects/local-object';
+import emptyBucket from './helpers/empty-bucket';
+import hasObject from './helpers/has-object';
+import syncDiff from '../lib/utilities/sync-diff';
 
 const BUCKET = 's3-sync-client';
 const BUCKET_2 = 's3-sync-client-2';

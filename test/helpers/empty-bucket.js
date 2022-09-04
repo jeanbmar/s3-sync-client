@@ -4,4 +4,4 @@ async function emptyBucket(client, bucket) {
     await client.deleteBucketObjects(bucket, keysToDelete);
 }
 
-module.exports = emptyBucket;
+export default emptyBucket;
