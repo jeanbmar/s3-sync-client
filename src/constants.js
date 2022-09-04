@@ -1,4 +1,2 @@
-module.exports = {
-    DEFAULT_MAX_CONCURRENT_TRANSFERS: 10,
-    DEFAULT_PART_SIZE: 1024 * 1024 * 5,
-};
+export const DEFAULT_MAX_CONCURRENT_TRANSFERS = 10;
+export const DEFAULT_PART_SIZE = 1024 * 1024 * 5;

@@ -1,10 +1,4 @@
-const path = require('node:path');
+import path from 'node:path';
 
-module.exports = {
-    toLocalPath(filePath) {
-        return filePath.split(path.posix.sep).join(path.sep);
-    },
-    toPosixPath(filePath) {
-        return filePath.split(path.sep).join(path.posix.sep);
-    },
-};
+export const toPosixPath = (filePath) => filePath.split(path.sep).join(path.posix.sep);
+export const toLocalPath = (filePath) => filePath.split(path.posix.sep).join(path.sep);
