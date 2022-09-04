@@ -80,7 +80,9 @@ class LocalObject extends SyncObject {
       Bucket: bucket,
       Key: this.id,
     }, { ...commandInput, Body: undefined });
-    const { UploadId: uploadId } = await client.send(new CreateMultipartUploadCommand(uploadCommandInput));
+    const { UploadId: uploadId } = await client.send(
+      new CreateMultipartUploadCommand(uploadCommandInput),
+    );
     return { uploadId };
   }
 
