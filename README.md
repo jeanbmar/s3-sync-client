@@ -30,7 +30,7 @@ AWS CLI installation is **NOT** required by this module.
 
 1. [Getting Started](#getting-started)
     1. [Install](#install)
-    2. [Code Examples](#code-examples)
+    2. [Recipes](#recipes)
         1. [Client initialization](#client-initialization)
         2. [Sync a remote S3 bucket with the local file system](#sync-a-remote-s3-bucket-with-the-local-file-system)
         3. [Sync the local file system with a remote S3 bucket](#sync-the-local-file-system-with-a-remote-s3-bucket)
@@ -54,7 +54,7 @@ AWS CLI installation is **NOT** required by this module.
 
 ``npm i s3-sync-client``
 
-### Code Examples
+### Recipes
 
 #### Client initialization
 
