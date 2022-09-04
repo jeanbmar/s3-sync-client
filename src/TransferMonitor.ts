@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events';
+import { EventEmitter } from 'node:events';
 
 class TransferMonitor extends EventEmitter {
   constructor() {

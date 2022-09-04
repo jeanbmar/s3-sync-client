@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import { GetObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
-import SyncObject from './sync-object';
+import SyncObject from './SyncObject';
 import { merge } from '../utilities/command-input-helper';
 import { toLocalPath } from '../utilities/path-helper';
 

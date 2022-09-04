@@ -1,4 +1,4 @@
-import TransferManager from './transfer-manager';
+import TransferManager from './TransferManager';
 import asyncMap from '../utilities/async-map';
 
 class DownloadManager extends TransferManager {

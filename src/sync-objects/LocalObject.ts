@@ -7,7 +7,7 @@ import {
   UploadPartCommand,
 } from '@aws-sdk/client-s3';
 import { merge } from '../utilities/command-input-helper';
-import SyncObject from './sync-object';
+import SyncObject from './SyncObject';
 
 class LocalObject extends SyncObject {
   constructor(properties = {}) {

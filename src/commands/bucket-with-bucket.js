@@ -1,5 +1,5 @@
 import { DEFAULT_MAX_CONCURRENT_TRANSFERS } from '../constants';
-import CopyManager from '../sync-managers/copy-manager';
+import CopyManager from '../sync-managers/CopyManager';
 import syncDiff from '../utilities/sync-diff';
 import { parsePrefix } from '../utilities/bucket-helper';
 

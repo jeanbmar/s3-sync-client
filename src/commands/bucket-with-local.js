@@ -2,7 +2,7 @@ import {
   DEFAULT_MAX_CONCURRENT_TRANSFERS,
   DEFAULT_PART_SIZE,
 } from '../constants';
-import UploadManager from '../sync-managers/upload-manager';
+import UploadManager from '../sync-managers/UploadManager';
 import syncDiff from '../utilities/sync-diff';
 import { parsePrefix } from '../utilities/bucket-helper';
 

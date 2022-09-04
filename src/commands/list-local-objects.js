@@ -1,7 +1,7 @@
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import { toPosixPath } from '../utilities/path-helper';
-import LocalObject from '../sync-objects/local-object';
+import LocalObject from '../sync-objects/LocalObject';
 
 async function listLocalObjects(currentDir, rootDir = currentDir, objects = []) {
   const childPaths = await fsp.readdir(currentDir);

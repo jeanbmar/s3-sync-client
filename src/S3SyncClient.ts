@@ -6,7 +6,7 @@ import sync from './commands/sync';
 import deleteBucketObjects from './commands/delete-bucket-objects';
 import listBucketObjects from './commands/list-bucket-objects';
 import listLocalObjects from './commands/list-local-objects';
-import TransferMonitor from './transfer-monitor';
+import TransferMonitor from './TransferMonitor';
 
 class S3SyncClient {
   constructor(options = {}) {

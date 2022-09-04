@@ -1,5 +1,5 @@
 import { DEFAULT_PART_SIZE } from '../constants';
-import TransferManager from './transfer-manager';
+import TransferManager from './TransferManager';
 import asyncMap from '../utilities/async-map';
 import defer from '../utilities/defer';
 

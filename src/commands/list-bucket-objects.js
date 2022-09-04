@@ -1,5 +1,5 @@
 import { ListObjectsV2Command } from '@aws-sdk/client-s3';
-import BucketObject from '../sync-objects/bucket-object';
+import BucketObject from '../sync-objects/BucketObject';
 
 async function listBucketObjects(bucket, options = {}) {
   const {

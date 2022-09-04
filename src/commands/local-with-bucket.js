@@ -1,6 +1,6 @@
 import fsp from 'node:fs/promises';
 import { DEFAULT_MAX_CONCURRENT_TRANSFERS } from '../constants';
-import DownloadManager from '../sync-managers/download-manager';
+import DownloadManager from '../sync-managers/DownloadManager';
 import syncDiff from '../utilities/sync-diff';
 import { parsePrefix } from '../utilities/bucket-helper';
 
