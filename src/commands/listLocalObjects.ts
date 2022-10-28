@@ -1,5 +1,5 @@
-import fsp from 'node:fs/promises';
-import path from 'node:path';
+import { promises as fsp } from 'node:fs';
+import * as path from 'node:path';
 import { toPosixPath } from '../utilities/path-helper';
 import LocalObject from '../sync-objects/LocalObject';
 

@@ -1,27 +1,52 @@
 import { S3Client } from '@aws-sdk/client-s3';
-import bucketWithBucket from './commands/bucket-with-bucket';
-import bucketWithLocal from './commands/bucket-with-local';
-import localWithBucket from './commands/local-with-bucket';
+import { S3SyncClientConfig } from './S3SyncClientConfig';
+import { S3SyncOptions } from './S3SyncOptions';
+import { BucketWithBucketOptions } from './BucketWithBucketOptions';
+import { BucketWithLocalOptions } from './BucketWithLocalOptions';
+import { LocalWithBucketOptions } from './LocalWithBucketOptions';
+import bucketWithBucket from './commands/bucketWithBucket';
+import bucketWithLocal from './commands/bucketWithLocal';
+import localWithBucket from './commands/localWithBucket';
 import sync from './commands/sync';
-import deleteBucketObjects from './commands/delete-bucket-objects';
-import listBucketObjects from './commands/list-bucket-objects';
-import listLocalObjects from './commands/list-local-objects';
-import TransferMonitor from './TransferMonitor';
+import deleteBucketObjects from './commands/deleteBucketObjects';
+import listBucketObjects from './commands/listBucketObjects';
+import listLocalObjects from './commands/listLocalObjects';
 
-class S3SyncClient {
-  constructor(options = {}) {
-    const { client = new S3Client(options) } = options;
-    this.client = client;
+export class S3SyncClient {
+  private client: S3Client = null;
+
+  constructor(options: S3SyncClientConfig) {
+    this.client = options?.client ?? new S3Client(options);
     this.sync = this.sync.bind(this);
   }
+
+  async sync(source: string, target: string, options: S3SyncOptions) {
+    return sync.call(this, source, target, options);
+  }
+
+  async bucketWithBucket(sourceBucketPrefix: string, targetBucketPrefix: string, options: BucketWithBucketOptions) {
+    return bucketWithBucket.call(this, sourceBucketPrefix, targetBucketPrefix, options);
+  }
+
+  async bucketWithLocal(localDir, bucketPrefix, options: BucketWithLocalOptions) {
+    return bucketWithLocal.call(this, localDir, bucketPrefix, options);
+  }
+
+  async localWithBucket(bucketPrefix, localDir, options: LocalWithBucketOptions) {
+    return localWithBucket.call(this, bucketPrefix, localDir, options);
+  }
+
+  async listBucketObjects(bucket, options) {
+    return listBucketObjects.call(this, bucket, options);
+  }
+
+  async listLocalObjects(currentDir: string) {
+    return listLocalObjects.call(this, currentDir);
+  }
+
+  async deleteBucketObjects(bucket: string, keys: string[]) {
+    return deleteBucketObjects.call(this, bucket, keys);
+  }
 }
-S3SyncClient.prototype.bucketWithBucket = bucketWithBucket;
-S3SyncClient.prototype.bucketWithLocal = bucketWithLocal;
-S3SyncClient.prototype.localWithBucket = localWithBucket;
-S3SyncClient.prototype.sync = sync;
-S3SyncClient.prototype.listBucketObjects = listBucketObjects;
-S3SyncClient.prototype.listLocalObjects = listLocalObjects;
-S3SyncClient.prototype.deleteBucketObjects = deleteBucketObjects;
-S3SyncClient.TransferMonitor = TransferMonitor;
 
 export default S3SyncClient;

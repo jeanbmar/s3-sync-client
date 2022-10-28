@@ -1,4 +1,4 @@
-import fsp from 'node:fs/promises';
+import { promises as fsp } from 'node:fs';
 import { DEFAULT_MAX_CONCURRENT_TRANSFERS } from '../constants';
 import DownloadManager from '../sync-managers/DownloadManager';
 import syncDiff from '../utilities/sync-diff';
