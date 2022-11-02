@@ -1,5 +1,5 @@
 export class CommandInputHelper {
-  static merge(commandInput: any, properties: any = {}): object {
+  static merge<T>(commandInput: any, properties: any = {}): T {
     const entries = Object.entries(properties)
       .map(([propertyName, propertyValue]) => {
         const evaluated = typeof propertyValue === 'function'
