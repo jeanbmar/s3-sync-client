@@ -1,4 +1,7 @@
-const diff = (sourceObjects, targetObjects, sizeOnly = false) => {
+import { SyncObject } from '../sync-objects/SyncObject';
+import { Diff } from './Diff';
+
+export const syncDiff = (sourceObjects: SyncObject[], targetObjects: SyncObject[], sizeOnly: boolean = false): Diff => {
   const sourceObjectMap = new Map(
     sourceObjects.map((sourceObject) => [sourceObject.id, sourceObject]),
   );
@@ -27,4 +30,4 @@ const diff = (sourceObjects, targetObjects, sizeOnly = false) => {
   return { created, updated, deleted };
 };
 
-export default diff;
+export default syncDiff;

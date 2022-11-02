@@ -1,5 +1,7 @@
+import { DeferredPromise } from './DeferredPromise';
+
 // defer is used to keep track of fn status no matter where resolve is called
-const defer = (fn) => {
+export const defer = (fn): DeferredPromise => {
   let deferredResolve;
   const promise = new Promise((resolve, reject) => {
     deferredResolve = async () => {
