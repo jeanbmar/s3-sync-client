@@ -50,11 +50,14 @@ describe('S3SyncClient', () => {
     test('load bucket 2 dataset', async () => {
         const monitor = new TransferMonitor();
         let count = 0;
+        let done = 0;
         monitor.on('progress', (progress) => { count = progress.count.current; });
+        monitor.on('done', () => { done++; });
         await emptyBucket(syncClient, BUCKET_2);
         await syncClient.sync(DATA_DIR, `s3://${BUCKET_2}`, { del: true, maxConcurrentTransfers: 200, monitor });
         const objects = await syncClient.listLocalObjects(DATA_DIR);
         expect(count).toStrictEqual(5000);
+        expect(done).toStrictEqual(count);
         expect(objects.length).toStrictEqual(5000);
     });
 
@@ -113,11 +116,14 @@ describe('S3SyncClient', () => {
         test('sync a single dir with progress tracking', async () => {
             const monitor = new TransferMonitor();
             let count = 0;
+            let done = 0;
             monitor.on('progress', (progress) => { count = progress.count.current; });
+            monitor.on('done', () => { done++; });
             await syncClient.bucketWithBucket(`${BUCKET_2}/def/jkl`, BUCKET, { maxConcurrentTransfers: 200, monitor });
             const objects = await syncClient.listBucketObjects(BUCKET, { prefix: 'def/jkl' });
             expect(hasObject(objects, 'def/jkl/xmoj')).toBe(true);
             expect(count).toStrictEqual(11);
+            expect(done).toStrictEqual(count);
             expect(objects.length).toStrictEqual(11);
         });
 
@@ -268,10 +274,13 @@ describe('S3SyncClient', () => {
         test('sync 5000 bucket objects successfully with progress tracking', async () => {
             const monitor = new TransferMonitor();
             let count = 0;
+            let done = 0;
             monitor.on('progress', (progress) => { count = progress.count.current; });
+            monitor.on('done', () => { done++; });
             await syncClient.sync(`s3://${BUCKET_2}`, SYNC_DIR, { maxConcurrentTransfers: 200, monitor });
             const objects = await syncClient.listLocalObjects(SYNC_DIR);
             expect(count).toStrictEqual(5000);
+            expect(done).toStrictEqual(count);
             expect(objects.length).toBeGreaterThanOrEqual(5000);
         });
 
