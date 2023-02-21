@@ -36,9 +36,10 @@ AWS CLI installation is **NOT** required by this module.
         3. [Sync the local file system with a remote S3 bucket](#sync-the-local-file-system-with-a-remote-s3-bucket)
         4. [Sync two remote S3 buckets](#sync-two-remote-s3-buckets)
         5. [Monitor transfer progress](#monitor-transfer-progress)
-        6. [Use AWS SDK command input options](#use-aws-sdk-command-input-options)
-        7. [Relocate objects during sync](#relocate-objects-during-sync)
-        8. [Filter source files](#filter-source-files)
+        6. [Monitor object status](#monitor-object-status)
+        7. [Use AWS SDK command input options](#use-aws-sdk-command-input-options)
+        8. [Relocate objects during sync](#relocate-objects-during-sync)
+        9. [Filter source files](#filter-source-files)
 1. [API Reference](#api-reference)
     - [Class: S3SyncClient](#class-s3-sync-client)
       - [new S3SyncClient(configuration)](#new-s3-sync-client)
@@ -100,7 +101,6 @@ await sync('s3://my-source-bucket', 's3://my-target-bucket', { del: true });
 #### Monitor transfer progress
 
 ```javascript
-const EventEmitter = require('events');
 const { TransferMonitor } = require('s3-sync-client');
 
 const monitor = new TransferMonitor();
@@ -126,6 +126,35 @@ try {
 } finally {
     clearInterval(timeout);
 }
+```
+
+#### Monitor object status
+
+```javascript
+const { TransferMonitor } = require('s3-sync-client');
+
+const monitor = new TransferMonitor();
+monitor.on('start', (data) => console.log("Start:", data));
+monitor.on('done', (data) => console.log("Done:", data));
+monitor.on('error', (data) => console.log("Error:", data));
+
+await sync('s3://mybucket', '/path/to/local/dir', { monitor });
+
+/* output, per object as it is processed:
+...
+Start: {
+  filePath: '...'
+}
+...
+Done: {
+  filePath: '...'
+}
+...
+Done: {
+  filePath: '...',
+  error: '...'
+}
+*/
 ```
 
 #### Use AWS SDK command input options
