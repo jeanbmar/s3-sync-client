@@ -1,7 +1,10 @@
-import { DeferredPromise } from './DeferredPromise';
+export type DeferredPromise = {
+  promise: Promise<any>;
+  resolve: Function;
+};
 
 // defer is used to keep track of fn status no matter where resolve is called
-export const defer = (fn): DeferredPromise => {
+export function defer(fn): DeferredPromise {
   let deferredResolve;
   const promise = new Promise((resolve, reject) => {
     deferredResolve = async () => {
@@ -15,6 +18,4 @@ export const defer = (fn): DeferredPromise => {
     };
   });
   return { promise, resolve: deferredResolve };
-};
-
-export default defer;
+}
