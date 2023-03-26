@@ -1,16 +1,45 @@
-class SyncObject {
-  constructor(properties = {}) {
-    this.id = properties.id;
-    this.size = 0;
-    this.lastModified = 0;
-    this.excluded = false;
+import { Relocation, Filter } from '../commands/Command';
+
+export type SyncObjectOptions = {
+  id: string;
+  size: number;
+  lastModified: number;
+};
+
+export type Diff = {
+  created: SyncObject[];
+  updated: SyncObject[];
+  deleted: SyncObject[];
+};
+
+export class SyncObject {
+  id: string;
+  size: number;
+  lastModified: number;
+  private isExcluded: boolean = false;
+
+  constructor(options: SyncObjectOptions) {
+    this.id = options.id;
+    this.size = options.size;
+    this.lastModified = options.lastModified;
   }
 
-  isIncluded() {
-    return !this.excluded;
+  get isIncluded(): boolean {
+    return !this.isExcluded;
   }
 
-  relocate(sourcePrefix, targetPrefix) {
+  applyFilters(filters: Filter[]): void {
+    filters.forEach(({ include, exclude }) => {
+      if (!this.isExcluded && exclude != null) {
+        this.isExcluded = exclude(this.id);
+      }
+      if (this.isExcluded && include) {
+        this.isExcluded = !include(this.id);
+      }
+    });
+  }
+
+  applyRelocation(sourcePrefix: string, targetPrefix: string): void {
     if (sourcePrefix === '' && targetPrefix !== '') {
       this.id = `${targetPrefix}/${this.id}`;
     }
@@ -22,22 +51,42 @@ class SyncObject {
     }
   }
 
-  applyFilters(filters) {
-    filters.forEach(({ include, exclude }) => {
-      if (!this.excluded && exclude) {
-        this.excluded = exclude(this.id);
-      }
-      if (this.excluded && include) {
-        this.excluded = !include(this.id);
-      }
-    });
-  }
-
-  applyRelocations(relocations) {
+  applyRelocations(relocations: Relocation[]): void {
     relocations.forEach(([sourcePrefix, targetPrefix]) => {
-      this.relocate(sourcePrefix, targetPrefix);
+      this.applyRelocation(sourcePrefix, targetPrefix);
     });
   }
 }
 
-export default SyncObject;
+export function diff(
+  sourceObjects: SyncObject[],
+  targetObjects: SyncObject[],
+  sizeOnly: boolean = false
+): Diff {
+  const sourceObjectMap = new Map(
+    sourceObjects.map((sourceObject) => [sourceObject.id, sourceObject])
+  );
+  const targetObjectMap = new Map(
+    targetObjects.map((targetObject) => [targetObject.id, targetObject])
+  );
+  const created = [];
+  const updated = [];
+  sourceObjectMap.forEach((sourceObject) => {
+    const targetObject = targetObjectMap.get(sourceObject.id);
+    if (targetObject === undefined) {
+      created.push(sourceObject);
+    } else if (
+      sourceObject.size !== targetObject.size ||
+      (!sizeOnly && sourceObject.lastModified > targetObject.lastModified)
+    ) {
+      updated.push(sourceObject);
+    }
+  });
+  const deleted = [];
+  targetObjectMap.forEach((targetObject) => {
+    if (!sourceObjectMap.has(targetObject.id)) {
+      deleted.push(targetObject);
+    }
+  });
+  return { created, updated, deleted };
+}
