@@ -8,7 +8,7 @@
     "removeComments": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "es6",
+    "target": "es2022",
   },
   "include": ["src/"],
   "exclude": ["node_modules", "dist"]
