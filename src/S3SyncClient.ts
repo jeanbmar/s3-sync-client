@@ -1,6 +1,4 @@
-import { S3Client } from '@aws-sdk/client-s3';
-import { S3SyncClientConfig } from './S3SyncClientConfig';
-import { S3SyncOptions } from './S3SyncOptions';
+import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import { BucketWithBucketOptions } from './BucketWithBucketOptions';
 import { BucketWithLocalOptions } from './BucketWithLocalOptions';
 import { LocalWithBucketOptions } from './LocalWithBucketOptions';
@@ -11,6 +9,12 @@ import sync from './commands/sync';
 import deleteBucketObjects from './commands/deleteBucketObjects';
 import listBucketObjects from './commands/listBucketObjects';
 import listLocalObjects from './commands/listLocalObjects';
+
+export type S3SyncOptions = {}
+
+export type S3SyncClientConfig = {
+  client: S3Client;
+} & S3ClientConfig;
 
 export class S3SyncClient {
   private client: S3Client = null;
