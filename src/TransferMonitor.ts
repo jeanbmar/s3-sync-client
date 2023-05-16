@@ -1,5 +1,16 @@
 import { EventEmitter } from 'node:events';
 
+export type TransferStatus = {
+  size: {
+    current: number;
+    total: number;
+  };
+  count: {
+    current: number;
+    total: number;
+  };
+};
+
 export class TransferMonitor extends EventEmitter {
   private transferredObjectCount: number = 0;
   private totalObjectCount: number = 0;
@@ -13,22 +24,22 @@ export class TransferMonitor extends EventEmitter {
     this.on('object', this.updateObjectCount.bind(this));
   }
 
-  setMetadata(totalDataSize: number, totalObjectCount: number) {
+  setMetadata(totalDataSize: number, totalObjectCount: number): void {
     this.totalDataSize = totalDataSize;
     this.totalObjectCount = totalObjectCount;
   }
 
-  updateDataSize(size: number) {
+  updateDataSize(size: number): void {
     this.transferredDataSize += size;
     this.emit('progress', this.getStatus());
   }
 
-  updateObjectCount(count: number = 1) {
+  updateObjectCount(count: number = 1): void {
     this.transferredObjectCount += count;
     this.emit('progress', this.getStatus());
   }
 
-  getStatus() {
+  getStatus(): TransferStatus {
     return {
       size: {
         current: this.transferredDataSize,
@@ -38,7 +49,7 @@ export class TransferMonitor extends EventEmitter {
         current: this.transferredObjectCount,
         total: this.totalObjectCount,
       },
-    };
+    } as TransferStatus;
   }
 }
 

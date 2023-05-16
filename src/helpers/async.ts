@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/prefer-default-export
 export async function asyncMap(
   iterable: any[],
   limit: number,
