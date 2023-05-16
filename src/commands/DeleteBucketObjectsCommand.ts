@@ -20,7 +20,7 @@ export class DeleteBucketObjectsCommand {
     this.keys = input.keys;
   }
 
-  async send(client: S3Client): Promise<number> {
+  async execute(client: S3Client): Promise<number> {
     let deleted = 0;
     while (deleted < this.keys.length) {
       const chunk = this.keys.slice(deleted, deleted + 1000);
@@ -37,5 +37,3 @@ export class DeleteBucketObjectsCommand {
     return deleted;
   }
 }
-
-export default DeleteBucketObjectsCommand;

@@ -1,7 +1,7 @@
 import { promises as fsp } from 'node:fs';
 import * as path from 'node:path';
 import { toPosixPath } from '../helpers/path';
-import { LocalObject } from '../sync-objects/LocalObject';
+import { LocalObject } from '../fs/LocalObject';
 
 export type ListLocalObjectsCommandInput = {
   directory: string;
@@ -13,7 +13,7 @@ export class ListLocalObjectsCommand {
     this.directory = input.directory;
   }
 
-  async send(): Promise<LocalObject[]> {
+  async execute(): Promise<LocalObject[]> {
     return this.listObjectsRecursively(this.directory);
   }
 

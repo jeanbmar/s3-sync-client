@@ -5,7 +5,7 @@ import {
   CompletedPart,
 } from '@aws-sdk/client-s3';
 import { UploadedPart } from './UploadLocalObjectPartCommand';
-import { LocalObject } from '../sync-objects/LocalObject';
+import { LocalObject } from '../fs/LocalObject';
 
 export type CompleteMultipartLocalObjectCommandInput = {
   localObject: LocalObject;
@@ -26,7 +26,7 @@ export class CompleteMultipartLocalObjectCommand {
     this.parts = input.parts;
   }
 
-  async send(client: S3Client): Promise<void> {
+  async execute(client: S3Client): Promise<void> {
     const parts = [...this.parts]
       .sort((a, b) => a.partNumber - b.partNumber)
       .map(

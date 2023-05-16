@@ -1,9 +1,9 @@
 import { GetObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
 import { AbortSignal } from '@aws-sdk/abort-controller';
 import { asyncMap } from '../helpers/async';
-import { BucketObject } from '../sync-objects/BucketObject';
+import { BucketObject } from '../fs/BucketObject';
 import { TransferMonitor } from '../TransferMonitor';
-import { DEFAULT_MAX_CONCURRENT_TRANSFERS } from '../constants';
+import { DEFAULT_MAX_CONCURRENT_TRANSFERS } from './constants';
 import {
   DownloadBucketObjectCommand,
   DownloadBucketObjectCommandInput,
@@ -35,7 +35,7 @@ export class DownloadBucketObjectsCommand {
       input.maxConcurrentTransfers ?? DEFAULT_MAX_CONCURRENT_TRANSFERS;
   }
 
-  async send(client: S3Client): Promise<void> {
+  async execute(client: S3Client): Promise<void> {
     if (this.monitor) {
       const totalDataSize = this.bucketObjects.reduce(
         (total, bucketObject) => total + bucketObject.size,
@@ -54,7 +54,7 @@ export class DownloadBucketObjectsCommand {
           nativeCommandInput: this.nativeCommandInput,
           monitor: this.monitor,
         } as DownloadBucketObjectCommandInput);
-        await command.send(client);
+        await command.execute(client);
       }
     );
   }

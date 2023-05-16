@@ -12,7 +12,7 @@ import { AbortSignal } from '@aws-sdk/abort-controller';
 import { mergeInput } from './Command';
 import { toLocalPath } from '../helpers/path';
 import { TransferMonitor } from '../TransferMonitor';
-import { BucketObject } from '../sync-objects/BucketObject';
+import { BucketObject } from '../fs/BucketObject';
 
 export type DownloadBucketObjectCommandInput = {
   bucketObject: BucketObject;
@@ -37,7 +37,7 @@ export class DownloadBucketObjectCommand {
     this.monitor = input.monitor;
   }
 
-  async send(client: S3Client): Promise<void> {
+  async execute(client: S3Client): Promise<void> {
     const relativePath = toLocalPath(this.bucketObject.id);
     const filePath = path.join(this.localDir, relativePath);
     await fsp.mkdir(path.dirname(filePath), { recursive: true });

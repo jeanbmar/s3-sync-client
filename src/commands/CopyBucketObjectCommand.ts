@@ -5,7 +5,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { AbortSignal } from '@aws-sdk/abort-controller';
 import { TransferMonitor } from '../TransferMonitor';
-import { BucketObject } from '../sync-objects/BucketObject';
+import { BucketObject } from '../fs/BucketObject';
 import { mergeInput } from './Command';
 
 export type CopyBucketObjectCommandInput = {
@@ -31,7 +31,7 @@ export class CopyBucketObjectCommand {
     this.monitor = input.monitor;
   }
 
-  async send(client: S3Client): Promise<void> {
+  async execute(client: S3Client): Promise<void> {
     const copyObjectCommandInput = mergeInput<CopyObjectCommandInput>(
       {
         Bucket: this.targetBucket,

@@ -4,7 +4,7 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { mergeInput } from './Command';
-import { LocalObject } from '../sync-objects/LocalObject';
+import { LocalObject } from '../fs/LocalObject';
 
 export type CreateMultipartLocalObjectUploadCommandInput = {
   localObject: LocalObject;
@@ -22,7 +22,7 @@ export class CreateMultipartLocalObjectUploadCommand {
     this.nativeCommandInput = input.nativeCommandInput;
   }
 
-  async send(client: S3Client): Promise<string> {
+  async execute(client: S3Client): Promise<string> {
     const uploadCommandInput = mergeInput<CreateMultipartUploadCommandInput>(
       {
         Bucket: this.bucket,

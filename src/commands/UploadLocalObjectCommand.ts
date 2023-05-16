@@ -6,7 +6,7 @@ import {
 import { AbortSignal } from '@aws-sdk/abort-controller';
 import fs from 'node:fs';
 import { TransferMonitor } from '../TransferMonitor';
-import { LocalObject } from '../sync-objects/LocalObject';
+import { LocalObject } from '../fs/LocalObject';
 import { mergeInput } from './Command';
 
 export type UploadLocalObjectCommandInput = {
@@ -31,7 +31,7 @@ export class UploadLocalObjectCommand {
     this.nativeCommandInput = input.nativeCommandInput;
     this.monitor = input.monitor;
   }
-  async send(client: S3Client): Promise<void> {
+  async execute(client: S3Client): Promise<void> {
     const stream = fs.createReadStream(this.localObject.path);
     const putObjectCommandInput = mergeInput<PutObjectCommandInput>(
       {

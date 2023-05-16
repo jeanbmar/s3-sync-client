@@ -13,10 +13,6 @@ export class TransferMonitor extends EventEmitter {
     this.on('object', this.updateObjectCount.bind(this));
   }
 
-  abort() {
-    this.emit('abort');
-  }
-
   setMetadata(totalDataSize: number, totalObjectCount: number) {
     this.totalDataSize = totalDataSize;
     this.totalObjectCount = totalObjectCount;

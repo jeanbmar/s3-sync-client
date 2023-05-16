@@ -4,10 +4,7 @@ import {
   ListObjectsV2CommandOutput,
   S3Client,
 } from '@aws-sdk/client-s3';
-import {
-  BucketObject,
-  BucketObjectOptions,
-} from '../sync-objects/BucketObject';
+import { BucketObject, BucketObjectOptions } from '../fs/BucketObject';
 
 export type ListBucketObjectsCommandInput = {
   bucket: string;
@@ -23,7 +20,7 @@ export class ListBucketObjectsCommand {
     this.prefix = input.prefix;
   }
 
-  async send(client: S3Client): Promise<BucketObject[]> {
+  async execute(client: S3Client): Promise<BucketObject[]> {
     const objects: BucketObject[] = [];
     let response: ListObjectsV2CommandOutput;
     let nextContinuationToken: string;
@@ -55,5 +52,3 @@ export class ListBucketObjectsCommand {
     return objects;
   }
 }
-
-export default ListBucketObjectsCommand;
