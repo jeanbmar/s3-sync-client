@@ -1,58 +1,53 @@
-import { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
+import { promises as fsp } from 'node:fs';
+import { GetObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
 import { AbortSignal } from '@aws-sdk/abort-controller';
-import { UploadLocalObjectsCommand } from './UploadLocalObjectsCommand';
-import { DeleteBucketObjectsCommand } from './DeleteBucketObjectsCommand';
+import { DEFAULT_MAX_CONCURRENT_TRANSFERS } from './constants';
+import { DownloadBucketObjectsCommand } from './DownloadBucketObjectsCommand';
 import { SyncObject } from '../fs/SyncObject';
 import { parsePrefix } from '../helpers/bucket';
 import { Relocation, Filter } from './Command';
 import { TransferMonitor } from '../TransferMonitor';
-import {
-  DEFAULT_MAX_CONCURRENT_TRANSFERS,
-  DEFAULT_PART_SIZE,
-} from './constants';
-import { ListLocalObjectsCommand } from './ListLocalObjectsCommand';
-import { ListBucketObjectsCommand } from './ListBucketObjectsCommand';
-import { LocalObject } from '../fs/LocalObject';
 import { BucketObject } from '../fs/BucketObject';
+import { LocalObject } from '../fs/LocalObject';
+import { ListBucketObjectsCommand } from './ListBucketObjectsCommand';
+import { ListLocalObjectsCommand } from './ListLocalObjectsCommand';
 
-export type SyncBucketWithLocalCommandInput = {
-  localDir: string;
+export type SyncLocalWithBucketCommandInput = {
   bucketPrefix: string;
+  localDir: string;
   dryRun?: boolean;
   del?: boolean;
   sizeOnly?: boolean;
   relocations?: Relocation[];
   filters?: Filter[];
   abortSignal?: AbortSignal;
-  nativeCommandInput?: PutObjectCommandInput;
+  nativeCommandInput?: GetObjectCommandInput;
   monitor?: TransferMonitor;
   maxConcurrentTransfers?: number;
-  partSize?: number;
 };
 
-export type SyncBucketWithLocalCommandOutput = {
-  created: LocalObject[];
-  updated: LocalObject[];
-  deleted: BucketObject[];
+export type SyncLocalWithBucketCommandOutput = {
+  created: BucketObject[];
+  updated: BucketObject[];
+  deleted: LocalObject[];
 };
 
-export class SyncBucketWithLocalCommand {
-  localDir: string;
+export class SyncLocalWithBucketCommand {
   bucketPrefix: string;
+  localDir: string;
   dryRun: boolean;
   del: boolean;
   sizeOnly: boolean;
   relocations: Relocation[];
   filters: Filter[];
   abortSignal?: AbortSignal;
-  nativeCommandInput?: PutObjectCommandInput;
+  nativeCommandInput?: GetObjectCommandInput;
   monitor?: TransferMonitor;
   maxConcurrentTransfers: number;
-  partSize: number;
 
-  constructor(input: SyncBucketWithLocalCommandInput) {
-    this.localDir = input.localDir;
+  constructor(input: SyncLocalWithBucketCommandInput) {
     this.bucketPrefix = input.bucketPrefix;
+    this.localDir = input.localDir;
     this.dryRun = input.dryRun ?? false;
     this.del = input.del ?? false;
     this.sizeOnly = input.sizeOnly ?? false;
@@ -63,25 +58,24 @@ export class SyncBucketWithLocalCommand {
     this.monitor = input.monitor;
     this.maxConcurrentTransfers =
       input.maxConcurrentTransfers ?? DEFAULT_MAX_CONCURRENT_TRANSFERS;
-    this.partSize = input.partSize ?? DEFAULT_PART_SIZE;
   }
 
-  async execute(client: S3Client): Promise<SyncBucketWithLocalCommandOutput> {
+  async execute(client: S3Client) {
     const { bucket, prefix } = parsePrefix(this.bucketPrefix);
+    await fsp.mkdir(this.localDir, { recursive: true });
     const [sourceObjects, targetObjects] = await Promise.all([
-      new ListLocalObjectsCommand({ directory: this.localDir }).execute(),
       new ListBucketObjectsCommand({ bucket, prefix }).execute(client),
+      new ListLocalObjectsCommand({ directory: this.localDir }).execute(),
     ]);
-    if (prefix !== '') this.relocations = this.relocations.concat(['', prefix]);
     sourceObjects.forEach((sourceObject) =>
       sourceObject.applyFilters(this.filters)
     );
     const includedSourceObjects = sourceObjects.filter(
       (sourceObject) => sourceObject.isIncluded
     );
-    includedSourceObjects.forEach((sourceObject) =>
-      sourceObject.applyRelocations(this.relocations)
-    );
+    includedSourceObjects.forEach((sourceObject) => {
+      sourceObject.applyRelocations(this.relocations);
+    });
     const diff = SyncObject.diff(
       includedSourceObjects,
       targetObjects,
@@ -90,24 +84,24 @@ export class SyncBucketWithLocalCommand {
     const commands = [];
     if (!this.dryRun) {
       commands.push(
-        new UploadLocalObjectsCommand({
-          localObjects: [...diff.created, ...diff.updated] as LocalObject[],
-          bucket,
+        new DownloadBucketObjectsCommand({
+          bucketObjects: [...diff.created, ...diff.updated] as BucketObject[],
+          localDir: this.localDir,
           abortSignal: this.abortSignal,
           nativeCommandInput: this.nativeCommandInput,
           monitor: this.monitor,
           maxConcurrentTransfers: this.maxConcurrentTransfers,
-          partSize: this.partSize,
         }).execute(client)
       );
     }
     if (this.del) {
       if (!this.dryRun) {
         commands.push(
-          new DeleteBucketObjectsCommand({
-            bucket,
-            keys: (diff.deleted as BucketObject[]).map((object) => object.key),
-          }).execute(client)
+          Promise.all(
+            (diff.deleted as LocalObject[]).map((object) =>
+              fsp.unlink(object.path)
+            )
+          )
         );
       }
     }
@@ -116,6 +110,6 @@ export class SyncBucketWithLocalCommand {
       created: diff.created,
       updated: diff.updated,
       deleted: this.del ? diff.deleted : [],
-    } as SyncBucketWithLocalCommandOutput;
+    } as SyncLocalWithBucketCommandOutput;
   }
 }
