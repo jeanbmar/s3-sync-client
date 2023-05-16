@@ -10,6 +10,6 @@
     "sourceMap": true,
     "target": "es2022",
   },
-  "include": ["src/"],
+  "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist"]
 }
