@@ -362,7 +362,11 @@ test('s3 sync client', async (t) => {
     await b.test('aborts a multipart sync and throw', async () => {
       const monitor = new TransferMonitor();
       const abortController = new AbortController();
-      setTimeout(() => abortController.abort(), 4000);
+      let tick = 0;
+      monitor.on('progress', () => {
+        tick += 1;
+        if (tick === 100) abortController.abort();
+      });
       await assert.rejects(
         () =>
           syncClient.sync(
