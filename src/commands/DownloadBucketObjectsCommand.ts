@@ -8,12 +8,13 @@ import {
   DownloadBucketObjectCommand,
   DownloadBucketObjectCommandInput,
 } from './DownloadBucketObjectCommand';
+import { CommandInput } from './Command';
 
 export type DownloadBucketObjectsCommandInput = {
   bucketObjects: BucketObject[];
   localDir: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: GetObjectCommandInput;
+  commandInput?: CommandInput<GetObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers?: number;
 };
@@ -22,14 +23,14 @@ export class DownloadBucketObjectsCommand {
   bucketObjects: BucketObject[];
   localDir: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: GetObjectCommandInput;
+  commandInput?: CommandInput<GetObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers: number;
   constructor(input: DownloadBucketObjectsCommandInput) {
     this.bucketObjects = input.bucketObjects;
     this.localDir = input.localDir;
     this.abortSignal = input.abortSignal;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
     this.maxConcurrentTransfers =
       input.maxConcurrentTransfers ?? DEFAULT_MAX_CONCURRENT_TRANSFERS;
@@ -51,7 +52,7 @@ export class DownloadBucketObjectsCommand {
           bucketObject,
           localDir: this.localDir,
           abortSignal: this.abortSignal,
-          nativeCommandInput: this.nativeCommandInput,
+          commandInput: this.commandInput,
           monitor: this.monitor,
         } as DownloadBucketObjectCommandInput);
         await command.execute(client);

@@ -4,7 +4,7 @@ import { UploadLocalObjectsCommand } from './UploadLocalObjectsCommand';
 import { DeleteBucketObjectsCommand } from './DeleteBucketObjectsCommand';
 import { SyncObject } from '../fs/SyncObject';
 import { parsePrefix } from '../helpers/bucket';
-import { Relocation, Filter } from './Command';
+import { Relocation, Filter, CommandInput } from './Command';
 import { TransferMonitor } from '../TransferMonitor';
 import {
   DEFAULT_MAX_CONCURRENT_TRANSFERS,
@@ -24,7 +24,7 @@ export type SyncBucketWithLocalCommandInput = {
   relocations?: Relocation[];
   filters?: Filter[];
   abortSignal?: AbortSignal;
-  nativeCommandInput?: PutObjectCommandInput;
+  commandInput?: CommandInput<PutObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers?: number;
   partSize?: number;
@@ -45,7 +45,7 @@ export class SyncBucketWithLocalCommand {
   relocations: Relocation[];
   filters: Filter[];
   abortSignal?: AbortSignal;
-  nativeCommandInput?: PutObjectCommandInput;
+  commandInput?: CommandInput<PutObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers: number;
   partSize: number;
@@ -59,7 +59,7 @@ export class SyncBucketWithLocalCommand {
     this.relocations = input.relocations ?? [];
     this.filters = input.filters ?? [];
     this.abortSignal = input.abortSignal;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
     this.maxConcurrentTransfers =
       input.maxConcurrentTransfers ?? DEFAULT_MAX_CONCURRENT_TRANSFERS;
@@ -72,7 +72,8 @@ export class SyncBucketWithLocalCommand {
       new ListLocalObjectsCommand({ directory: this.localDir }).execute(),
       new ListBucketObjectsCommand({ bucket, prefix }).execute(client),
     ]);
-    if (prefix !== '') this.relocations = this.relocations.concat(['', prefix]);
+    if (prefix !== '')
+      this.relocations = this.relocations.concat([['', prefix]]);
     sourceObjects.forEach((sourceObject) =>
       sourceObject.applyFilters(this.filters)
     );
@@ -94,7 +95,7 @@ export class SyncBucketWithLocalCommand {
           localObjects: [...diff.created, ...diff.updated] as LocalObject[],
           bucket,
           abortSignal: this.abortSignal,
-          nativeCommandInput: this.nativeCommandInput,
+          commandInput: this.commandInput,
           monitor: this.monitor,
           maxConcurrentTransfers: this.maxConcurrentTransfers,
           partSize: this.partSize,

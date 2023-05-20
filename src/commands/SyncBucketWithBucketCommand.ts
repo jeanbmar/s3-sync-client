@@ -3,7 +3,7 @@ import { AbortSignal } from '@aws-sdk/abort-controller';
 import { DEFAULT_MAX_CONCURRENT_TRANSFERS } from './constants';
 import { SyncObject } from '../fs/SyncObject';
 import { parsePrefix } from '../helpers/bucket';
-import { Relocation, Filter } from './Command';
+import { Relocation, Filter, CommandInput } from './Command';
 import { TransferMonitor } from '../TransferMonitor';
 import { BucketObject } from '../fs/BucketObject';
 import { CopyBucketObjectsCommand } from './CopyBucketObjectsCommand';
@@ -19,7 +19,7 @@ export type SyncBucketWithBucketCommandInput = {
   relocations?: Relocation[];
   filters?: Filter[];
   abortSignal?: AbortSignal;
-  nativeCommandInput?: CopyObjectCommandInput;
+  commandInput?: CommandInput<CopyObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers?: number;
 };
@@ -39,7 +39,7 @@ export class SyncBucketWithBucketCommand {
   relocations: Relocation[];
   filters: Filter[];
   abortSignal?: AbortSignal;
-  nativeCommandInput?: CopyObjectCommandInput;
+  commandInput?: CommandInput<CopyObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers: number;
 
@@ -52,13 +52,13 @@ export class SyncBucketWithBucketCommand {
     this.relocations = input.relocations ?? [];
     this.filters = input.filters ?? [];
     this.abortSignal = input.abortSignal;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
     this.maxConcurrentTransfers =
       input.maxConcurrentTransfers ?? DEFAULT_MAX_CONCURRENT_TRANSFERS;
   }
 
-  async execute(client: S3Client) {
+  async execute(client: S3Client): Promise<SyncBucketWithBucketCommandOutput> {
     const { bucket: sourceBucket, prefix: sourcePrefix } = parsePrefix(
       this.sourceBucketPrefix
     );
@@ -76,7 +76,7 @@ export class SyncBucketWithBucketCommand {
       }).execute(client),
     ]);
     if (targetPrefix !== '')
-      this.relocations = this.relocations.concat(['', targetPrefix]);
+      this.relocations = this.relocations.concat([['', targetPrefix]]);
     sourceObjects.forEach((sourceObject) =>
       sourceObject.applyFilters(this.filters)
     );
@@ -98,7 +98,7 @@ export class SyncBucketWithBucketCommand {
           bucketObjects: [...diff.created, ...diff.updated] as BucketObject[],
           targetBucket,
           abortSignal: this.abortSignal,
-          nativeCommandInput: this.nativeCommandInput,
+          commandInput: this.commandInput,
           monitor: this.monitor,
           maxConcurrentTransfers: this.maxConcurrentTransfers,
         }).execute(client)

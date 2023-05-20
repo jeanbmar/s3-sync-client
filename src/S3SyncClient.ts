@@ -1,5 +1,10 @@
 import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
-import { SyncCommand, SyncOptions } from './commands/SyncCommand';
+import {
+  SyncCommand,
+  SyncCommandOutput,
+  SyncOptions,
+} from './commands/SyncCommand';
+import { ICommand } from './commands/Command';
 
 export type S3SyncClientConfig = {
   client: S3Client;
@@ -13,12 +18,20 @@ export class S3SyncClient {
     this.sync = this.sync.bind(this);
   }
 
-  async sync(source: string, target: string, options: SyncOptions) {
+  async sync(
+    source: string,
+    target: string,
+    options?: SyncOptions
+  ): Promise<SyncCommandOutput> {
     return new SyncCommand({
       source,
       target,
       ...options,
     }).execute(this.client);
+  }
+
+  async send(command: ICommand): Promise<any> {
+    return command.execute(this.client);
   }
 }
 

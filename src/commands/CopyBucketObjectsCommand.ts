@@ -8,12 +8,13 @@ import {
   CopyBucketObjectCommand,
   CopyBucketObjectCommandInput,
 } from './CopyBucketObjectCommand';
+import { CommandInput } from './Command';
 
 export type CopyBucketObjectsCommandInput = {
   bucketObjects: BucketObject[];
   targetBucket: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: CopyObjectCommandInput;
+  commandInput?: CommandInput<CopyObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers?: number;
 };
@@ -22,13 +23,15 @@ export class CopyBucketObjectsCommand {
   bucketObjects: BucketObject[];
   targetBucket: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: CopyObjectCommandInput;
+  commandInput?: CommandInput<CopyObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers: number;
+
   constructor(input: CopyBucketObjectsCommandInput) {
     this.bucketObjects = input.bucketObjects;
     this.targetBucket = input.targetBucket;
     this.abortSignal = input.abortSignal;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
     this.maxConcurrentTransfers =
       input.maxConcurrentTransfers ?? DEFAULT_MAX_CONCURRENT_TRANSFERS;
@@ -50,7 +53,7 @@ export class CopyBucketObjectsCommand {
           bucketObject,
           targetBucket: this.targetBucket,
           abortSignal: this.abortSignal,
-          nativeCommandInput: this.nativeCommandInput,
+          commandInput: this.commandInput,
           monitor: this.monitor,
         } as CopyBucketObjectCommandInput);
         await command.execute(client);

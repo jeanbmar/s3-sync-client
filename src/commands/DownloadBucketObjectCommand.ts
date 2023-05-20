@@ -9,7 +9,7 @@ import {
 import { Readable } from 'node:stream';
 import fs from 'node:fs';
 import { AbortSignal } from '@aws-sdk/abort-controller';
-import { mergeInput } from './Command';
+import { CommandInput, mergeInput } from './Command';
 import { toLocalPath } from '../helpers/path';
 import { TransferMonitor } from '../TransferMonitor';
 import { BucketObject } from '../fs/BucketObject';
@@ -18,7 +18,7 @@ export type DownloadBucketObjectCommandInput = {
   bucketObject: BucketObject;
   localDir: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: GetObjectCommandInput;
+  commandInput?: CommandInput<GetObjectCommandInput>;
   monitor?: TransferMonitor;
 };
 
@@ -26,14 +26,14 @@ export class DownloadBucketObjectCommand {
   bucketObject: BucketObject;
   localDir: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: GetObjectCommandInput;
+  commandInput?: CommandInput<GetObjectCommandInput>;
   monitor?: TransferMonitor;
 
   constructor(input: DownloadBucketObjectCommandInput) {
     this.bucketObject = input.bucketObject;
     this.localDir = input.localDir;
     this.abortSignal = input.abortSignal;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
   }
 
@@ -46,7 +46,7 @@ export class DownloadBucketObjectCommand {
         Bucket: this.bucketObject.bucket,
         Key: this.bucketObject.key,
       },
-      this.nativeCommandInput
+      this.commandInput
     );
     const response: GetObjectCommandOutput = await client.send(
       new GetObjectCommand(getObjectCommandInput),

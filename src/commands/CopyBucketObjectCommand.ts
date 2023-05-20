@@ -6,13 +6,13 @@ import {
 import { AbortSignal } from '@aws-sdk/abort-controller';
 import { TransferMonitor } from '../TransferMonitor';
 import { BucketObject } from '../fs/BucketObject';
-import { mergeInput } from './Command';
+import { CommandInput, mergeInput } from './Command';
 
 export type CopyBucketObjectCommandInput = {
   bucketObject: BucketObject;
   targetBucket: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: CopyObjectCommandInput;
+  commandInput?: CommandInput<CopyObjectCommandInput>;
   monitor?: TransferMonitor;
 };
 
@@ -20,19 +20,19 @@ export class CopyBucketObjectCommand {
   bucketObject: BucketObject;
   targetBucket: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: CopyObjectCommandInput;
+  commandInput?: CommandInput<CopyObjectCommandInput>;
   monitor?: TransferMonitor;
 
   constructor(input: CopyBucketObjectCommandInput) {
     this.bucketObject = input.bucketObject;
     this.targetBucket = input.targetBucket;
     this.abortSignal = input.abortSignal;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
   }
 
   async execute(client: S3Client): Promise<void> {
-    const copyObjectCommandInput = mergeInput<CopyObjectCommandInput>(
+    const commandInput = mergeInput<CopyObjectCommandInput>(
       {
         Bucket: this.targetBucket,
         Key: this.bucketObject.id,
@@ -40,9 +40,9 @@ export class CopyBucketObjectCommand {
           `${this.bucketObject.bucket}/${this.bucketObject.key}`
         ),
       },
-      this.nativeCommandInput
+      this.commandInput
     );
-    await client.send(new CopyObjectCommand(copyObjectCommandInput), {
+    await client.send(new CopyObjectCommand(commandInput), {
       abortSignal: this.abortSignal,
     });
     if (this.monitor) {

@@ -1,4 +1,8 @@
-import { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
+import {
+  CreateMultipartUploadCommandInput,
+  PutObjectCommandInput,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { AbortSignal } from '@aws-sdk/abort-controller';
 import { asyncMap } from '../helpers/async';
 import { LocalObject } from '../fs/LocalObject';
@@ -14,24 +18,27 @@ import {
   UploadLocalObjectPartCommand,
 } from './UploadLocalObjectPartCommand';
 import { CompleteMultipartLocalObjectCommand } from './CompleteMultipartLocalObjectCommand';
+import { CommandInput } from './Command';
 
 export type UploadLocalObjectsCommandInput = {
   localObjects: LocalObject[];
   bucket: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: PutObjectCommandInput;
+  commandInput?:
+    | CommandInput<PutObjectCommandInput>
+    | CommandInput<CreateMultipartUploadCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers?: number;
   partSize?: number;
 };
 
-// todo manage upload part input
-
 export class UploadLocalObjectsCommand {
   localObjects: LocalObject[];
   bucket: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: PutObjectCommandInput;
+  commandInput?:
+    | CommandInput<PutObjectCommandInput>
+    | CommandInput<CreateMultipartUploadCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers: number;
   partSize: number;
@@ -40,7 +47,7 @@ export class UploadLocalObjectsCommand {
     this.localObjects = input.localObjects;
     this.bucket = input.bucket;
     this.abortSignal = input.abortSignal;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
     this.maxConcurrentTransfers =
       input.maxConcurrentTransfers ?? DEFAULT_MAX_CONCURRENT_TRANSFERS;
@@ -74,7 +81,7 @@ export class UploadLocalObjectsCommand {
         localObject,
         bucket: this.bucket,
         abortSignal: this.abortSignal,
-        nativeCommandInput: this.nativeCommandInput,
+        commandInput: this.commandInput,
         monitor: this.monitor,
       });
       await command.execute(client);
@@ -91,7 +98,7 @@ export class UploadLocalObjectsCommand {
           const command = new CreateMultipartLocalObjectUploadCommand({
             localObject,
             bucket: this.bucket,
-            nativeCommandInput: this.nativeCommandInput,
+            commandInput: this.commandInput,
           });
           resolve(command.execute(client));
         });

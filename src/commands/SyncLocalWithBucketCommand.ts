@@ -5,7 +5,7 @@ import { DEFAULT_MAX_CONCURRENT_TRANSFERS } from './constants';
 import { DownloadBucketObjectsCommand } from './DownloadBucketObjectsCommand';
 import { SyncObject } from '../fs/SyncObject';
 import { parsePrefix } from '../helpers/bucket';
-import { Relocation, Filter } from './Command';
+import { Relocation, Filter, CommandInput } from './Command';
 import { TransferMonitor } from '../TransferMonitor';
 import { BucketObject } from '../fs/BucketObject';
 import { LocalObject } from '../fs/LocalObject';
@@ -21,7 +21,7 @@ export type SyncLocalWithBucketCommandInput = {
   relocations?: Relocation[];
   filters?: Filter[];
   abortSignal?: AbortSignal;
-  nativeCommandInput?: GetObjectCommandInput;
+  commandInput?: CommandInput<GetObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers?: number;
 };
@@ -41,7 +41,7 @@ export class SyncLocalWithBucketCommand {
   relocations: Relocation[];
   filters: Filter[];
   abortSignal?: AbortSignal;
-  nativeCommandInput?: GetObjectCommandInput;
+  commandInput?: CommandInput<GetObjectCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers: number;
 
@@ -54,13 +54,13 @@ export class SyncLocalWithBucketCommand {
     this.relocations = input.relocations ?? [];
     this.filters = input.filters ?? [];
     this.abortSignal = input.abortSignal;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
     this.maxConcurrentTransfers =
       input.maxConcurrentTransfers ?? DEFAULT_MAX_CONCURRENT_TRANSFERS;
   }
 
-  async execute(client: S3Client) {
+  async execute(client: S3Client): Promise<SyncLocalWithBucketCommandOutput> {
     const { bucket, prefix } = parsePrefix(this.bucketPrefix);
     await fsp.mkdir(this.localDir, { recursive: true });
     const [sourceObjects, targetObjects] = await Promise.all([
@@ -88,7 +88,7 @@ export class SyncLocalWithBucketCommand {
           bucketObjects: [...diff.created, ...diff.updated] as BucketObject[],
           localDir: this.localDir,
           abortSignal: this.abortSignal,
-          nativeCommandInput: this.nativeCommandInput,
+          commandInput: this.commandInput,
           monitor: this.monitor,
           maxConcurrentTransfers: this.maxConcurrentTransfers,
         }).execute(client)

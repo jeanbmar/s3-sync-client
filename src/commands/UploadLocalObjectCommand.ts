@@ -7,13 +7,13 @@ import { AbortSignal } from '@aws-sdk/abort-controller';
 import fs from 'node:fs';
 import { TransferMonitor } from '../TransferMonitor';
 import { LocalObject } from '../fs/LocalObject';
-import { mergeInput } from './Command';
+import { CommandInput, mergeInput } from './Command';
 
 export type UploadLocalObjectCommandInput = {
   localObject: LocalObject;
   bucket: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: PutObjectCommandInput;
+  commandInput?: CommandInput<PutObjectCommandInput>;
   monitor?: TransferMonitor;
 };
 
@@ -21,14 +21,14 @@ export class UploadLocalObjectCommand {
   localObject: LocalObject;
   bucket: string;
   abortSignal?: AbortSignal;
-  nativeCommandInput?: PutObjectCommandInput;
+  commandInput?: CommandInput<PutObjectCommandInput>;
   monitor?: TransferMonitor;
 
   constructor(input: UploadLocalObjectCommandInput) {
     this.localObject = input.localObject;
     this.bucket = input.bucket;
     this.abortSignal = input.abortSignal;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
     this.monitor = input.monitor;
   }
   async execute(client: S3Client): Promise<void> {
@@ -40,7 +40,7 @@ export class UploadLocalObjectCommand {
         Body: stream,
         ContentLength: this.localObject.size,
       },
-      this.nativeCommandInput
+      this.commandInput
     );
     if (this.monitor) {
       stream.on('data', (data) => {

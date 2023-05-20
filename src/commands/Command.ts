@@ -1,3 +1,5 @@
+import { S3Client } from '@aws-sdk/client-s3';
+
 export type Relocation = [sourcePrefix: string, targetPrefix: string];
 
 export type Filter = {
@@ -5,20 +7,25 @@ export type Filter = {
   include?: (key) => boolean;
 };
 
-export function mergeInput<T>(commandInput: T, properties: any = {}): T {
-  const entries = Object.entries(properties).map(
-    ([propertyName, propertyValue]) => {
-      const evaluated =
-        typeof propertyValue === 'function'
-          ? propertyValue(commandInput)
-          : propertyValue;
-      return [propertyName, evaluated];
-    }
-  );
+export type CommandInput<T> =
+  | Partial<T>
+  | ((properties: Partial<T>) => Partial<T>);
+
+function isFunction<T>(
+  properties: any
+): properties is (properties: Partial<T>) => Partial<T> {
+  return typeof properties === 'function';
+}
+
+export function mergeInput<T>(commandInput: T, properties: CommandInput<T>): T {
   return {
     ...commandInput,
-    ...Object.fromEntries(entries),
+    ...(isFunction(properties)
+      ? (properties as (properties: Partial<T>) => Partial<T>)(commandInput)
+      : properties),
   };
 }
 
-export class Command {}
+export interface ICommand {
+  execute(client?: S3Client): any;
+}

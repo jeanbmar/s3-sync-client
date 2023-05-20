@@ -5,7 +5,7 @@ import {
 } from '@aws-sdk/client-s3';
 import fs from 'node:fs';
 import { AbortSignal } from '@aws-sdk/abort-controller';
-import { mergeInput } from './Command';
+import { CommandInput, mergeInput } from './Command';
 import { LocalObject } from '../fs/LocalObject';
 import { TransferMonitor } from '../TransferMonitor';
 
@@ -18,7 +18,7 @@ export type UploadLocalObjectPartCommandInput = {
   bucket: string;
   abortSignal?: AbortSignal;
   monitor?: TransferMonitor;
-  nativeCommandInput?: UploadPartCommandInput;
+  commandInput?: CommandInput<UploadPartCommandInput>;
 };
 
 export type UploadedPart = {
@@ -35,7 +35,7 @@ export class UploadLocalObjectPartCommand {
   bucket: string;
   abortSignal?: AbortSignal;
   monitor?: TransferMonitor;
-  nativeCommandInput?: UploadPartCommandInput;
+  commandInput?: CommandInput<UploadPartCommandInput>;
   constructor(input: UploadLocalObjectPartCommandInput) {
     this.localObject = input.localObject;
     this.startOffset = input.startOffset;
@@ -45,7 +45,7 @@ export class UploadLocalObjectPartCommand {
     this.bucket = input.bucket;
     this.abortSignal = input.abortSignal;
     this.monitor = input.monitor;
-    this.nativeCommandInput = input.nativeCommandInput;
+    this.commandInput = input.commandInput;
   }
 
   async execute(client: S3Client): Promise<UploadedPart> {
@@ -62,7 +62,7 @@ export class UploadLocalObjectPartCommand {
         Body: stream,
         ContentLength: this.endOffset - this.startOffset + 1,
       },
-      this.nativeCommandInput
+      this.commandInput
     );
     if (this.monitor) {
       stream.on('data', (data) => {

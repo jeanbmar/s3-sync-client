@@ -2,14 +2,16 @@ import { S3Client } from '@aws-sdk/client-s3';
 import {
   SyncBucketWithBucketCommand,
   SyncBucketWithBucketCommandInput,
+  SyncBucketWithBucketCommandOutput,
 } from './SyncBucketWithBucketCommand';
 import {
   SyncBucketWithLocalCommand,
   SyncBucketWithLocalCommandInput,
+  SyncBucketWithLocalCommandOutput,
 } from './SyncBucketWithLocalCommand';
 import {
   SyncLocalWithBucketCommand,
-  SyncLocalWithBucketCommandInput,
+  SyncLocalWithBucketCommandInput, SyncLocalWithBucketCommandOutput,
 } from './SyncLocalWithBucketCommand';
 
 export type SyncBucketWithBucketOptions = Omit<
@@ -36,6 +38,11 @@ export type SyncCommandInput = {
   target: string;
 } & SyncOptions;
 
+export type SyncCommandOutput =
+  | SyncBucketWithBucketCommandOutput
+  | SyncBucketWithLocalCommandOutput
+  | SyncLocalWithBucketCommandOutput;
+
 export class SyncCommand {
   source: string;
   target: string;
@@ -48,7 +55,7 @@ export class SyncCommand {
     this.options = options;
   }
 
-  async execute(client: S3Client) {
+  async execute(client: S3Client): Promise<SyncCommandOutput> {
     const sourceIsBucket = this.source.startsWith('s3://');
     const targetIsBucket = this.target.startsWith('s3://');
     if (!sourceIsBucket && !targetIsBucket) {
