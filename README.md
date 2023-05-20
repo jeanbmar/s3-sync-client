@@ -2,7 +2,7 @@
 
 ![npm](https://img.shields.io/npm/v/s3-sync-client.svg) ![downloads](https://img.shields.io/npm/dm/s3-sync-client.svg)
 
-**AWS CLI ``s3 sync`` for Node.js** provides a modern client to perform S3 sync operations between file systems and S3 buckets in the spirit of the official [AWS CLI command](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html).    
+**AWS CLI ``s3 sync`` for Node.js** is a modern TypeScript client to perform S3 sync operations between file systems and S3 buckets, in the spirit of the official [AWS CLI command](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/sync.html).    
 AWS CLI installation is **NOT** required by this module.
 
 ## Features
@@ -12,41 +12,42 @@ AWS CLI installation is **NOT** required by this module.
 - Sync two remote Amazon S3 buckets
 - Sync only new and updated objects
 - Support AWS CLI options `--delete`, `--dryrun`, `--size-only`, `--include` and `--exclude`
-- Support AWS SDK command input options
-- Monitor object sync progress
+- Support AWS SDK native command input options
+- Monitor sync progress
 - Sync **any** number of objects (no 1000 objects limit)
 - Transfer objects concurrently
 - Manage differences in folder structures easily through relocation
 
 ## Why should I use this module?
 
-1. There is no way to achieve S3 sync using the AWS SDK for JavaScript v3 alone.
-1. AWS CLI installation is **NOT** required.
-1. The package contains no external dependency.
-1. The AWS SDK peer dependency is up-to-date ([AWS SDK for JavaScript v3](https://github.com/aws/aws-sdk-js-v3)).
-1. The module overcomes a set of common limitations listed at the bottom of this README.
+1. There is [no way](https://github.com/aws/aws-sdk-js-v3/issues/2096#issuecomment-858098764) to achieve S3 sync using the AWS SDK for JavaScript v3 alone
+1. AWS CLI installation is **NOT** required
+1. The module contains no external dependency
+1. The AWS SDK peer dependency is up-to-date ([AWS SDK for JavaScript v3](https://github.com/aws/aws-sdk-js-v3))
+1. The module overcomes a set of common limitations listed at the bottom of this README
 
 # Table of Contents
 
 1. [Getting Started](#getting-started)
     1. [Install](#install)
-    2. [Recipes](#recipes)
+    2. [Quick Start](#quick-start)
         1. [Client initialization](#client-initialization)
         2. [Sync a remote S3 bucket with the local file system](#sync-a-remote-s3-bucket-with-the-local-file-system)
         3. [Sync the local file system with a remote S3 bucket](#sync-the-local-file-system-with-a-remote-s3-bucket)
         4. [Sync two remote S3 buckets](#sync-two-remote-s3-buckets)
-        5. [Monitor transfer progress](#monitor-transfer-progress)
-        6. [Use AWS SDK command input options](#use-aws-sdk-command-input-options)
-        7. [Relocate objects during sync](#relocate-objects-during-sync)
-        8. [Filter source files](#filter-source-files)
+        5. [Monitor transfer progress](#monitor-sync-progress)
+        6. [Abort sync](#abort-sync)
+        7. [Use AWS SDK command input options](#use-aws-sdk-command-input-options)
+        8. [Relocate objects during sync](#relocate-objects-during-sync)
+        9. [Filter source files](#filter-source-files)
 1. [API Reference](#api-reference)
     - [Class: S3SyncClient](#class-s3-sync-client)
       - [new S3SyncClient(configuration)](#new-s3-sync-client)
-      - [client.sync(localDir, bucketUri[, options])](#sync-bucket-with-local)
-      - [client.sync(bucketUri, localDir[, options])](#sync-local-with-bucket)
-      - [client.sync(sourceBucketUri, targetBucketUri[, options])](#sync-bucket-with-bucket)
+      - [client.sync(localDir, bucketPrefix[, options])](#sync-bucket-with-local)
+      - [client.sync(bucketPrefix, localDir[, options])](#sync-local-with-bucket)
+      - [client.sync(sourceBucketPrefix, targetBucketPrefix[, options])](#sync-bucket-with-bucket)
 1. [Change Log](#change-log)
-1. [Comparison with other modules](#comparison-with-other-modules)
+1. [Benchmark](#benchmark)
 
 ## Getting Started
 
@@ -54,15 +55,15 @@ AWS CLI installation is **NOT** required by this module.
 
 ``npm i s3-sync-client``
 
-### Recipes
+### Quick Start
 
 #### Client initialization
 
 ``S3SyncClient`` is a wrapper for the AWS SDK ``S3Client`` class.
 
 ```javascript
-const S3Client = require('@aws-sdk/client-s3');
-const S3SyncClient = require('s3-sync-client');
+import S3Client from '@aws-sdk/client-s3';
+import { S3SyncClient } from 's3-sync-client';
 
 const s3Client = new S3Client({ /* ... */ });
 const { sync } = new S3SyncClient({ client: s3Client });
@@ -86,8 +87,8 @@ await sync('/path/to/local/dir', 's3://mybucket2/zzz', { del: true });
 await sync('s3://mybucket', '/path/to/some/local', { del: true });
 
 // aws s3 sync s3://mybucket2 /path/to/local/dir --dryrun
-const syncOps = await sync('s3://mybucket2', '/path/to/local/dir', { dryRun: true });
-console.log(syncOps); // log download and delete operations to perform
+const diff = await sync('s3://mybucket2', '/path/to/local/dir', { dryRun: true });
+console.log(diff); // log operations to perform
 ```
 
 #### Sync two remote S3 buckets
@@ -97,16 +98,13 @@ console.log(syncOps); // log download and delete operations to perform
 await sync('s3://my-source-bucket', 's3://my-target-bucket', { del: true });
 ```
 
-#### Monitor transfer progress
+#### Monitor sync progress
 
 ```javascript
-const EventEmitter = require('events');
-const { TransferMonitor } = require('s3-sync-client');
+import { TransferMonitor } from 's3-sync-client';
 
 const monitor = new TransferMonitor();
 monitor.on('progress', (progress) => console.log(progress));
-setTimeout(() => monitor.abort(), 30000); // optional abort
-
 await sync('s3://mybucket', '/path/to/local/dir', { monitor });
 
 /* output:
@@ -116,7 +114,6 @@ await sync('s3://mybucket', '/path/to/local/dir', { monitor });
   count: { current: 3974, total: 10000 }
 }
 ...
-and aborts unfinished sync after 30s (promise rejected with an AbortError) 
 */
 
 // to pull status info occasionally only, use monitor.getStatus():
@@ -128,14 +125,26 @@ try {
 }
 ```
 
+#### Abort sync
+
+```javascript
+import { AbortController } from '@aws-sdk/abort-controller';
+import { TransferMonitor } from 's3-sync-client';
+
+const abortController = new AbortController();
+setTimeout(() => abortController.abort(), 30000);
+
+await sync('s3://mybucket', '/path/to/local/dir', { abortSignal: abortController.signal });
+```
+
 #### Use AWS SDK command input options
 
 ```javascript
-const mime = require('mime-types');
+import mime from 'mime-types';
 /*
 commandInput properties can either be:
-  - fixed values
-  - functions, in order to set dynamic values (e.g. using the object key)
+  - a plain object
+  - a function returning a plain object
 */
 
 // set ACL, fixed value
@@ -147,11 +156,22 @@ await sync('s3://mybucket', '/path/to/local/dir', {
 
 // set content type, dynamic value (function)
 await sync('s3://mybucket1', 's3://mybucket2', {
-    commandInput: {
-        ContentType: (syncCommandInput) => (
-            mime.lookup(syncCommandInput.Key) || 'text/html'
-        ),
-    },
+    commandInput: (input) => ({
+        ContentType: mime.lookup(input.Key) || 'text/html',
+    }),
+});
+```
+
+#### Filter source files
+
+```javascript
+// aws s3 sync s3://my-source-bucket s3://my-target-bucket --exclude "*" --include "*.txt" --include "flowers/*"
+await sync('s3://my-source-bucket', 's3://my-target-bucket', {
+    filters: [
+        { exclude: () => true }, // exclude everything
+        { include: (key) => key.endsWith('.txt') }, // include .txt files
+        { include: (key) => key.startsWith('flowers/') }, // also include everything inside the flowers folder
+    ],
 });
 ```
 
@@ -175,20 +195,7 @@ await sync('s3://mybucket/flowers/red/rose.png', '/path/to/local/dir', {
 
 Note: relocations are applied after every other options such as filters.
 
-#### Filter source files
-
-```javascript
-// aws s3 sync s3://my-source-bucket s3://my-target-bucket --exclude "*" --include "*.txt" --include "flowers/*"
-await sync('s3://my-source-bucket', 's3://my-target-bucket', {
-    filters: [
-        { exclude: () => true }, // exclude everything
-        { include: (key) => key.endsWith('.txt') }, // include .txt files
-        { include: (key) => key.startsWith('flowers/') }, // also include everything inside the flowers folder
-    ],
-});
-```
-
-Additional code examples are available in the test folder.
+Additional examples are available in the repo test directory.
 
 ## API Reference
 <a name="class-s3-sync-client"></a>
@@ -196,80 +203,83 @@ Additional code examples are available in the test folder.
 <a name="new-s3-sync-client"></a>
 #### ``new S3SyncClient(options)``
 
-- `options` *<Object\>*
+- `options` *<S3SyncClientConfig\>*
   - `client` *<S3Client\>* instance of [AWS SDK S3Client](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/index.html).
 
 <a name="sync-bucket-with-local"></a>
-#### ``client.sync(localDir, bucketUri[, options])``
+#### ``client.sync(localDir, bucketPrefix[, options])``
 
 - `localDir` *<string\>* Local directory
-- `bucketUri` *<string\>* Remote bucket name which may contain a prefix appended with a `/` separator 
-- `options` *<Object\>*
-  - `commandInput` *<Object\>* Set any of the SDK [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) or [*<CreateMultipartUploadCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/createmultipartuploadcommandinput.html) options to uploads
-  - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+- `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a `/` separator 
+- `options` *<SyncBucketWithLocalOptions\>*
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-  - `filters` *<Array\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
+  - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
-  - `monitor` *<S3SyncClient.TransferMonitor\>*
+  - `relocations` *<Relocation[]\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
+  - `abortSignal` *<AbortSignal\>* Allows aborting the sync
+  - `commandInput` *<CommandInput<PutObjectCommandInput\>\> | <CommandInput<CreateMultipartUploadCommandInput\>\>* Set any of the SDK [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) or [*<CreateMultipartUploadCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/createmultipartuploadcommandinput.html) options to uploads
+  - `monitor` *<TransferMonitor\>*
     - Attach `progress` event to receive upload progress notifications
-    - Emit `abort` event to stop object uploads immediately
+    - Call `getStatus()` to retrieve progress info on demand
   - `maxConcurrentTransfers` *<number\>* Each upload generates a Promise which is resolved when a local object is written to the S3 bucket. This parameter sets the maximum number of upload promises that might be running concurrently.
   - `partSize` *<number\>* Set the part size in **bytes** for multipart uploads. Default to 5 MB.
-  - `relocations` *<Array\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
-- Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
+- Returns: *<Promise<SyncBucketWithLocalCommandOutput\>\>* Fulfills with sync operations upon success.
 
 Sync a remote S3 bucket with the local file system.  
-Similar to AWS CLI ``aws s3 sync localDir bucketUri [options]``.
+Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
 
 <a name="sync-local-with-bucket"></a>
-#### ``client.sync(bucketUri, localDir[, options])``
+#### ``client.sync(bucketPrefix, localDir[, options])``
 
-- `bucketUri` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
+- `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
 - `localDir` *<string\>* Local directory
-- `options` *<Object\>*
-  - `commandInput` *<Object\>* Set any of the SDK [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) options to downloads
-  - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+- `options` *<SyncLocalWithBucketOptions\>*
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-  - `filters` *<Array\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
+  - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
-  - `monitor` *<S3SyncClient.TransferMonitor\>*
+  - `relocations` *<Relocation[]\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
+  - `abortSignal` *<AbortSignal\>* Allows aborting the sync
+  - `commandInput` *<CommandInput<GetObjectCommandInput\>\>* Set any of the SDK [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) options to downloads
+  - `monitor` *<TransferMonitor\>*
     - Attach `progress` event to receive download progress notifications
-    - Emit `abort` event to stop object downloads immediately
+    - Call `getStatus()` to retrieve progress info on demand
   - `maxConcurrentTransfers` *<number\>* Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
-  - `relocations` *<Array\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
-- Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
+- Returns: *<Promise<SyncLocalWithBucketCommandOutput\>\>* Fulfills with sync operations upon success.
 
 Sync the local file system with a remote S3 bucket.  
-Similar to AWS CLI ``aws s3 sync bucketUri localDir [options]``.
+Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
 
 <a name="sync-bucket-with-bucket"></a>
-#### ``client.sync(sourceBucketUri, targetBucketUri[, options])``
+#### ``client.sync(sourceBucketPrefix, targetBucketPrefix[, options])``
 
-- `sourceBucketUri` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
-- `targetBucketUri` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
-- `options` *<Object\>*
-  - `commandInput` *<Object\>* Set any of the SDK [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) options to copy operations
-  - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+- `sourceBucketPrefix` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
+- `targetBucketPrefix` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
+- `options` *<SyncBucketWithBucketOptions\>*
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
-  - `filters` *<Array\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
+  - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
-  - `monitor` *<S3SyncClient.TransferMonitor\>*
+  - `relocations` *<Relocation[]\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
+  - `abortSignal` *<AbortSignal\>* Allows aborting the sync
+  - `commandInput` *<CommandInput<CopyObjectCommandInput\>\>* Set any of the SDK [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) options to copy operations
+  - `monitor` *<TransferMonitor\>*
     - Attach `progress` event to receive copy progress notifications
-    - Emit `abort` event to stop object copy operations immediately
+    - Call `getStatus()` to retrieve progress info on demand
   - `maxConcurrentTransfers` *<number\>* Each copy generates a Promise which is resolved after the object has been copied. This parameter sets the maximum number of copy promises that might be running concurrently.
-  - `relocations` *<Array\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
-- Returns: *<Promise\>* Fulfills with an *<Object\>* of sync operations upon success.
+- Returns: *<Promise<SyncBucketWithBucketCommandOutput\>\>* Fulfills with sync operations upon success.
 
 Sync two remote S3 buckets.  
-Similar to AWS CLI ``aws s3 sync sourceBucketUri targetBucketUri [options]``.
+Similar to AWS CLI ``aws s3 sync sourceBucketPrefix targetBucketPrefix [options]``.
 
 # Change Log
 
 See [CHANGELOG.md](CHANGELOG.md).
 
-# Comparison with other modules
+# Benchmark
 
-**AWS CLI ``s3 sync`` for Node.js** has been developed to solve the S3 syncing limitations of the existing GitHub repo and NPM modules.
+**AWS CLI ``s3 sync`` for Node.js** has been developed to solve the S3 sync limitations of the existing GitHub repo and NPM modules.
 
 Most of the existing repo and NPM modules suffer one or more of the following limitations:
 
