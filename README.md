@@ -198,6 +198,9 @@ Note: relocations are applied after every other options such as filters.
 Additional examples are available in the repo test directory.
 
 ## API Reference
+
+A complete API reference is available in the repo docs directory.
+
 <a name="class-s3-sync-client"></a>
 ### Class: S3SyncClient
 <a name="new-s3-sync-client"></a>
