@@ -2,7 +2,8 @@ name: test
 
 on:
   pull_request:
-    branches: [ master ]
+    branches:
+      - '*'
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -14,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [18.x]
     steps:
       - uses: actions/checkout@v3
       - name: Use node.js ${{ matrix.node-version }}
@@ -28,5 +29,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.node-version }}-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install
         run: npm ci
+      - name: Build
+        run: npm run build
       - name: run test
         run: npm run test

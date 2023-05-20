@@ -1,3 +1,5 @@
+s3-sync-client / [Exports](modules.md)
+
 # AWS CLI s3 sync for Node.js
 
 ![npm](https://img.shields.io/npm/v/s3-sync-client.svg) ![downloads](https://img.shields.io/npm/dm/s3-sync-client.svg)

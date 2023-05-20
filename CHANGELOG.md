@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0]
+
+### Breaking Changes
+
+* the abort feature from the TransferMonitor class has been replaced with a new abortSignal option
+* `sync` method now returns a SyncBucketWithBucketCommandOutput, SyncBucketWithLocalCommandOutput or SyncLocalWithBucketCommandOutput object
+* old methods `bucketWithBucket`, `bucketWithLocal` and `localWithBucket` have been removed. `sync` method should be used instead
+* dynamic aws command input options can now be set by passing a function to the `commandInput` option (functions were previously defined for each commandInput property)
+
+### Features
+
+* migrate the module to typescript
+
+### Test
+
+* replace `jest` with the native node test runner
+
 ## [3.0.0]
 
 ### Breaking Changes

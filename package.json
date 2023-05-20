@@ -1,13 +1,32 @@
 {
   "name": "s3-sync-client",
-  "version": "3.0.3",
+  "version": "4.0.0",
   "description": "AWS CLI s3 sync for Node.js provides a modern client to perform S3 sync operations between file systems and S3 buckets in the spirit of the official AWS CLI command",
-  "main": "lib/index.js",
+  "keywords": [
+    "aws",
+    "aws-cli",
+    "aws-cli-sync",
+    "aws-s3",
+    "aws-s3-sync",
+    "aws-sdk",
+    "aws-sync",
+    "s3-bucket",
+    "s3-sync",
+    "s3-syncing",
+    "sync"
+  ],
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "files": [
-    "/lib"
+    "/dist/**/*"
   ],
   "scripts": {
-    "test": "jest --runInBand"
+    "build": "tsc -p tsconfig.build.json",
+    "watch": "tsc -w",
+    "test": "ts-node -T ./test/S3SyncClient.test.ts",
+    "docgen": "typedoc --plugin typedoc-plugin-markdown --out docs src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -20,16 +39,25 @@
   },
   "homepage": "https://github.com/jeanbmar/s3-sync-client#readme",
   "peerDependencies": {
-    "@aws-sdk/abort-controller": "^3.0.0",
-    "@aws-sdk/client-s3": "^3.0.0"
+    "@aws-sdk/abort-controller": "^3.x.x",
+    "@aws-sdk/client-s3": "^3.x.x"
   },
   "devDependencies": {
-    "@aws-sdk/abort-controller": "^3.110.0",
-    "@aws-sdk/client-s3": "^3.113.0",
-    "eslint": "^8.18.0",
+    "@aws-sdk/abort-controller": "^3.329.0",
+    "@aws-sdk/client-s3": "^3.332.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
+    "eslint": "^8.40.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "jest": "^28.1.1",
-    "tar": "^6.1.11"
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8",
+    "tar": "^6.1.14",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.24.7",
+    "typedoc-plugin-markdown": "^3.15.3",
+    "typescript": "^5.0.4"
   }
 }

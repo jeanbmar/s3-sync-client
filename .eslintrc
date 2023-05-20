@@ -1,28 +1,32 @@
 {
-  "extends": "airbnb-base",
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "airbnb-base",
+    "airbnb-typescript/base",
+    "prettier",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
+  ],
   "env": {
-    "node": true,
-    "jest":  true
+    "es2022": true,
+    "jest":  true,
+    "node": true
   },
-  "rules":{
-    "indent": ["error", 4],
-    "linebreak-style": 0,
+  "plugins": ["prettier"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/lines-between-class-members": "off",
+    "indent": ["error", 2],
     "no-await-in-loop": 0,
-    "no-param-reassign": 0,
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
-    "max-len": ["error", 120, 2, {
-      "ignoreUrls": true,
-      "ignoreComments": false,
-      "ignoreRegExpLiterals": true,
-      "ignoreStrings": true,
-      "ignoreTemplateLiterals": true
-    }]
-  },
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "paths": ["."]
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "endOfLine": "auto"
       }
-    }
+    ]
   }
 }
