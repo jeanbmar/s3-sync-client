@@ -25,7 +25,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "watch": "tsc -w",
-    "test": "ts-node -T ./test/S3SyncClient.test.ts"
+    "test": "ts-node -T ./test/S3SyncClient.test.ts",
+    "docgen": "typedoc --plugin typedoc-plugin-markdown --out docs src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -55,6 +56,8 @@
     "prettier": "^2.8.8",
     "tar": "^6.1.14",
     "ts-node": "^10.9.1",
+    "typedoc": "^0.24.7",
+    "typedoc-plugin-markdown": "^3.15.3",
     "typescript": "^5.0.4"
   }
 }
