@@ -212,6 +212,9 @@ A complete API reference is available in the repo docs directory.
 <a name="sync-bucket-with-local"></a>
 #### ``client.sync(localDir, bucketPrefix[, options])``
 
+Sync a remote S3 bucket with the local file system.  
+Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
+
 - `localDir` *<string\>* Local directory
 - `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a `/` separator 
 - `options` *<SyncBucketWithLocalOptions\>*
@@ -229,11 +232,11 @@ A complete API reference is available in the repo docs directory.
   - `partSize` *<number\>* Set the part size in **bytes** for multipart uploads. Default to 5 MB.
 - Returns: *<Promise<SyncBucketWithLocalCommandOutput\>\>* Fulfills with sync operations upon success.
 
-Sync a remote S3 bucket with the local file system.  
-Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
-
 <a name="sync-local-with-bucket"></a>
 #### ``client.sync(bucketPrefix, localDir[, options])``
+
+Sync the local file system with a remote S3 bucket.  
+Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
 
 - `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
 - `localDir` *<string\>* Local directory
@@ -251,11 +254,11 @@ Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
   - `maxConcurrentTransfers` *<number\>* Each download generates a Promise which is resolved when a remote object is written to the local file system. This parameter sets the maximum number of download promises that might be running concurrently.
 - Returns: *<Promise<SyncLocalWithBucketCommandOutput\>\>* Fulfills with sync operations upon success.
 
-Sync the local file system with a remote S3 bucket.  
-Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
-
 <a name="sync-bucket-with-bucket"></a>
 #### ``client.sync(sourceBucketPrefix, targetBucketPrefix[, options])``
+
+Sync two remote S3 buckets.  
+Similar to AWS CLI ``aws s3 sync sourceBucketPrefix targetBucketPrefix [options]``.
 
 - `sourceBucketPrefix` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
 - `targetBucketPrefix` *<string\>* Remote bucket name to sync which may contain a prefix appended with a ``/`` separator
@@ -272,9 +275,6 @@ Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
     - Call `getStatus()` to retrieve progress info on demand
   - `maxConcurrentTransfers` *<number\>* Each copy generates a Promise which is resolved after the object has been copied. This parameter sets the maximum number of copy promises that might be running concurrently.
 - Returns: *<Promise<SyncBucketWithBucketCommandOutput\>\>* Fulfills with sync operations upon success.
-
-Sync two remote S3 buckets.  
-Similar to AWS CLI ``aws s3 sync sourceBucketPrefix targetBucketPrefix [options]``.
 
 # Change Log
 
