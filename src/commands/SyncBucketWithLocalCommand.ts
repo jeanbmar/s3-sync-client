@@ -1,4 +1,8 @@
-import { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
+import {
+  CreateMultipartUploadCommandInput,
+  PutObjectCommandInput,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { AbortSignal } from '@aws-sdk/abort-controller';
 import { UploadLocalObjectsCommand } from './UploadLocalObjectsCommand';
 import { DeleteBucketObjectsCommand } from './DeleteBucketObjectsCommand';
@@ -24,7 +28,9 @@ export type SyncBucketWithLocalCommandInput = {
   relocations?: Relocation[];
   filters?: Filter[];
   abortSignal?: AbortSignal;
-  commandInput?: CommandInput<PutObjectCommandInput>;
+  commandInput?:
+    | CommandInput<PutObjectCommandInput>
+    | CommandInput<CreateMultipartUploadCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers?: number;
   partSize?: number;
@@ -45,7 +51,9 @@ export class SyncBucketWithLocalCommand {
   relocations: Relocation[];
   filters: Filter[];
   abortSignal?: AbortSignal;
-  commandInput?: CommandInput<PutObjectCommandInput>;
+  commandInput?:
+    | CommandInput<PutObjectCommandInput>
+    | CommandInput<CreateMultipartUploadCommandInput>;
   monitor?: TransferMonitor;
   maxConcurrentTransfers: number;
   partSize: number;
