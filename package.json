@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "watch": "tsc -w",
-    "test": "ts-node -T ./test/s3-sync-client.test.ts"
+    "test": "ts-node -T ./test/S3SyncClient.test.ts"
   },
   "repository": {
     "type": "git",
