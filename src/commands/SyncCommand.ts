@@ -11,7 +11,8 @@ import {
 } from './SyncBucketWithLocalCommand';
 import {
   SyncLocalWithBucketCommand,
-  SyncLocalWithBucketCommandInput, SyncLocalWithBucketCommandOutput,
+  SyncLocalWithBucketCommandInput,
+  SyncLocalWithBucketCommandOutput,
 } from './SyncLocalWithBucketCommand';
 
 export type SyncBucketWithBucketOptions = Omit<
