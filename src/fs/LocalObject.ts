@@ -12,8 +12,4 @@ export class LocalObject extends SyncObject {
     super(options);
     this.path = options.path;
   }
-
-  async delete(): Promise<void> {
-    await fsp.unlink(this.path);
-  }
 }
