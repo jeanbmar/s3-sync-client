@@ -1,4 +1,3 @@
-import { promises as fsp } from 'node:fs';
 import { SyncObject, SyncObjectOptions } from './SyncObject';
 
 export type LocalObjectOptions = {
