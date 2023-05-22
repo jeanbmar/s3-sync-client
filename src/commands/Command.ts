@@ -1,6 +1,8 @@
 import { S3Client } from '@aws-sdk/client-s3';
 
-export type Relocation = [sourcePrefix: string, targetPrefix: string];
+export type Relocation =
+  | [sourcePrefix: string, targetPrefix: string]
+  | ((currentPath: string) => string);
 
 export type Filter = {
   exclude?: (key) => boolean;

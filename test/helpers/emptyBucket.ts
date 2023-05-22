@@ -1,7 +1,4 @@
-import {
-  ListBucketObjectsCommand,
-  DeleteBucketObjectsCommand,
-} from '../../src';
+import { ListBucketObjectsCommand, DeleteBucketObjectsCommand } from '../..';
 
 async function emptyBucket(client, bucket) {
   const bucketObjects = await new ListBucketObjectsCommand({

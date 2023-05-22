@@ -183,14 +183,17 @@ await sync('s3://my-source-bucket', 's3://my-target-bucket', {
 // sync s3://my-source-bucket/a/b/c.txt to s3://my-target-bucket/zzz/c.txt
 await sync('s3://my-source-bucket/a/b/c.txt', 's3://my-target-bucket', {
     relocations: [ // multiple relocations can be applied
-        ['a/b', 'zzz'],
+      (currentPath) =>
+        currentPath.startsWith('a/b/')
+          ? currentPath.replace('a/b/', 'zzz/')
+          : currentPath
     ],
 });
 
 // sync s3://mybucket/flowers/red/rose.png to /path/to/local/dir/rose.png
 await sync('s3://mybucket/flowers/red/rose.png', '/path/to/local/dir', {
     relocations: [
-        ['flowers/red', ''], // folder flowers/red will be flattened during sync
+      (currentPath) => currentPath.replace('flowers/red/', '') // folder flowers/red will be flattened during sync
     ],
 });
 ```
@@ -223,7 +226,7 @@ Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
-  - `relocations` *<Relocation[]\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `relocations` *<Relocation[]\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation is as a callback taking a string posix path param and returning a relocated string posix path.
   - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
   - `abortSignal` *<AbortSignal\>* Allows aborting the sync
   - `commandInput` *<CommandInput<PutObjectCommandInput\>\> | <CommandInput<CreateMultipartUploadCommandInput\>\>* Set any of the SDK [*<PutObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/putobjectcommandinput.html) or [*<CreateMultipartUploadCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/createmultipartuploadcommandinput.html) options to uploads
@@ -246,7 +249,7 @@ Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
-  - `relocations` *<Relocation[]\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `relocations` *<Relocation[]\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation is as a callback taking a string posix path param and returning a relocated string posix path.
   - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
   - `abortSignal` *<AbortSignal\>* Allows aborting the sync
   - `commandInput` *<CommandInput<GetObjectCommandInput\>\>* Set any of the SDK [*<GetObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/getobjectcommandinput.html) options to downloads
@@ -268,7 +271,7 @@ Similar to AWS CLI ``aws s3 sync sourceBucketPrefix targetBucketPrefix [options]
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
-  - `relocations` *<Relocation[]\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation should be specified as an *<Array\>* of `[sourcePrefix, targetPrefix]`.
+  - `relocations` *<Relocation[]\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation is as a callback taking a string posix path param and returning a relocated string posix path.
   - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
   - `abortSignal` *<AbortSignal\>* Allows aborting the sync
   - `commandInput` *<CommandInput<CopyObjectCommandInput\>\>* Set any of the SDK [*<CopyObjectCommandInput\>*](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/copyobjectcommandinput.html) options to copy operations

@@ -12,7 +12,7 @@ export type Diff = {
   deleted: SyncObject[];
 };
 
-export class SyncObject {
+export abstract class SyncObject {
   id: string;
   size: number;
   lastModified: number;
@@ -72,7 +72,7 @@ export class SyncObject {
     });
   }
 
-  applyRelocation(sourcePrefix: string, targetPrefix: string): void {
+  applyLegacyRelocation(sourcePrefix, targetPrefix) {
     if (sourcePrefix === '' && targetPrefix !== '') {
       this.id = `${targetPrefix}/${this.id}`;
     }
@@ -84,9 +84,17 @@ export class SyncObject {
     }
   }
 
+  applyRelocation(relocation: Relocation): void {
+    if (Array.isArray(relocation)) {
+      this.applyLegacyRelocation(...relocation);
+    } else {
+      this.id = relocation(this.id);
+    }
+  }
+
   applyRelocations(relocations: Relocation[]): void {
-    relocations.forEach(([sourcePrefix, targetPrefix]) => {
-      this.applyRelocation(sourcePrefix, targetPrefix);
+    relocations.forEach((relocation) => {
+      this.applyRelocation(relocation);
     });
   }
 }

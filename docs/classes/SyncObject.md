@@ -30,6 +30,7 @@
 ### Methods
 
 - [applyFilters](SyncObject.md#applyfilters)
+- [applyLegacyRelocation](SyncObject.md#applylegacyrelocation)
 - [applyRelocation](SyncObject.md#applyrelocation)
 - [applyRelocations](SyncObject.md#applyrelocations)
 - [diff](SyncObject.md#diff)
@@ -48,7 +49,7 @@
 
 #### Defined in
 
-[src/fs/SyncObject.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L21)
+[src/fs/SyncObject.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L21)
 
 ## Properties
 
@@ -58,7 +59,7 @@
 
 #### Defined in
 
-[src/fs/SyncObject.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L16)
+[src/fs/SyncObject.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L16)
 
 ___
 
@@ -68,7 +69,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:19](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L19)
+[src/fs/SyncObject.ts:19](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L19)
 
 ___
 
@@ -78,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L18)
+[src/fs/SyncObject.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L18)
 
 ___
 
@@ -88,7 +89,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:17](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L17)
+[src/fs/SyncObject.ts:17](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L17)
 
 ## Accessors
 
@@ -102,7 +103,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:60](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L60)
+[src/fs/SyncObject.ts:60](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L60)
 
 ## Methods
 
@@ -122,20 +123,20 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:64](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L64)
+[src/fs/SyncObject.ts:64](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L64)
 
 ___
 
-### applyRelocation
+### applyLegacyRelocation
 
-▸ **applyRelocation**(`sourcePrefix`, `targetPrefix`): `void`
+▸ **applyLegacyRelocation**(`sourcePrefix`, `targetPrefix`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `sourcePrefix` | `string` |
-| `targetPrefix` | `string` |
+| `sourcePrefix` | `any` |
+| `targetPrefix` | `any` |
 
 #### Returns
 
@@ -143,7 +144,27 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:75](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L75)
+[src/fs/SyncObject.ts:75](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L75)
+
+___
+
+### applyRelocation
+
+▸ **applyRelocation**(`relocation`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `relocation` | [`Relocation`](../modules.md#relocation) |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/fs/SyncObject.ts:87](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L87)
 
 ___
 
@@ -163,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:87](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L87)
+[src/fs/SyncObject.ts:95](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L95)
 
 ___
 
@@ -185,4 +206,4 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/fs/SyncObject.ts#L27)
+[src/fs/SyncObject.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/fs/SyncObject.ts#L27)

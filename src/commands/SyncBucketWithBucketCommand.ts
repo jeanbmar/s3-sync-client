@@ -76,7 +76,10 @@ export class SyncBucketWithBucketCommand {
       }).execute(client),
     ]);
     if (targetPrefix !== '')
-      this.relocations = this.relocations.concat([['', targetPrefix]]);
+      this.relocations = [
+        (currentPath) => `${targetPrefix}/${currentPath}`,
+        ...this.relocations,
+      ];
     sourceObjects.forEach((sourceObject) =>
       sourceObject.applyFilters(this.filters)
     );
