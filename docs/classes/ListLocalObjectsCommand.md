@@ -31,7 +31,7 @@
 
 #### Defined in
 
-[src/commands/ListLocalObjectsCommand.ts:12](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/commands/ListLocalObjectsCommand.ts#L12)
+[src/commands/ListLocalObjectsCommand.ts:12](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/ListLocalObjectsCommand.ts#L12)
 
 ## Properties
 
@@ -41,7 +41,7 @@
 
 #### Defined in
 
-[src/commands/ListLocalObjectsCommand.ts:11](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/commands/ListLocalObjectsCommand.ts#L11)
+[src/commands/ListLocalObjectsCommand.ts:11](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/ListLocalObjectsCommand.ts#L11)
 
 ## Methods
 
@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[src/commands/ListLocalObjectsCommand.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/commands/ListLocalObjectsCommand.ts#L16)
+[src/commands/ListLocalObjectsCommand.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/ListLocalObjectsCommand.ts#L16)
 
 ___
 
@@ -75,4 +75,4 @@ ___
 
 #### Defined in
 
-[src/commands/ListLocalObjectsCommand.ts:20](https://github.com/jeanbmar/s3-sync-client/blob/4394dfa/src/commands/ListLocalObjectsCommand.ts#L20)
+[src/commands/ListLocalObjectsCommand.ts:20](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/ListLocalObjectsCommand.ts#L20)
