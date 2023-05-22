@@ -157,7 +157,7 @@ test('s3 sync client', async (t) => {
           sourceBucketPrefix: `${BUCKET_2}/def/jkl`,
           targetBucketPrefix: BUCKET,
           maxConcurrentTransfers: 200,
-          relocations: [['', 'relocated']],
+          relocations: [(currentPath) => `relocated/${currentPath}`],
         })
       );
       const objects = await syncClient.send(
@@ -173,7 +173,12 @@ test('s3 sync client', async (t) => {
     await b.test('syncs a single dir with folder relocation', async () => {
       await syncClient.sync(`s3://${BUCKET_2}/def/jkl`, `s3://${BUCKET}`, {
         maxConcurrentTransfers: 200,
-        relocations: [['def/jkl', 'relocated-bis/folder']],
+        relocations: [
+          (currentPath) =>
+            currentPath.startsWith('def/jkl')
+              ? currentPath.replace('def/jkl', 'relocated-bis/folder')
+              : currentPath,
+        ],
       });
       const objects = await syncClient.send(
         new ListBucketObjectsCommand({
@@ -228,7 +233,7 @@ test('s3 sync client', async (t) => {
         await syncClient.sync(
           path.join(DATA_DIR, 'def/jkl'),
           `s3://${path.posix.join(BUCKET, 'zzz')}`,
-          { relocations: [['', 'zzz']] }
+          { relocations: [(currentPath) => `zzz/${currentPath}`] }
         );
         const objects = await syncClient.send(
           new ListBucketObjectsCommand({
@@ -348,7 +353,7 @@ test('s3 sync client', async (t) => {
       await syncClient.sync(MULTIPART_DATA_DIR, `s3://${BUCKET}`, {
         maxConcurrentTransfers: 2,
         partSize: 5 * 1024 * 1024,
-        relocations: [['', 'multipart']],
+        relocations: [(currentPath) => `multipart/${currentPath}`],
       });
       const objects = await syncClient.send(
         new ListBucketObjectsCommand({
@@ -410,7 +415,12 @@ test('s3 sync client', async (t) => {
           new SyncLocalWithBucketCommand({
             bucketPrefix: `${BUCKET_2}/def/jkl`,
             localDir: SYNC_DIR,
-            relocations: [['def/jkl', 'issue9']],
+            relocations: [
+              (currentPath) =>
+                currentPath.startsWith('def/jkl')
+                  ? currentPath.replace('def/jkl', 'issue9')
+                  : currentPath,
+            ],
           })
         );
         fs.writeFileSync(
@@ -422,7 +432,12 @@ test('s3 sync client', async (t) => {
           new SyncLocalWithBucketCommand({
             bucketPrefix: `${BUCKET_2}/def/jkl`,
             localDir: SYNC_DIR,
-            relocations: [['def/jkl', 'issue9']],
+            relocations: [
+              (currentPath) =>
+                currentPath.startsWith('def/jkl')
+                  ? currentPath.replace('def/jkl', 'issue9')
+                  : currentPath,
+            ],
             del: true,
           })
         );
@@ -443,7 +458,12 @@ test('s3 sync client', async (t) => {
         new SyncLocalWithBucketCommand({
           bucketPrefix: `${BUCKET_2}/def/jkl`,
           localDir: SYNC_DIR,
-          relocations: [['def/jkl', '']],
+          relocations: [
+            (currentPath) =>
+              currentPath.startsWith('def/jkl')
+                ? currentPath.replace('def/jkl', '')
+                : currentPath,
+          ],
         })
       );
       const objects = await syncClient.send(
