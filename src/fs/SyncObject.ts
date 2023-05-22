@@ -12,7 +12,7 @@ export type Diff = {
   deleted: SyncObject[];
 };
 
-export class SyncObject {
+export abstract class SyncObject {
   id: string;
   size: number;
   lastModified: number;

@@ -583,25 +583,25 @@ test('s3 sync client', async (t) => {
     await f.test(
       'applies include and exclude filters to source objects',
       () => {
-        const syncObjects = [
+        const objects = [
           'flowers/rose.jpg',
           'flowers/sunflower.jpg',
           'flowers/tulip.png',
           'flowers/unknown/1.jpg',
           'animals/cat.jpg',
-        ].map((id) => new SyncObject({ id, size: 0, lastModified: 0 }));
-        syncObjects.forEach((syncObject) => {
-          syncObject.applyFilters([
+        ].map(
+          (id) => new LocalObject({ id, size: 0, lastModified: 0, path: '' })
+        );
+        objects.forEach((object) => {
+          object.applyFilters([
             { exclude: () => true },
             { include: (key) => key.endsWith('.jpg') },
             { exclude: (key) => key.startsWith('animals') },
             { exclude: (key) => key.indexOf('/unknown/') > -1 },
           ]);
         });
-        const included = syncObjects.filter(
-          (syncObject) => syncObject.isIncluded
-        );
-        const keys = included.map((syncObject) => syncObject.id);
+        const included = objects.filter((object) => object.isIncluded);
+        const keys = included.map((object) => object.id);
         assert.deepStrictEqual(keys, [
           'flowers/rose.jpg',
           'flowers/sunflower.jpg',
