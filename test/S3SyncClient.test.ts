@@ -416,7 +416,7 @@ test('s3 sync client', async (t) => {
     await l.test('syncs a single dir with a few files', async () => {
       await syncClient.send(
         new SyncLocalWithBucketCommand({
-          bucketPrefix: `${BUCKET_2}/def/jkl`,
+          bucketPrefix: `${BUCKET_2}/def`,
           localDir: SYNC_DIR,
         })
       );
@@ -425,7 +425,7 @@ test('s3 sync client', async (t) => {
           directory: SYNC_DIR,
         })
       );
-      assert(hasObject(objects, 'def/jkl/xmoj') === true);
+      assert(hasObject(objects, 'jkl/xmoj') === true);
     });
 
     await l.test(
