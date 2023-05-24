@@ -31,7 +31,7 @@
 
 #### Defined in
 
-[src/S3SyncClient.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/S3SyncClient.ts#L16)
+[src/S3SyncClient.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/S3SyncClient.ts#L16)
 
 ## Properties
 
@@ -41,7 +41,7 @@
 
 #### Defined in
 
-[src/S3SyncClient.ts:14](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/S3SyncClient.ts#L14)
+[src/S3SyncClient.ts:14](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/S3SyncClient.ts#L14)
 
 ## Methods
 
@@ -61,7 +61,7 @@
 
 #### Defined in
 
-[src/S3SyncClient.ts:33](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/S3SyncClient.ts#L33)
+[src/S3SyncClient.ts:33](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/S3SyncClient.ts#L33)
 
 ___
 
@@ -83,4 +83,4 @@ ___
 
 #### Defined in
 
-[src/S3SyncClient.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/S3SyncClient.ts#L21)
+[src/S3SyncClient.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/S3SyncClient.ts#L21)

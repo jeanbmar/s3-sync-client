@@ -31,7 +31,7 @@
 
 #### Defined in
 
-[src/commands/DeleteBucketObjectsCommand.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/DeleteBucketObjectsCommand.ts#L18)
+[src/commands/DeleteBucketObjectsCommand.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DeleteBucketObjectsCommand.ts#L18)
 
 ## Properties
 
@@ -41,7 +41,7 @@
 
 #### Defined in
 
-[src/commands/DeleteBucketObjectsCommand.ts:15](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/DeleteBucketObjectsCommand.ts#L15)
+[src/commands/DeleteBucketObjectsCommand.ts:15](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DeleteBucketObjectsCommand.ts#L15)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 #### Defined in
 
-[src/commands/DeleteBucketObjectsCommand.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/DeleteBucketObjectsCommand.ts#L16)
+[src/commands/DeleteBucketObjectsCommand.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DeleteBucketObjectsCommand.ts#L16)
 
 ## Methods
 
@@ -71,4 +71,4 @@ ___
 
 #### Defined in
 
-[src/commands/DeleteBucketObjectsCommand.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/DeleteBucketObjectsCommand.ts#L23)
+[src/commands/DeleteBucketObjectsCommand.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DeleteBucketObjectsCommand.ts#L23)

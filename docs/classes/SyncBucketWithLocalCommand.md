@@ -41,7 +41,7 @@
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:61](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L61)
+[src/commands/SyncBucketWithLocalCommand.ts:61](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L61)
 
 ## Properties
 
@@ -51,7 +51,7 @@
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:53](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L53)
+[src/commands/SyncBucketWithLocalCommand.ts:53](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L53)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:47](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L47)
+[src/commands/SyncBucketWithLocalCommand.ts:47](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L47)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:54](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L54)
+[src/commands/SyncBucketWithLocalCommand.ts:54](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L54)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:49](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L49)
+[src/commands/SyncBucketWithLocalCommand.ts:49](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L49)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:48](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L48)
+[src/commands/SyncBucketWithLocalCommand.ts:48](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L48)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:52](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L52)
+[src/commands/SyncBucketWithLocalCommand.ts:52](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L52)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:46](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L46)
+[src/commands/SyncBucketWithLocalCommand.ts:46](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L46)
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:58](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L58)
+[src/commands/SyncBucketWithLocalCommand.ts:58](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L58)
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:57](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L57)
+[src/commands/SyncBucketWithLocalCommand.ts:57](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L57)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:59](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L59)
+[src/commands/SyncBucketWithLocalCommand.ts:59](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L59)
 
 ___
 
@@ -151,7 +151,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:51](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L51)
+[src/commands/SyncBucketWithLocalCommand.ts:51](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L51)
 
 ___
 
@@ -161,7 +161,7 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:50](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L50)
+[src/commands/SyncBucketWithLocalCommand.ts:50](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L50)
 
 ## Methods
 
@@ -181,4 +181,4 @@ ___
 
 #### Defined in
 
-[src/commands/SyncBucketWithLocalCommand.ts:77](https://github.com/jeanbmar/s3-sync-client/blob/3b5f6c4/src/commands/SyncBucketWithLocalCommand.ts#L77)
+[src/commands/SyncBucketWithLocalCommand.ts:77](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/SyncBucketWithLocalCommand.ts#L77)

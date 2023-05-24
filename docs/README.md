@@ -180,8 +180,8 @@ await sync('s3://my-source-bucket', 's3://my-target-bucket', {
 #### Relocate objects during sync
 
 ```javascript
-// sync s3://my-source-bucket/a/b/c.txt to s3://my-target-bucket/zzz/c.txt
-await sync('s3://my-source-bucket/a/b/c.txt', 's3://my-target-bucket', {
+// move objects from source folder a/b/ to target folder zzz/
+await sync('s3://my-source-bucket', 's3://my-target-bucket', {
     relocations: [ // multiple relocations can be applied
       (currentPath) =>
         currentPath.startsWith('a/b/')
@@ -190,12 +190,9 @@ await sync('s3://my-source-bucket/a/b/c.txt', 's3://my-target-bucket', {
     ],
 });
 
-// sync s3://mybucket/flowers/red/rose.png to /path/to/local/dir/rose.png
-await sync('s3://mybucket/flowers/red/rose.png', '/path/to/local/dir', {
-    relocations: [
-      (currentPath) => currentPath.replace('flowers/red/', '') // folder flowers/red will be flattened during sync
-    ],
-});
+// aws s3 sync s3://mybucket/flowers/red /path/to/local/dir
+// as in cli, folder flowers/red will be flattened during sync
+await sync('s3://mybucket/flowers/red', '/path/to/local/dir'); 
 ```
 
 Note: relocations are applied after every other options such as filters.
