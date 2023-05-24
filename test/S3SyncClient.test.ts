@@ -135,7 +135,7 @@ test('s3 sync client', async (t) => {
       await syncClient.send(
         new SyncBucketWithBucketCommand({
           sourceBucketPrefix: `${BUCKET_2}/def/jkl`,
-          targetBucketPrefix: BUCKET,
+          targetBucketPrefix: `${BUCKET}/def/jkl`,
           maxConcurrentTransfers: 200,
           monitor,
         })
@@ -155,7 +155,7 @@ test('s3 sync client', async (t) => {
       await syncClient.send(
         new SyncBucketWithBucketCommand({
           sourceBucketPrefix: `${BUCKET_2}/def/jkl`,
-          targetBucketPrefix: BUCKET,
+          targetBucketPrefix: `${BUCKET}/def/jkl`,
           maxConcurrentTransfers: 200,
           relocations: [(currentPath) => `relocated/${currentPath}`],
         })
@@ -171,15 +171,19 @@ test('s3 sync client', async (t) => {
     });
 
     await b.test('syncs a single dir with folder relocation', async () => {
-      await syncClient.sync(`s3://${BUCKET_2}/def/jkl`, `s3://${BUCKET}`, {
-        maxConcurrentTransfers: 200,
-        relocations: [
-          (currentPath) =>
-            currentPath.startsWith('def/jkl')
-              ? currentPath.replace('def/jkl', 'relocated-bis/folder')
-              : currentPath,
-        ],
-      });
+      await syncClient.sync(
+        `s3://${BUCKET_2}/def/jkl`,
+        `s3://${BUCKET}/def/jkl`,
+        {
+          maxConcurrentTransfers: 200,
+          relocations: [
+            (currentPath) =>
+              currentPath.startsWith('def/jkl')
+                ? currentPath.replace('def/jkl', 'relocated-bis/folder')
+                : currentPath,
+          ],
+        }
+      );
       const objects = await syncClient.send(
         new ListBucketObjectsCommand({
           bucket: BUCKET,
@@ -209,6 +213,23 @@ test('s3 sync client', async (t) => {
         assert(objects.length === 5000);
       }
     );
+
+    // https://github.com/jeanbmar/s3-sync-client/issues/40
+    await b.test('processes prefix properly', async () => {
+      fs.rmSync(path.join(SYNC_DIR, 'issue40'), {
+        recursive: true,
+        force: true,
+      });
+      await syncClient.sync(`s3://${BUCKET_2}/def`, `s3://${BUCKET}/issue40`);
+      const objects = await syncClient.send(
+        new ListBucketObjectsCommand({
+          bucket: BUCKET,
+          prefix: 'issue40',
+        })
+      );
+      assert(hasObject(objects, 'issue40/def/jkl/xmoj') === false);
+      assert(hasObject(objects, 'issue40/jkl/xmoj') === true);
+    });
   });
 
   await t.test('syncs bucket with local', async (b) => {
@@ -415,12 +436,7 @@ test('s3 sync client', async (t) => {
           new SyncLocalWithBucketCommand({
             bucketPrefix: `${BUCKET_2}/def/jkl`,
             localDir: SYNC_DIR,
-            relocations: [
-              (currentPath) =>
-                currentPath.startsWith('def/jkl')
-                  ? currentPath.replace('def/jkl', 'issue9')
-                  : currentPath,
-            ],
+            relocations: [(currentPath) => `issue9/${currentPath}`],
           })
         );
         fs.writeFileSync(
@@ -432,12 +448,7 @@ test('s3 sync client', async (t) => {
           new SyncLocalWithBucketCommand({
             bucketPrefix: `${BUCKET_2}/def/jkl`,
             localDir: SYNC_DIR,
-            relocations: [
-              (currentPath) =>
-                currentPath.startsWith('def/jkl')
-                  ? currentPath.replace('def/jkl', 'issue9')
-                  : currentPath,
-            ],
+            relocations: [(currentPath) => `issue9/${currentPath}`],
             del: true,
           })
         );
@@ -553,6 +564,25 @@ test('s3 sync client', async (t) => {
       );
       assert(atimeMs < now);
       assert(mtimeMs < now);
+    });
+
+    // https://github.com/jeanbmar/s3-sync-client/issues/40
+    await l.test('processes prefix properly', async () => {
+      fs.rmSync(path.join(SYNC_DIR, 'issue40'), {
+        recursive: true,
+        force: true,
+      });
+      await syncClient.sync(
+        `s3://${BUCKET_2}/def`,
+        path.join(SYNC_DIR, 'issue40')
+      );
+      const objects = await syncClient.send(
+        new ListLocalObjectsCommand({
+          directory: path.join(SYNC_DIR, 'issue40'),
+        })
+      );
+      assert(hasObject(objects, 'def/jkl/xmoj') === false);
+      assert(hasObject(objects, 'jkl/xmoj') === true);
     });
   });
 
