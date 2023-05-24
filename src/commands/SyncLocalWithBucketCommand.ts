@@ -67,6 +67,14 @@ export class SyncLocalWithBucketCommand {
       new ListBucketObjectsCommand({ bucket, prefix }).execute(client),
       new ListLocalObjectsCommand({ directory: this.localDir }).execute(),
     ]);
+    if (prefix !== '')
+      this.relocations = [
+        (currentPath) =>
+          currentPath.startsWith(`${prefix}/`)
+            ? currentPath.replace(`${prefix}/`, '')
+            : currentPath,
+        ...this.relocations,
+      ];
     sourceObjects.forEach((sourceObject) =>
       sourceObject.applyFilters(this.filters)
     );

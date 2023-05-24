@@ -80,6 +80,14 @@ export class SyncBucketWithBucketCommand {
         (currentPath) => `${targetPrefix}/${currentPath}`,
         ...this.relocations,
       ];
+    if (sourcePrefix !== '')
+      this.relocations = [
+        (currentPath) =>
+          currentPath.startsWith(`${sourcePrefix}/`)
+            ? currentPath.replace(`${sourcePrefix}/`, '')
+            : currentPath,
+        ...this.relocations,
+      ];
     sourceObjects.forEach((sourceObject) =>
       sourceObject.applyFilters(this.filters)
     );
