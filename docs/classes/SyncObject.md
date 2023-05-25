@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[src/fs/SyncObject.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L21)
+[src/fs/SyncObject.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L26)
 
 ## Properties
 
@@ -59,7 +59,7 @@
 
 #### Defined in
 
-[src/fs/SyncObject.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L16)
+[src/fs/SyncObject.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L21)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:19](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L19)
+[src/fs/SyncObject.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L24)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L18)
+[src/fs/SyncObject.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L23)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:17](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L17)
+[src/fs/SyncObject.ts:22](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L22)
 
 ## Accessors
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:60](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L60)
+[src/fs/SyncObject.ts:71](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L71)
 
 ## Methods
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:64](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L64)
+[src/fs/SyncObject.ts:75](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L75)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:75](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L75)
+[src/fs/SyncObject.ts:86](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L86)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:87](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L87)
+[src/fs/SyncObject.ts:98](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L98)
 
 ___
 
@@ -184,21 +184,21 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:95](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L95)
+[src/fs/SyncObject.ts:106](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L106)
 
 ___
 
 ### diff
 
-▸ `Static` **diff**(`sourceObjects`, `targetObjects`, `sizeOnly?`): [`Diff`](../modules.md#diff)
+▸ `Static` **diff**(`sourceObjects`, `targetObjects`, `options?`): [`Diff`](../modules.md#diff)
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `sourceObjects` | [`SyncObject`](SyncObject.md)[] | `undefined` |
-| `targetObjects` | [`SyncObject`](SyncObject.md)[] | `undefined` |
-| `sizeOnly` | `boolean` | `false` |
+| Name | Type |
+| :------ | :------ |
+| `sourceObjects` | [`SyncObject`](SyncObject.md)[] |
+| `targetObjects` | [`SyncObject`](SyncObject.md)[] |
+| `options?` | [`DiffOptions`](../modules.md#diffoptions) |
 
 #### Returns
 
@@ -206,4 +206,4 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/fs/SyncObject.ts#L27)
+[src/fs/SyncObject.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/fs/SyncObject.ts#L32)

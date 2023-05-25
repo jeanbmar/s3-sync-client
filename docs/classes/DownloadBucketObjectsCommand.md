@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectsCommand.ts:29](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DownloadBucketObjectsCommand.ts#L29)
+[src/commands/DownloadBucketObjectsCommand.ts:29](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/DownloadBucketObjectsCommand.ts#L29)
 
 ## Properties
 
@@ -45,7 +45,7 @@
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectsCommand.ts:25](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DownloadBucketObjectsCommand.ts#L25)
+[src/commands/DownloadBucketObjectsCommand.ts:25](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/DownloadBucketObjectsCommand.ts#L25)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectsCommand.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DownloadBucketObjectsCommand.ts#L23)
+[src/commands/DownloadBucketObjectsCommand.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/DownloadBucketObjectsCommand.ts#L23)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectsCommand.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DownloadBucketObjectsCommand.ts#L26)
+[src/commands/DownloadBucketObjectsCommand.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/DownloadBucketObjectsCommand.ts#L26)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectsCommand.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DownloadBucketObjectsCommand.ts#L24)
+[src/commands/DownloadBucketObjectsCommand.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/DownloadBucketObjectsCommand.ts#L24)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectsCommand.ts:28](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DownloadBucketObjectsCommand.ts#L28)
+[src/commands/DownloadBucketObjectsCommand.ts:28](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/DownloadBucketObjectsCommand.ts#L28)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectsCommand.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DownloadBucketObjectsCommand.ts#L27)
+[src/commands/DownloadBucketObjectsCommand.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/DownloadBucketObjectsCommand.ts#L27)
 
 ## Methods
 
@@ -115,4 +115,4 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectsCommand.ts:39](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/DownloadBucketObjectsCommand.ts#L39)
+[src/commands/DownloadBucketObjectsCommand.ts:39](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/DownloadBucketObjectsCommand.ts#L39)

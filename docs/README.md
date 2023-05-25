@@ -222,6 +222,7 @@ Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
 - `options` *<SyncBucketWithLocalOptions\>*
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+  - `deleteExcluded` *<boolean\>* Delete **excluded** target objects even if they match a source object. Ignored if `del` is false. See [this](https://github.com/aws/aws-cli/issues/4923) CLI issue.
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `relocations` *<Relocation[]\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation is as a callback taking a string posix path param and returning a relocated string posix path.
   - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
@@ -245,6 +246,7 @@ Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
 - `options` *<SyncLocalWithBucketOptions\>*
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+  - `deleteExcluded` *<boolean\>* Delete **excluded** target objects even if they match a source object. Ignored if `del` is false. See [this](https://github.com/aws/aws-cli/issues/4923) CLI issue.
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `relocations` *<Relocation[]\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation is as a callback taking a string posix path param and returning a relocated string posix path.
   - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
@@ -267,6 +269,7 @@ Similar to AWS CLI ``aws s3 sync sourceBucketPrefix targetBucketPrefix [options]
 - `options` *<SyncBucketWithBucketOptions\>*
   - `dryRun` *<boolean\>* Equivalent to CLI ``--dryrun`` option
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
+  - `deleteExcluded` *<boolean\>* Delete **excluded** target objects even if they match a source object. Ignored if `del` is false. See [this](https://github.com/aws/aws-cli/issues/4923) CLI issue.
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
   - `relocations` *<Relocation[]\>* Allows copying objects to remote folders without mirroring the source folder structure. Each relocation is as a callback taking a string posix path param and returning a relocated string posix path.
   - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.

@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[src/commands/CreateMultipartLocalObjectUploadCommand.ts:19](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L19)
+[src/commands/CreateMultipartLocalObjectUploadCommand.ts:19](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L19)
 
 ## Properties
 
@@ -42,7 +42,7 @@
 
 #### Defined in
 
-[src/commands/CreateMultipartLocalObjectUploadCommand.ts:17](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L17)
+[src/commands/CreateMultipartLocalObjectUploadCommand.ts:17](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L17)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[src/commands/CreateMultipartLocalObjectUploadCommand.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L18)
+[src/commands/CreateMultipartLocalObjectUploadCommand.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L18)
 
 ___
 
@@ -62,7 +62,7 @@ ___
 
 #### Defined in
 
-[src/commands/CreateMultipartLocalObjectUploadCommand.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L16)
+[src/commands/CreateMultipartLocalObjectUploadCommand.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L16)
 
 ## Methods
 
@@ -82,4 +82,4 @@ ___
 
 #### Defined in
 
-[src/commands/CreateMultipartLocalObjectUploadCommand.ts:25](https://github.com/jeanbmar/s3-sync-client/blob/7c529f6/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L25)
+[src/commands/CreateMultipartLocalObjectUploadCommand.ts:25](https://github.com/jeanbmar/s3-sync-client/blob/8c597d9/src/commands/CreateMultipartLocalObjectUploadCommand.ts#L25)
