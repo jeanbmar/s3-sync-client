@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.2.0]
+
+### Bug Fixes
+
+* prevent deleting excluded files by default to match aws cli behavior
+
+### Features
+
+* add a `deleteExcluded` option to delete excluded files
+
 ## [4.1.0]
 
 ### Features

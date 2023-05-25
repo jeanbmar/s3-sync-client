@@ -24,6 +24,7 @@ export type SyncBucketWithLocalCommandInput = {
   bucketPrefix: string;
   dryRun?: boolean;
   del?: boolean;
+  deleteExcluded?: boolean;
   sizeOnly?: boolean;
   relocations?: Relocation[];
   filters?: Filter[];
@@ -47,6 +48,7 @@ export class SyncBucketWithLocalCommand {
   bucketPrefix: string;
   dryRun: boolean;
   del: boolean;
+  deleteExcluded: boolean;
   sizeOnly: boolean;
   relocations: Relocation[];
   filters: Filter[];
@@ -63,6 +65,7 @@ export class SyncBucketWithLocalCommand {
     this.bucketPrefix = input.bucketPrefix;
     this.dryRun = input.dryRun ?? false;
     this.del = input.del ?? false;
+    this.deleteExcluded = input.deleteExcluded ?? false;
     this.sizeOnly = input.sizeOnly ?? false;
     this.relocations = input.relocations ?? [];
     this.filters = input.filters ?? [];
@@ -85,20 +88,14 @@ export class SyncBucketWithLocalCommand {
         (currentPath) => `${prefix}/${currentPath}`,
         ...this.relocations,
       ];
-    sourceObjects.forEach((sourceObject) =>
-      sourceObject.applyFilters(this.filters)
-    );
-    const includedSourceObjects = sourceObjects.filter(
-      (sourceObject) => sourceObject.isIncluded
-    );
-    includedSourceObjects.forEach((sourceObject) =>
-      sourceObject.applyRelocations(this.relocations)
-    );
-    const diff = SyncObject.diff(
-      includedSourceObjects,
-      targetObjects,
-      this.sizeOnly
-    );
+    sourceObjects.forEach((sourceObject) => {
+      sourceObject.applyFilters(this.filters);
+      sourceObject.applyRelocations(this.relocations);
+    });
+    const diff = SyncObject.diff(sourceObjects, targetObjects, {
+      sizeOnly: this.sizeOnly,
+      deleteExcluded: this.deleteExcluded,
+    });
     const commands = [];
     if (!this.dryRun) {
       commands.push(
