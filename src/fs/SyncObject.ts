@@ -12,6 +12,11 @@ export type Diff = {
   deleted: SyncObject[];
 };
 
+export type DiffOptions = {
+  sizeOnly?: boolean;
+  deleteExcluded?: boolean;
+};
+
 export abstract class SyncObject {
   id: string;
   size: number;
@@ -27,7 +32,7 @@ export abstract class SyncObject {
   static diff(
     sourceObjects: SyncObject[],
     targetObjects: SyncObject[],
-    sizeOnly: boolean = false
+    options?: DiffOptions
   ): Diff {
     const sourceObjectMap = new Map(
       sourceObjects.map((sourceObject) => [sourceObject.id, sourceObject])
@@ -38,19 +43,25 @@ export abstract class SyncObject {
     const created = [];
     const updated = [];
     sourceObjectMap.forEach((sourceObject) => {
+      if (!sourceObject.isIncluded) return;
       const targetObject = targetObjectMap.get(sourceObject.id);
       if (targetObject === undefined) {
         created.push(sourceObject);
       } else if (
         sourceObject.size !== targetObject.size ||
-        (!sizeOnly && sourceObject.lastModified > targetObject.lastModified)
+        (options?.sizeOnly !== true &&
+          sourceObject.lastModified > targetObject.lastModified)
       ) {
         updated.push(sourceObject);
       }
     });
     const deleted = [];
     targetObjectMap.forEach((targetObject) => {
-      if (!sourceObjectMap.has(targetObject.id)) {
+      const sourceObject = sourceObjectMap.get(targetObject.id);
+      if (
+        sourceObject === undefined ||
+        (!sourceObject.isIncluded && options?.deleteExcluded === true)
+      ) {
         deleted.push(targetObject);
       }
     });

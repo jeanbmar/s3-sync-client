@@ -248,6 +248,42 @@ test('s3 sync client', async (t) => {
       assert(hasObject(objects, 'xmoj') === true);
     });
 
+    // https://github.com/jeanbmar/s3-sync-client/issues/30
+    await b.test('does not delete excluded files', async () => {
+      await syncClient.send(
+        new SyncBucketWithLocalCommand({
+          localDir: path.join(DATA_DIR, 'def/jkl'),
+          bucketPrefix: BUCKET,
+          del: true,
+          filters: [{ exclude: (key) => key.startsWith('def/jkl/xmot') }],
+        })
+      );
+      const objects = await syncClient.send(
+        new ListBucketObjectsCommand({
+          bucket: BUCKET,
+        })
+      );
+      assert(hasObject(objects, 'xmot') === true);
+    });
+
+    await b.test('deletes excluded files', async () => {
+      await syncClient.send(
+        new SyncBucketWithLocalCommand({
+          localDir: path.join(DATA_DIR, 'def/jkl'),
+          bucketPrefix: BUCKET,
+          del: true,
+          deleteExcluded: true,
+          filters: [{ exclude: (key) => key.startsWith('def/jkl/xmot') }],
+        })
+      );
+      const objects = await syncClient.send(
+        new ListBucketObjectsCommand({
+          bucket: BUCKET,
+        })
+      );
+      assert(hasObject(objects, 'xmot') === false);
+    });
+
     await b.test(
       'syncs a single dir with a bucket using relocation',
       async () => {
@@ -615,8 +651,9 @@ test('s3 sync client', async (t) => {
     });
 
     await d.test('computes sync sizeOnly operations on objects', () => {
-      const sizeOnly = true;
-      const diff = SyncObject.diff(bucketObjects, localObjects, sizeOnly);
+      const diff = SyncObject.diff(bucketObjects, localObjects, {
+        sizeOnly: true,
+      });
       assert.deepStrictEqual(diff.created, [
         { id: 'abc/created', size: 1, lastModified: 0 },
       ]);
