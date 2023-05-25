@@ -255,7 +255,7 @@ test('s3 sync client', async (t) => {
           localDir: path.join(DATA_DIR, 'def/jkl'),
           bucketPrefix: BUCKET,
           del: true,
-          filters: [{ exclude: (key) => key.startsWith('def/jkl/xmot') }],
+          filters: [{ exclude: (key) => key.startsWith('xmot') }],
         })
       );
       const objects = await syncClient.send(
@@ -273,7 +273,7 @@ test('s3 sync client', async (t) => {
           bucketPrefix: BUCKET,
           del: true,
           deleteExcluded: true,
-          filters: [{ exclude: (key) => key.startsWith('def/jkl/xmot') }],
+          filters: [{ exclude: (key) => key.startsWith('xmot') }],
         })
       );
       const objects = await syncClient.send(
@@ -624,29 +624,29 @@ test('s3 sync client', async (t) => {
 
   await t.test('diffs sync objects', async (d) => {
     const bucketObjects = [
-      { id: 'abc/created', lastModified: 0, size: 1 },
-      { id: 'abc/updated1', lastModified: 1, size: 1 },
-      { id: 'abc/updated2', lastModified: 0, size: 2 },
-      { id: 'abc/unchanged', lastModified: 0, size: 1 },
+      { id: 'abc/created', lastModified: 0, size: 1, isIncluded: true },
+      { id: 'abc/updated1', lastModified: 1, size: 1, isIncluded: true },
+      { id: 'abc/updated2', lastModified: 0, size: 2, isIncluded: true },
+      { id: 'abc/unchanged', lastModified: 0, size: 1, isIncluded: true },
     ] as BucketObject[];
     const localObjects = [
-      { id: 'abc/unchanged', lastModified: 0, size: 1 },
-      { id: 'abc/updated1', lastModified: 0, size: 1 },
-      { id: 'abc/updated2', lastModified: 0, size: 1 },
-      { id: 'deleted', lastModified: 0, size: 1 },
+      { id: 'abc/unchanged', lastModified: 0, size: 1, isIncluded: true },
+      { id: 'abc/updated1', lastModified: 0, size: 1, isIncluded: true },
+      { id: 'abc/updated2', lastModified: 0, size: 1, isIncluded: true },
+      { id: 'deleted', lastModified: 0, size: 1, isIncluded: true },
     ] as LocalObject[];
 
     await d.test('computes sync operations on objects', () => {
       const diff = SyncObject.diff(bucketObjects, localObjects);
       assert.deepStrictEqual(diff.created, [
-        { id: 'abc/created', size: 1, lastModified: 0 },
+        { id: 'abc/created', size: 1, lastModified: 0, isIncluded: true },
       ]);
       assert.deepStrictEqual(diff.updated, [
-        { id: 'abc/updated1', size: 1, lastModified: 1 },
-        { id: 'abc/updated2', size: 2, lastModified: 0 },
+        { id: 'abc/updated1', size: 1, lastModified: 1, isIncluded: true },
+        { id: 'abc/updated2', size: 2, lastModified: 0, isIncluded: true },
       ]);
       assert.deepStrictEqual(diff.deleted, [
-        { id: 'deleted', size: 1, lastModified: 0 },
+        { id: 'deleted', size: 1, lastModified: 0, isIncluded: true },
       ]);
     });
 
@@ -655,13 +655,13 @@ test('s3 sync client', async (t) => {
         sizeOnly: true,
       });
       assert.deepStrictEqual(diff.created, [
-        { id: 'abc/created', size: 1, lastModified: 0 },
+        { id: 'abc/created', size: 1, lastModified: 0, isIncluded: true },
       ]);
       assert.deepStrictEqual(diff.updated, [
-        { id: 'abc/updated2', size: 2, lastModified: 0 },
+        { id: 'abc/updated2', size: 2, lastModified: 0, isIncluded: true },
       ]);
       assert.deepStrictEqual(diff.deleted, [
-        { id: 'deleted', size: 1, lastModified: 0 },
+        { id: 'deleted', size: 1, lastModified: 0, isIncluded: true },
       ]);
     });
   });
@@ -708,6 +708,7 @@ test('s3 sync client', async (t) => {
               { include: (key) => key.startsWith('def/jkl') },
             ],
             del: true,
+            deleteExcluded: true,
           })
         );
         const objects = await syncClient.send(
