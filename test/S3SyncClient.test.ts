@@ -8,7 +8,11 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { AbortController } from '@aws-sdk/abort-controller';
-import { createLocalObjects, createMultipartLocalObjects } from './setup';
+import {
+  createLocalObjects,
+  createMultipartLocalObjects,
+  createSymlinkDataObjects,
+} from './setup';
 import emptyBucket from './helpers/emptyBucket';
 import hasObject from './helpers/hasObject';
 import getRelocatedId from './helpers/getRelocatedId';
@@ -23,19 +27,21 @@ import {
   SyncObject,
   ListBucketObjectsCommand,
   ListLocalObjectsCommand,
-} from '..';
+} from '../src';
 
 const BUCKET = 's3-sync-client';
 const BUCKET_2 = 's3-sync-client-2';
 const DATA_DIR = path.join(__dirname, 'data');
 const MULTIPART_DATA_DIR = path.join(__dirname, 'multipart-data');
 const SYNC_DIR = path.join(__dirname, 'sync');
+const SYMLINK_DATA_DIR = path.join(__dirname, 'symlink-data');
 
 test('s3 sync client', async (t) => {
   const s3Client = new S3Client({ region: 'eu-west-3' });
   const syncClient = new S3SyncClient({ client: s3Client });
   await createLocalObjects(DATA_DIR);
   await createMultipartLocalObjects(MULTIPART_DATA_DIR);
+  await createSymlinkDataObjects(SYMLINK_DATA_DIR);
 
   await t.test('loads bucket dataset', async () => {
     const monitor = new TransferMonitor();
@@ -52,6 +58,7 @@ test('s3 sync client', async (t) => {
     const objects = await syncClient.send(
       new ListLocalObjectsCommand({
         directory: DATA_DIR,
+        followSymlinks: true,
       })
     );
     assert(count === 5000);
@@ -73,6 +80,7 @@ test('s3 sync client', async (t) => {
       const objects = await syncClient.send(
         new ListLocalObjectsCommand({
           directory: path.join(DATA_DIR, 'def/jkl'),
+          followSymlinks: true,
         })
       );
       assert.deepStrictEqual(
@@ -91,8 +99,47 @@ test('s3 sync client', async (t) => {
         syncClient.send(
           new ListLocalObjectsCommand({
             directory: path.join(DATA_DIR, 'xoin'),
+            followSymlinks: true,
           })
         )
+      );
+    });
+
+    await l.test('skips symlinks when listing objects', async () => {
+      const objects = await syncClient.send(
+        new ListLocalObjectsCommand({
+          directory: path.join(SYMLINK_DATA_DIR, 'valid-symlinks'),
+          followSymlinks: false,
+        })
+      );
+      assert.equal(
+        objects.find((id: string) => id === 'valid'),
+        undefined
+      );
+    });
+
+    await l.test('throws if symlink is broken', async () => {
+      await assert.rejects(() =>
+        syncClient.send(
+          new ListLocalObjectsCommand({
+            directory: path.join(SYMLINK_DATA_DIR, 'broken-symlinks'),
+            followSymlinks: true,
+          })
+        )
+      );
+    });
+
+    await l.test('follows symlinks when listing objects', async () => {
+      const objects = await syncClient.send(
+        new ListLocalObjectsCommand({
+          directory: path.join(SYMLINK_DATA_DIR, 'valid-symlinks'),
+          followSymlinks: true,
+        })
+      );
+      const object = objects.find(({ id }) => id === 'valid');
+      assert.equal(
+        object.path,
+        path.join(SYMLINK_DATA_DIR, 'valid-symlinks/valid')
       );
     });
   });
@@ -459,6 +506,7 @@ test('s3 sync client', async (t) => {
       const objects = await syncClient.send(
         new ListLocalObjectsCommand({
           directory: SYNC_DIR,
+          followSymlinks: true,
         })
       );
       assert(hasObject(objects, 'jkl/xmoj') === true);
@@ -491,6 +539,7 @@ test('s3 sync client', async (t) => {
         const objects = await syncClient.send(
           new ListLocalObjectsCommand({
             directory: `${SYNC_DIR}/issue9`,
+            followSymlinks: true,
           })
         );
         assert(objects.length === 11);
@@ -516,6 +565,7 @@ test('s3 sync client', async (t) => {
       const objects = await syncClient.send(
         new ListLocalObjectsCommand({
           directory: SYNC_DIR,
+          followSymlinks: true,
         })
       );
       assert(hasObject(objects, 'xmoj') === true);
@@ -536,6 +586,7 @@ test('s3 sync client', async (t) => {
         const objects = await syncClient.send(
           new ListLocalObjectsCommand({
             directory: SYNC_DIR,
+            followSymlinks: true,
           })
         );
         assert(count === 5000);
@@ -559,6 +610,7 @@ test('s3 sync client', async (t) => {
         const objects = await syncClient.send(
           new ListLocalObjectsCommand({
             directory: SYNC_DIR,
+            followSymlinks: true,
           })
         );
         assert(objects.length === 5000);
@@ -615,6 +667,7 @@ test('s3 sync client', async (t) => {
       const objects = await syncClient.send(
         new ListLocalObjectsCommand({
           directory: path.join(SYNC_DIR, 'issue40'),
+          followSymlinks: true,
         })
       );
       assert(hasObject(objects, 'def/jkl/xmoj') === false);
@@ -763,6 +816,7 @@ test('s3 sync client', async (t) => {
         const objects = await syncClient.send(
           new ListLocalObjectsCommand({
             directory: path.join(SYNC_DIR, 'def/jkl'),
+            followSymlinks: true,
           })
         );
         assert(objects.length === 11);
