@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/commands/UploadLocalObjectCommand.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/UploadLocalObjectCommand.ts#L27)
+[src/commands/UploadLocalObjectCommand.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectCommand.ts#L27)
 
 ## Properties
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/commands/UploadLocalObjectCommand.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/UploadLocalObjectCommand.ts#L23)
+[src/commands/UploadLocalObjectCommand.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectCommand.ts#L23)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectCommand.ts:22](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/UploadLocalObjectCommand.ts#L22)
+[src/commands/UploadLocalObjectCommand.ts:22](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectCommand.ts#L22)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectCommand.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/UploadLocalObjectCommand.ts#L24)
+[src/commands/UploadLocalObjectCommand.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectCommand.ts#L24)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectCommand.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/UploadLocalObjectCommand.ts#L21)
+[src/commands/UploadLocalObjectCommand.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectCommand.ts#L21)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectCommand.ts:25](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/UploadLocalObjectCommand.ts#L25)
+[src/commands/UploadLocalObjectCommand.ts:25](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectCommand.ts#L25)
 
 ## Methods
 
@@ -104,4 +104,4 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectCommand.ts:34](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/UploadLocalObjectCommand.ts#L34)
+[src/commands/UploadLocalObjectCommand.ts:34](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectCommand.ts#L34)

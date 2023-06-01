@@ -64,7 +64,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/TransferMonitor.ts:20](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L20)
+[src/TransferMonitor.ts:20](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L20)
 
 ## Properties
 
@@ -74,7 +74,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/TransferMonitor.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L18)
+[src/TransferMonitor.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L18)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/TransferMonitor.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L16)
+[src/TransferMonitor.ts:16](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L16)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/TransferMonitor.ts:17](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L17)
+[src/TransferMonitor.ts:17](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L17)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/TransferMonitor.ts:15](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L15)
+[src/TransferMonitor.ts:15](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L15)
 
 ___
 
@@ -345,7 +345,7 @@ ___
 
 #### Defined in
 
-[src/TransferMonitor.ts:42](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L42)
+[src/TransferMonitor.ts:42](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L42)
 
 ___
 
@@ -887,7 +887,7 @@ ___
 
 #### Defined in
 
-[src/TransferMonitor.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L27)
+[src/TransferMonitor.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L27)
 
 ___
 
@@ -907,7 +907,7 @@ ___
 
 #### Defined in
 
-[src/TransferMonitor.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L32)
+[src/TransferMonitor.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L32)
 
 ___
 
@@ -927,7 +927,7 @@ ___
 
 #### Defined in
 
-[src/TransferMonitor.ts:37](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/TransferMonitor.ts#L37)
+[src/TransferMonitor.ts:37](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/TransferMonitor.ts#L37)
 
 ___
 

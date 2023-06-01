@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[src/commands/CopyBucketObjectsCommand.ts:30](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/CopyBucketObjectsCommand.ts#L30)
+[src/commands/CopyBucketObjectsCommand.ts:30](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CopyBucketObjectsCommand.ts#L30)
 
 ## Properties
 
@@ -45,7 +45,7 @@
 
 #### Defined in
 
-[src/commands/CopyBucketObjectsCommand.ts:25](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/CopyBucketObjectsCommand.ts#L25)
+[src/commands/CopyBucketObjectsCommand.ts:25](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CopyBucketObjectsCommand.ts#L25)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[src/commands/CopyBucketObjectsCommand.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/CopyBucketObjectsCommand.ts#L23)
+[src/commands/CopyBucketObjectsCommand.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CopyBucketObjectsCommand.ts#L23)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[src/commands/CopyBucketObjectsCommand.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/CopyBucketObjectsCommand.ts#L26)
+[src/commands/CopyBucketObjectsCommand.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CopyBucketObjectsCommand.ts#L26)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[src/commands/CopyBucketObjectsCommand.ts:28](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/CopyBucketObjectsCommand.ts#L28)
+[src/commands/CopyBucketObjectsCommand.ts:28](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CopyBucketObjectsCommand.ts#L28)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/commands/CopyBucketObjectsCommand.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/CopyBucketObjectsCommand.ts#L27)
+[src/commands/CopyBucketObjectsCommand.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CopyBucketObjectsCommand.ts#L27)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[src/commands/CopyBucketObjectsCommand.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/CopyBucketObjectsCommand.ts#L24)
+[src/commands/CopyBucketObjectsCommand.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CopyBucketObjectsCommand.ts#L24)
 
 ## Methods
 
@@ -115,4 +115,4 @@ ___
 
 #### Defined in
 
-[src/commands/CopyBucketObjectsCommand.ts:40](https://github.com/jeanbmar/s3-sync-client/blob/c83b38d/src/commands/CopyBucketObjectsCommand.ts#L40)
+[src/commands/CopyBucketObjectsCommand.ts:40](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CopyBucketObjectsCommand.ts#L40)
