@@ -4,3 +4,4 @@ dist
 test/data
 test/multipart-data
 test/sync
+test/symlink-data

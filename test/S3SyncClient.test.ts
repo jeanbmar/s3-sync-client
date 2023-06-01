@@ -8,7 +8,11 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { AbortController } from '@aws-sdk/abort-controller';
-import { createLocalObjects, createMultipartLocalObjects } from './setup';
+import {
+  createLocalObjects,
+  createMultipartLocalObjects,
+  createSymlinkDataObjects,
+} from './setup';
 import emptyBucket from './helpers/emptyBucket';
 import hasObject from './helpers/hasObject';
 import getRelocatedId from './helpers/getRelocatedId';
@@ -30,12 +34,14 @@ const BUCKET_2 = 's3-sync-client-2';
 const DATA_DIR = path.join(__dirname, 'data');
 const MULTIPART_DATA_DIR = path.join(__dirname, 'multipart-data');
 const SYNC_DIR = path.join(__dirname, 'sync');
+const SYMLINK_DATA_DIR = path.join(__dirname, 'symlink-data');
 
 test('s3 sync client', async (t) => {
   const s3Client = new S3Client({ region: 'eu-west-3' });
   const syncClient = new S3SyncClient({ client: s3Client });
   await createLocalObjects(DATA_DIR);
   await createMultipartLocalObjects(MULTIPART_DATA_DIR);
+  await createSymlinkDataObjects(SYMLINK_DATA_DIR);
 
   await t.test('loads bucket dataset', async () => {
     const monitor = new TransferMonitor();
@@ -52,6 +58,7 @@ test('s3 sync client', async (t) => {
     const objects = await syncClient.send(
       new ListLocalObjectsCommand({
         directory: DATA_DIR,
+        followSymlinks: true,
       })
     );
     assert(count === 5000);
@@ -94,6 +101,36 @@ test('s3 sync client', async (t) => {
           })
         )
       );
+    });
+
+    await l.test('skips symlinks when listing objects', async () => {
+      const objects = await syncClient.send(
+        new ListLocalObjectsCommand({
+          directory: path.join(SYMLINK_DATA_DIR, 'valid-symlinks'),
+          followSymlinks: false,
+        })
+      );
+      assert(!hasObject(objects, 'valid'));
+    });
+
+    await l.test('throws if symlink is broken', async () => {
+      await assert.rejects(() =>
+        syncClient.send(
+          new ListLocalObjectsCommand({
+            directory: path.join(SYMLINK_DATA_DIR, 'broken-symlinks'),
+            followSymlinks: true,
+          })
+        )
+      );
+    });
+
+    await l.test('follows symlinks when listing objects', async () => {
+      const objects = await syncClient.send(
+        new ListLocalObjectsCommand({
+          directory: path.join(SYMLINK_DATA_DIR, 'valid-symlinks'),
+        })
+      );
+      assert(hasObject(objects, 'valid'));
     });
   });
 

@@ -19,6 +19,8 @@ export type SyncLocalWithBucketCommandInput = {
   del?: boolean;
   deleteExcluded?: boolean;
   sizeOnly?: boolean;
+  followSymlinks?: boolean;
+  noFollowSymlinks?: boolean;
   relocations?: Relocation[];
   filters?: Filter[];
   abortSignal?: AbortSignal;
@@ -40,6 +42,7 @@ export class SyncLocalWithBucketCommand {
   del: boolean;
   deleteExcluded: boolean;
   sizeOnly: boolean;
+  followSymlinks: boolean;
   relocations: Relocation[];
   filters: Filter[];
   abortSignal?: AbortSignal;
@@ -54,6 +57,8 @@ export class SyncLocalWithBucketCommand {
     this.del = input.del ?? false;
     this.deleteExcluded = input.deleteExcluded ?? false;
     this.sizeOnly = input.sizeOnly ?? false;
+    const noFollowSymlinks = input.noFollowSymlinks ?? false;
+    this.followSymlinks = input.followSymlinks ?? !noFollowSymlinks;
     this.relocations = input.relocations ?? [];
     this.filters = input.filters ?? [];
     this.abortSignal = input.abortSignal;
@@ -68,7 +73,10 @@ export class SyncLocalWithBucketCommand {
     await fsp.mkdir(this.localDir, { recursive: true });
     const [sourceObjects, targetObjects] = await Promise.all([
       new ListBucketObjectsCommand({ bucket, prefix }).execute(client),
-      new ListLocalObjectsCommand({ directory: this.localDir }).execute(),
+      new ListLocalObjectsCommand({
+        directory: this.localDir,
+        followSymlinks: this.followSymlinks,
+      }).execute(),
     ]);
     if (prefix !== '')
       this.relocations = [

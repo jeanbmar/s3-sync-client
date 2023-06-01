@@ -26,6 +26,8 @@ export type SyncBucketWithLocalCommandInput = {
   del?: boolean;
   deleteExcluded?: boolean;
   sizeOnly?: boolean;
+  followSymlinks?: boolean;
+  noFollowSymlinks?: boolean;
   relocations?: Relocation[];
   filters?: Filter[];
   abortSignal?: AbortSignal;
@@ -50,6 +52,7 @@ export class SyncBucketWithLocalCommand {
   del: boolean;
   deleteExcluded: boolean;
   sizeOnly: boolean;
+  followSymlinks: boolean;
   relocations: Relocation[];
   filters: Filter[];
   abortSignal?: AbortSignal;
@@ -67,6 +70,8 @@ export class SyncBucketWithLocalCommand {
     this.del = input.del ?? false;
     this.deleteExcluded = input.deleteExcluded ?? false;
     this.sizeOnly = input.sizeOnly ?? false;
+    const noFollowSymlinks = input.noFollowSymlinks ?? false;
+    this.followSymlinks = input.followSymlinks ?? !noFollowSymlinks;
     this.relocations = input.relocations ?? [];
     this.filters = input.filters ?? [];
     this.abortSignal = input.abortSignal;
@@ -80,7 +85,10 @@ export class SyncBucketWithLocalCommand {
   async execute(client: S3Client): Promise<SyncBucketWithLocalCommandOutput> {
     const { bucket, prefix } = parsePrefix(this.bucketPrefix);
     const [sourceObjects, targetObjects] = await Promise.all([
-      new ListLocalObjectsCommand({ directory: this.localDir }).execute(),
+      new ListLocalObjectsCommand({
+        directory: this.localDir,
+        followSymlinks: this.followSymlinks,
+      }).execute(),
       new ListBucketObjectsCommand({ bucket, prefix }).execute(client),
     ]);
     if (prefix !== '')

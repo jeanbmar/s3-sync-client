@@ -5,12 +5,17 @@ import { LocalObject } from '../fs/LocalObject';
 
 export type ListLocalObjectsCommandInput = {
   directory: string;
+  followSymlinks?: boolean;
+  noFollowSymlinks?: boolean;
 };
 
 export class ListLocalObjectsCommand {
   directory: string;
+  followSymlinks: boolean;
   constructor(input: ListLocalObjectsCommandInput) {
     this.directory = input.directory;
+    const noFollowSymlinks = input.noFollowSymlinks ?? false;
+    this.followSymlinks = input.followSymlinks ?? !noFollowSymlinks;
   }
 
   async execute(): Promise<LocalObject[]> {
@@ -23,10 +28,13 @@ export class ListLocalObjectsCommand {
     // eslint-disable-next-line no-restricted-syntax
     for (const childPath of childPaths) {
       const filePath = path.join(currentDir, childPath);
-      const stats = await fsp.stat(filePath);
+      let stats = await fsp.lstat(filePath);
+      if (stats.isSymbolicLink() && this.followSymlinks) {
+        stats = await fsp.stat(filePath);
+      }
       if (stats.isDirectory()) {
         objects = objects.concat(await this.listObjectsRecursively(filePath));
-      } else {
+      } else if (stats.isFile()) {
         const id = toPosixPath(path.relative(this.directory, filePath));
         objects.push(
           new LocalObject({
