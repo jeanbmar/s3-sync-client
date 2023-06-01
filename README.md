@@ -11,7 +11,7 @@ AWS CLI installation is **NOT** required by this module.
 - Sync a remote Amazon S3 bucket with a local file system (multipart uploads are supported)
 - Sync two remote Amazon S3 buckets
 - Sync only new and updated objects
-- Support AWS CLI options `--delete`, `--dryrun`, `--size-only`, `--include` and `--exclude`
+- Support AWS CLI options `--delete`, `--dryrun`, `--size-only`, `--include`, `--exclude`, `--follow-symlinks`, `--no-follow-symlinks`
 - Support AWS SDK native command input options
 - Monitor sync progress
 - Sync **any** number of objects (no 1000 objects limit)
@@ -222,6 +222,7 @@ Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `deleteExcluded` *<boolean\>* Delete **excluded** target objects even if they match a source object. Ignored if `del` is false. See [this](https://github.com/aws/aws-cli/issues/4923) CLI issue.
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
+  - `followSymlinks` *<boolean\>* Equivalent to CLI ``--follow-symlinks`` option (default `true`)
   - `relocations` *<Relocation[]\>* Allows uploading objects to remote folders without mirroring the source directory structure. Each relocation is as a callback taking a string posix path param and returning a relocated string posix path.
   - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
   - `abortSignal` *<AbortSignal\>* Allows aborting the sync
@@ -246,6 +247,7 @@ Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
   - `del` *<boolean\>* Equivalent to CLI ``--delete`` option
   - `deleteExcluded` *<boolean\>* Delete **excluded** target objects even if they match a source object. Ignored if `del` is false. See [this](https://github.com/aws/aws-cli/issues/4923) CLI issue.
   - `sizeOnly` *<boolean\>* Equivalent to CLI ``--size-only`` option
+  - `followSymlinks` *<boolean\>* Equivalent to CLI ``--follow-symlinks`` option (default `true`)
   - `relocations` *<Relocation[]\>* Allows downloading objects to local directories without mirroring the source folder structure. Each relocation is as a callback taking a string posix path param and returning a relocated string posix path.
   - `filters` *<Filter[]\>* [Almost](https://github.com/jeanbmar/s3-sync-client/issues/30) equivalent to CLI ``--exclude`` and ``--include`` options. Filters can be specified using plain objects including either an `include` or `exclude` property. The `include` and `exclude` properties are functions that take an object key and return a boolean.
   - `abortSignal` *<AbortSignal\>* Allows aborting the sync

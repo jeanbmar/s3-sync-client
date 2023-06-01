@@ -27,6 +27,7 @@ export type SyncBucketWithLocalCommandInput = {
   deleteExcluded?: boolean;
   sizeOnly?: boolean;
   followSymlinks?: boolean;
+  noFollowSymlinks?: boolean;
   relocations?: Relocation[];
   filters?: Filter[];
   abortSignal?: AbortSignal;
@@ -69,7 +70,8 @@ export class SyncBucketWithLocalCommand {
     this.del = input.del ?? false;
     this.deleteExcluded = input.deleteExcluded ?? false;
     this.sizeOnly = input.sizeOnly ?? false;
-    this.followSymlinks = input.followSymlinks ?? true;
+    const noFollowSymlinks = input.noFollowSymlinks ?? false;
+    this.followSymlinks = input.followSymlinks ?? !noFollowSymlinks;
     this.relocations = input.relocations ?? [];
     this.filters = input.filters ?? [];
     this.abortSignal = input.abortSignal;

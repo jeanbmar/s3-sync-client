@@ -5,7 +5,8 @@ import { LocalObject } from '../fs/LocalObject';
 
 export type ListLocalObjectsCommandInput = {
   directory: string;
-  followSymlinks: boolean;
+  followSymlinks?: boolean;
+  noFollowSymlinks?: boolean;
 };
 
 export class ListLocalObjectsCommand {
@@ -13,34 +14,27 @@ export class ListLocalObjectsCommand {
   followSymlinks: boolean;
   constructor(input: ListLocalObjectsCommandInput) {
     this.directory = input.directory;
-    this.followSymlinks = input.followSymlinks;
+    const noFollowSymlinks = input.noFollowSymlinks ?? false;
+    this.followSymlinks = input.followSymlinks ?? !noFollowSymlinks;
   }
 
   async execute(): Promise<LocalObject[]> {
-    return this.listObjectsRecursively(this.directory, this.followSymlinks);
+    return this.listObjectsRecursively(this.directory);
   }
 
-  private async listObjectsRecursively(
-    currentDir,
-    followSymlinks
-  ): Promise<LocalObject[]> {
+  private async listObjectsRecursively(currentDir): Promise<LocalObject[]> {
     let objects: LocalObject[] = [];
     const childPaths = await fsp.readdir(currentDir);
     // eslint-disable-next-line no-restricted-syntax
     for (const childPath of childPaths) {
       const filePath = path.join(currentDir, childPath);
-      const stats = await fsp.lstat(filePath);
-      if (stats.isSymbolicLink() && !followSymlinks) {
-        // eslint-disable-next-line no-continue
-        continue;
-      } else if (stats.isSymbolicLink()) {
-        await fsp.stat(filePath);
+      let stats = await fsp.lstat(filePath);
+      if (stats.isSymbolicLink() && this.followSymlinks) {
+        stats = await fsp.stat(filePath);
       }
       if (stats.isDirectory()) {
-        objects = objects.concat(
-          await this.listObjectsRecursively(filePath, followSymlinks)
-        );
-      } else {
+        objects = objects.concat(await this.listObjectsRecursively(filePath));
+      } else if (stats.isFile()) {
         const id = toPosixPath(path.relative(this.directory, filePath));
         objects.push(
           new LocalObject({
