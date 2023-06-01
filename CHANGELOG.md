@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [4.3.0]
 
-* implement follow symlinks and no follow symlinks options ([agouil](https://github.com/))
+* implement follow symlinks and no follow symlinks options ([agouil](https://github.com/agouil))
 
 ## [4.2.0]
 
