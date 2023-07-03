@@ -38,7 +38,7 @@
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:39](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L39)
+[src/commands/UploadLocalObjectPartCommand.ts:39](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L39)
 
 ## Properties
 
@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:36](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L36)
+[src/commands/UploadLocalObjectPartCommand.ts:36](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L36)
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:35](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L35)
+[src/commands/UploadLocalObjectPartCommand.ts:35](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L35)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:38](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L38)
+[src/commands/UploadLocalObjectPartCommand.ts:38](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L38)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L32)
+[src/commands/UploadLocalObjectPartCommand.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L32)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:30](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L30)
+[src/commands/UploadLocalObjectPartCommand.ts:30](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L30)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:37](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L37)
+[src/commands/UploadLocalObjectPartCommand.ts:37](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L37)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:33](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L33)
+[src/commands/UploadLocalObjectPartCommand.ts:33](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L33)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:31](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L31)
+[src/commands/UploadLocalObjectPartCommand.ts:31](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L31)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:34](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L34)
+[src/commands/UploadLocalObjectPartCommand.ts:34](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L34)
 
 ## Methods
 
@@ -148,4 +148,4 @@ ___
 
 #### Defined in
 
-[src/commands/UploadLocalObjectPartCommand.ts:51](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/UploadLocalObjectPartCommand.ts#L51)
+[src/commands/UploadLocalObjectPartCommand.ts:51](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/UploadLocalObjectPartCommand.ts#L51)

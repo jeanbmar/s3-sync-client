@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectCommand.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/DownloadBucketObjectCommand.ts#L32)
+[src/commands/DownloadBucketObjectCommand.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/DownloadBucketObjectCommand.ts#L32)
 
 ## Properties
 
@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectCommand.ts:28](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/DownloadBucketObjectCommand.ts#L28)
+[src/commands/DownloadBucketObjectCommand.ts:28](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/DownloadBucketObjectCommand.ts#L28)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectCommand.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/DownloadBucketObjectCommand.ts#L26)
+[src/commands/DownloadBucketObjectCommand.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/DownloadBucketObjectCommand.ts#L26)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectCommand.ts:29](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/DownloadBucketObjectCommand.ts#L29)
+[src/commands/DownloadBucketObjectCommand.ts:29](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/DownloadBucketObjectCommand.ts#L29)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectCommand.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/DownloadBucketObjectCommand.ts#L27)
+[src/commands/DownloadBucketObjectCommand.ts:27](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/DownloadBucketObjectCommand.ts#L27)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectCommand.ts:30](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/DownloadBucketObjectCommand.ts#L30)
+[src/commands/DownloadBucketObjectCommand.ts:30](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/DownloadBucketObjectCommand.ts#L30)
 
 ## Methods
 
@@ -104,4 +104,4 @@ ___
 
 #### Defined in
 
-[src/commands/DownloadBucketObjectCommand.ts:40](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/DownloadBucketObjectCommand.ts#L40)
+[src/commands/DownloadBucketObjectCommand.ts:40](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/DownloadBucketObjectCommand.ts#L40)

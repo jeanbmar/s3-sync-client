@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[src/fs/SyncObject.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L26)
+[src/fs/SyncObject.ts:26](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L26)
 
 ## Properties
 
@@ -59,7 +59,7 @@
 
 #### Defined in
 
-[src/fs/SyncObject.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L21)
+[src/fs/SyncObject.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L21)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L24)
+[src/fs/SyncObject.ts:24](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L24)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L23)
+[src/fs/SyncObject.ts:23](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L23)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:22](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L22)
+[src/fs/SyncObject.ts:22](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L22)
 
 ## Accessors
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:71](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L71)
+[src/fs/SyncObject.ts:71](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L71)
 
 ## Methods
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:75](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L75)
+[src/fs/SyncObject.ts:75](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L75)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:86](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L86)
+[src/fs/SyncObject.ts:86](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L86)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:98](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L98)
+[src/fs/SyncObject.ts:98](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L98)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:106](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L106)
+[src/fs/SyncObject.ts:106](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L106)
 
 ___
 
@@ -206,4 +206,4 @@ ___
 
 #### Defined in
 
-[src/fs/SyncObject.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/fs/SyncObject.ts#L32)
+[src/fs/SyncObject.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/fs/SyncObject.ts#L32)

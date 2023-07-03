@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[src/commands/CompleteMultipartLocalObjectCommand.ts:22](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CompleteMultipartLocalObjectCommand.ts#L22)
+[src/commands/CompleteMultipartLocalObjectCommand.ts:22](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/CompleteMultipartLocalObjectCommand.ts#L22)
 
 ## Properties
 
@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[src/commands/CompleteMultipartLocalObjectCommand.ts:19](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CompleteMultipartLocalObjectCommand.ts#L19)
+[src/commands/CompleteMultipartLocalObjectCommand.ts:19](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/CompleteMultipartLocalObjectCommand.ts#L19)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[src/commands/CompleteMultipartLocalObjectCommand.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CompleteMultipartLocalObjectCommand.ts#L18)
+[src/commands/CompleteMultipartLocalObjectCommand.ts:18](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/CompleteMultipartLocalObjectCommand.ts#L18)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/commands/CompleteMultipartLocalObjectCommand.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CompleteMultipartLocalObjectCommand.ts#L21)
+[src/commands/CompleteMultipartLocalObjectCommand.ts:21](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/CompleteMultipartLocalObjectCommand.ts#L21)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[src/commands/CompleteMultipartLocalObjectCommand.ts:20](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CompleteMultipartLocalObjectCommand.ts#L20)
+[src/commands/CompleteMultipartLocalObjectCommand.ts:20](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/CompleteMultipartLocalObjectCommand.ts#L20)
 
 ## Methods
 
@@ -93,4 +93,4 @@ ___
 
 #### Defined in
 
-[src/commands/CompleteMultipartLocalObjectCommand.ts:29](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/CompleteMultipartLocalObjectCommand.ts#L29)
+[src/commands/CompleteMultipartLocalObjectCommand.ts:29](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/CompleteMultipartLocalObjectCommand.ts#L29)

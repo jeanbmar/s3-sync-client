@@ -26,4 +26,4 @@
 
 #### Defined in
 
-[src/commands/Command.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/aff45e9/src/commands/Command.ts#L32)
+[src/commands/Command.ts:32](https://github.com/jeanbmar/s3-sync-client/blob/168acbf/src/commands/Command.ts#L32)

@@ -9,9 +9,9 @@ AWS CLI installation is **NOT** required by this module.
 
 ## Features
 
-- Sync a local file system with a remote Amazon S3 bucket
-- Sync a remote Amazon S3 bucket with a local file system (multipart uploads are supported)
-- Sync two remote Amazon S3 buckets
+- Sync from an S3 bucket to a local file system 
+- Sync from a local file system to an S3 bucket (with multipart uploads support)
+- Sync from an S3 bucket to another S3 bucket
 - Sync only new and updated objects
 - Support AWS CLI options `--delete`, `--dryrun`, `--size-only`, `--include`, `--exclude`, `--follow-symlinks`, `--no-follow-symlinks`
 - Support AWS SDK native command input options
@@ -34,9 +34,9 @@ AWS CLI installation is **NOT** required by this module.
     1. [Install](#install)
     2. [Quick Start](#quick-start)
         1. [Client initialization](#client-initialization)
-        2. [Sync a remote S3 bucket with the local file system](#sync-a-remote-s3-bucket-with-the-local-file-system)
-        3. [Sync the local file system with a remote S3 bucket](#sync-the-local-file-system-with-a-remote-s3-bucket)
-        4. [Sync two remote S3 buckets](#sync-two-remote-s3-buckets)
+        2. [Sync from file system to S3 bucket](#sync-from-file-system-to-s3-bucket)
+        3. [Sync from S3 bucket to file system](#sync-from-s3-bucket-to-s3-bucket)
+        4. [Sync from S3 bucket to S3 bucket](#sync-from-s3-bucket-to-s3-bucket)
         5. [Monitor transfer progress](#monitor-sync-progress)
         6. [Abort sync](#abort-sync)
         7. [Use AWS SDK command input options](#use-aws-sdk-command-input-options)
@@ -71,7 +71,7 @@ const s3Client = new S3Client({ /* ... */ });
 const { sync } = new S3SyncClient({ client: s3Client });
 ```
 
-#### Sync a remote S3 bucket with the local file system
+#### Sync from file system to S3 bucket
 
 ```javascript
 // aws s3 sync /path/to/local/dir s3://mybucket2
@@ -82,7 +82,7 @@ await sync('/path/to/local/dir', 's3://mybucket2', { partSize: 100 * 1024 * 1024
 await sync('/path/to/local/dir', 's3://mybucket2/zzz', { del: true });
 ```
 
-#### Sync the local file system with a remote S3 bucket
+#### Sync from S3 bucket to file system
 
 ```javascript
 // aws s3 sync s3://mybucket /path/to/some/local --delete
@@ -93,7 +93,7 @@ const diff = await sync('s3://mybucket2', '/path/to/local/dir', { dryRun: true }
 console.log(diff); // log operations to perform
 ```
 
-#### Sync two remote S3 buckets
+#### Sync from S3 bucket to S3 bucket
 
 ```javascript
 // aws s3 sync s3://my-source-bucket s3://my-target-bucket --delete
@@ -214,7 +214,7 @@ A complete API reference is available in the repo docs directory.
 <a name="sync-bucket-with-local"></a>
 #### ``client.sync(localDir, bucketPrefix[, options])``
 
-Sync a remote S3 bucket with the local file system.  
+Sync from file system to S3 bucket.  
 Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
 
 - `localDir` *<string\>* Local directory
@@ -239,7 +239,7 @@ Similar to AWS CLI ``aws s3 sync localDir bucketPrefix [options]``.
 <a name="sync-local-with-bucket"></a>
 #### ``client.sync(bucketPrefix, localDir[, options])``
 
-Sync the local file system with a remote S3 bucket.  
+Sync from S3 bucket to file system.  
 Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
 
 - `bucketPrefix` *<string\>* Remote bucket name which may contain a prefix appended with a ``/`` separator
@@ -263,7 +263,7 @@ Similar to AWS CLI ``aws s3 sync bucketPrefix localDir [options]``.
 <a name="sync-bucket-with-bucket"></a>
 #### ``client.sync(sourceBucketPrefix, targetBucketPrefix[, options])``
 
-Sync two remote S3 buckets.  
+Sync from S3 bucket to S3 bucket.  
 Similar to AWS CLI ``aws s3 sync sourceBucketPrefix targetBucketPrefix [options]``.
 
 - `sourceBucketPrefix` *<string\>* Remote reference bucket name which may contain a prefix appended with a ``/`` separator
@@ -296,7 +296,7 @@ Most of the existing repo and NPM modules suffer one or more of the following li
 - requires AWS CLI to be installed
 - uses Etag to perform file comparison (Etag should be considered an opaque field and shouldn't be used)
 - limits S3 bucket object listing to 1000 objects
-- supports syncing bucket with local, but doesn't support syncing local with bucket
+- supports syncing local to bucket, but doesn't support syncing bucket to local 
 - doesn't support multipart uploads
 - uses outdated dependencies
 - is unmaintained
