@@ -1,3 +1,7 @@
+![Archived](https://img.shields.io/badge/status-archived-red?style=for-the-badge)
+
+**This repository is now archived. Consider using [Mountpoint for Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mountpoint.html) instead.**
+
 # AWS CLI s3 sync for Node.js
 
 ![npm](https://img.shields.io/npm/v/s3-sync-client.svg) ![downloads](https://img.shields.io/npm/dm/s3-sync-client.svg)
