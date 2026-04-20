@@ -64,7 +64,7 @@ AWS CLI installation is **NOT** required by this module.
 ``S3SyncClient`` is a wrapper for the AWS SDK ``S3Client`` class.
 
 ```javascript
-import S3Client from '@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
 import { S3SyncClient } from 's3-sync-client';
 
 const s3Client = new S3Client({ /* ... */ });
